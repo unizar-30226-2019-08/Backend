@@ -14,10 +14,27 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import datetime
 
+# 	'''
+# 	Tag :
+# 		nombre_tag : String
+# 	'''
 class Tag(models.Model):
     nombre = models.CharField(
         max_length = 50,
         verbose_name = 'Nombre del tag')
+
+# 	'''
+# 	Producto :
+# 		vendido_por : 	FK String
+# 		latitud:		real
+# 		longitud:		real
+# 		nombre:			String
+# 		precio:			String (Integer guardado como Char)
+# 		estado_venta:	String (Únicamente Vendido,Reservado o en venta)
+# 		tipo_envio:		String (TODO: Qué es)
+# 		tiene_tags:		Tabla relación entre tags y producto. Asocia a 
+# 						cada producto una serie de tags creados previamente.
+# 	'''
 
 class Producto(models.Model):
     vendido_por = models.ForeignKey(
@@ -54,6 +71,13 @@ class Producto(models.Model):
         editable = True,
         related_name = 'tiene_tags')
 
+# 	'''
+# 	Chat :
+# 		vendedor:	String 	(PK de usuario)
+# 		comprador:	String 	(PK de usuario)
+# 		producto:	String	(PK de usuario)
+# 	'''
+# 	
 class Chat(models.Model):
     vendedor = models.ForeignKey(
         to=User,
@@ -73,6 +97,14 @@ class Chat(models.Model):
         on_delete=models.CASCADE,
         verbose_name = 'Producto al que esta asociado el chat')
 
+# 	'''
+# 	Mensaje :
+# 		texto:			String 	
+# 		hora:			Date 	
+# 		Chat_asociado:	ID	(PK de Chat)
+# 	'''
+# 	
+
 class Mensaje(models.Model):
     texto = models.CharField(
         max_length = 1000,
@@ -86,6 +118,13 @@ class Mensaje(models.Model):
         on_delete=models.CASCADE,
         verbose_name = 'Chat en el que se encuentra el mensaje')
 
+# 	'''
+# 	Report :
+# 		identificador:		Integer 	
+# 		Usuario_reportado:	String (PK de usuario) 	
+# 		Causa:				String	
+# 	'''
+# 	
 class Report(models.Model):
     identificador = models.IntegerField(
         unique = True,
@@ -99,6 +138,13 @@ class Report(models.Model):
         max_length = 1000,
         verbose_name = 'Causa del reporte')
 
+# 	'''
+# 	Validación producto :
+# 		Comentario:			String 	
+# 		Usuario_reportado:	String (PK de usuario)
+# 	'''
+# 
+
 class ValidacionProducto(models.Model):
     comentario = models.CharField(
         max_length = 1000,
@@ -109,6 +155,12 @@ class ValidacionProducto(models.Model):
         on_delete=models.CASCADE,
         verbose_name = 'Usuario que ha sido valorado')
 
+# 	'''
+# 	Validación estrella :
+# 		estrellas:			Integer 	
+# 		usuario_valorado:	String (PK de usuario)
+# 	'''
+# 
 class ValidacionEstrella(models.Model):
     estrellas = models.IntegerField(
         verbose_name = 'Numero de estrellas que ha recibido')
@@ -117,7 +169,12 @@ class ValidacionEstrella(models.Model):
         null=False,
         on_delete=models.CASCADE,
         verbose_name = 'Usuario que ha sido valorado')
-
+# 	'''
+# 	Validación estrella :
+# 		Contenido:	String (Indica el path del archivo) 	
+# 		producto:	Integer (PK de producto)
+# 	'''
+# 
 class ContenidoMultimedia(models.Model):
     contenido = models.FileField()
     producto = models.ForeignKey(
