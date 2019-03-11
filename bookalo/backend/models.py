@@ -59,12 +59,14 @@ class Chat(models.Model):
         to=User,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name = 'Usuario que ha puesto a la venta el producto')
+        verbose_name = 'Usuario que ha puesto a la venta el producto',
+        related_name='vendedor')
     comprador = models.ForeignKey(
         to=User,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name = 'Usuario que esta interesado en el producto')
+        verbose_name = 'Usuario que esta interesado en el producto',
+        related_name='comprador')
     producto = models.ForeignKey(
         to=Producto,
         null=False,
