@@ -1,3 +1,280 @@
+
+
+
+
+# Variables_globales
+
+const int MAX_Reportes = X		# Numero de reportes antes de una eliminacion de un usuario
+
+
+
+
+# -- 	Funciones de aplicación			------------------------------------------
+
+
+# -- 	Interaccion usuario-producto 	------------------------------------------
+
+'''
+	Pre: 	id_usuario corresponde al identificador de un usuario
+			registrado en el sistema
+	Post: 	Devuelve un usuario Usuario que contiene todos los datos de
+			ese usuario.
+
+'''
+def get_usuario(int id_usuario):
+
+
+'''
+	Pre: 	id_usuario corresponde al identificador de un usuario
+			registrado en el sistema
+	Post: 	Devuelve dos enteros longitud y latitud, correspondientes a las coordenadas
+			cartesianas del usuario con identificador id_usuario
+
+'''
+def get_coordenada(int id_usuario):
+
+'''
+	Pre: 	id_usuario corresponde al identificador de un usuario
+			registrado en el sistema
+	Post: 	Elimina al usuario y todo lo asociado a él de la base de datos.
+'''
+def usario_eliminar(int id_usuario):
+
+	
+'''
+	Pre: 	id_usuario corresponde al identificador de un usuario
+			registrado en el sistema
+	Post: 	Devuelve una lista no ordenada de datos de tipo Producto
+			que tiene el usuario en la plataforma.
+'''
+
+def fetch_productos_usuario(int id_usuario):
+
+'''
+	Pre: 	id_usuario corresponde al identificador de un usuario
+			registrado en el sistema.
+	Post: 	Devuelve una lista no ordenada las opiniones asociadas a un usuario con id ID_usuario
+'''
+
+def fetch_usuario_opiniones(int ID_usuario):
+'''
+	Pre: 	email_usuario corresponde al email de un usuario
+			registrado en el sistema.
+	Post: 	Devuelve una lista no ordenada de datos de tipo Producto
+			que tiene el usuario en en venta.
+'''
+
+def fetch_productos_usuario_venta(String email_usuario):
+
+
+
+# -- Interaccion productos
+
+'''
+	Pre:	longitud y latitud son coordenadas extraídas de la API
+			de geolocalización.
+	Post: 	Devuelve una lista de productos situados en un área cuya
+			circunferencia tendrá un radio radioC respecto de la longitud
+			y latitud del Usuario con email ,email_usuarios
+'''
+
+def fetch_productos_distancia(int longitud,int latitud , int radioC , String email_usuario):
+
+'''
+	Pre:	precio_1 y precio_2 son datos decimales tal que precio_2 >= precio_1
+	Post: 	Devuelve una lista de productos situados en un área cuya
+			circunferencia tendrá un radio radioC y cuto producto.precio >= precio_1
+			y producto.precio<= precio_2.
+'''
+def fetch_productos_precio(list<Producto> listaProductos, double precio_1,double precio_2)
+
+'''
+	Pre:	True
+	Post: 	Devuelve una lista de productos cuyo producto.titulo se encuentre alguna palabra
+			de las incluidas en busqueda_producto.
+'''
+def fetch_productos_nombre(String busqueda_producto)
+
+'''
+	Pre:	True
+	Post: 	Devuelve una lista de productos cuyo producto.tiene_tags se encuentre alguno de los
+			que se encuentran en busqueda_tag.
+'''
+def fetch_productos_listartags(list<Tag> busqueda_tag)
+
+'''
+	Pre:	True
+	Post: 	Añade una lista de tags al producto, en caso de no existir el tag previamente lo añade en la base de datos
+'''
+def fetch_productos_anyadirtags(list<Tag> lista_tags)
+
+'''
+	Pre:	valoracion es un entero  en el intervalo [0-5] 
+	Post: 	Devuelve una lista de productos cuyos usuarios Usuarios_vendedores tengan
+			una valoracionEstrella >= valoracion
+'''
+def fetch_productos_valoracion(int valoracion)
+
+'''
+	Pre:	nombre_producto , usuario son datos válidos de usuarios registrado y un producto asociado a él.
+	Post:	Cambia el estado del producto nombre_producto a 'Reservado' y activa un timeout para posteriormetne 
+			se haga un valoración del mismo
+'''
+def productos_reservar(String nombre_producto,String usuario)
+
+
+'''
+	Pre:	nombre_producto , usuario son datos válidos de usuarios registrado y un producto asociado a él.
+	Post:	Cambia el estado del producto nombre_producto a 'en venta' y activa un timeout para posteriormente 
+			se haga un valoración del mismo
+'''
+def productos_quitarReserva(String nombre_producto,String usuario)
+
+'''
+	Pre:	nuevoProducto es un Producto creado previamente
+	Post:	Asocia los campos de nuevoProducto al Producto nombre_producto del usuario con nombre usuario.
+'''
+def productos_modificarProducto(String nombre_producto,String usuario, Producto nuevoProducto)
+
+'''
+	Pre:	producto_ contiene un producto a subir al sistema
+	Post:	Cambia el estado del producto nombre_producto a 'en venta' y activa un timeout para posteriormetne 
+			se haga un valoración del mismo
+'''
+def productos_quitarReserva(Producto producto_)
+
+# -- 	Interaccion  tags ------------------------------------------
+
+
+'''
+	Pre: 	True
+	Post: 	Devuelve una list<tags> que contiene una serie tags predeterminados del sitema ()
+'''
+def tags_predeterminados()
+
+'''
+	Pre: 	nombre_tag es un String no vacio
+	Post: 	Anade un tag a la base de datos con nombre nombre_tag
+'''
+def tags_anyadir(String nombre_tag)
+
+'''
+	Pre: 	True
+	Post: 	Devuelve una lista de los 10 tags más usuados, en caso de no existir 10 tags devoverá 
+			el número que se encuentre en la base de datos.
+'''
+def tags_topTags()
+
+
+# -- 	Interaccion  Chat ------------------------------------------
+
+'''
+	Pre: 	email_comprador y email_vendedor contiene dos email válidos de usuarios registrados diferentes.
+	Post: 	Crea  un chat vacio entre dos usuarios 
+'''
+def chat_crear(String email_comprador, String email_vendedor)
+
+
+'''
+	Pre: 	ID es un identificador de un chat guardado en la base de datos.
+	Post: 	Añade el mensaje al chat con identificador ID con la hora especificada.
+'''
+def chat_anyadirMensaje(int ID,String mensaje, Date hora)
+
+'''
+	Pre: 	ID es un identificador de un chat guardado en la base de datos.
+	Post: 	Devuelve dos listas , una lista de mensajes y una lista de horas de los mensajes
+			del chat identificado con ID
+'''
+def chat_devolverChat(int ID)
+
+# -- 	Interaccion  Elemento Multimedia ------------------------------------------
+
+'''
+	Pre: 	path contiene la ruta relativa o absoluta a un archivo multimedia,  nombre_producto y email_usuario
+			corresponden a campos para la identificación de un usuario y un productos registrados en el sistema.
+	Post: 	Crear una instancia en la base de datos para ese producto y le asocia un identificador y el producto
+			al cual esta asociado.
+'''
+
+def ContenidoMultimedia_crear(int ID_multimedia, int ID_producto)
+
+'''
+	Pre: 	ID_multimedia contiene el identificador de un elemento de contenido multimedia creado previamente y path
+			contiene la ruta hacia el contenido multimedia.
+	Post: 	Modifica la ruta del ContenidoMultimedia con identificador ID_multimedia.
+'''
+def ContenidoMultimedia_modificar(int ID_multimedia, String pathProducto)
+
+'''
+	Pre: 	ID_multimedia contiene el identificador de un elemento de contenido multimedia creado previamente.
+	Post: 	Elimina el ContenidoMultimedia identificado con ID_multimedia.
+'''
+def ContenidoMultimedia_eliminar(int ID_multimedia)
+
+# 	------------------------------------ IDS corregidos -----------------------------
+
+# -- 	Interaccion  Valoraciones ------------------------------------------
+
+'''
+	Pre: 	ID_usuario contiene el identificador de un usuario registrado y calificacion
+			contiene un valor decimal [0,5]
+
+	Post: 	Crear una instancia en la base de datos ue asocia una valoración a un usuario
+'''
+
+def valoracionEstrella_anyadir(int ID_usuario, double calificacion)
+
+'''
+	Pre: 	ID_usuario contiene el identificador de un usuario registrado .
+
+	Post: 	Devuelve una lista que contiene las valoraciones asociadas a un usuaro
+'''
+def valoracionEstrella_lista_usuario(int ID_usuario)
+
+'''
+	Pre: 	ID_usuario contiene el identificador de un usuario registrado .
+
+	Post: 	Devuelve un valor decimal [0-5] que contiene la valoración media de un usuario
+'''
+def valoracionEstrella_usuario(int ID_usuario)
+
+
+'''
+	Pre: 	ID_usuario contiene el identificador de un producto registrado y un comentario asociado
+			al mismo
+
+	Post: 	Crear una instancia en la base de datos que asocia un comentario a un producto en concreto
+'''
+
+def valoracionProducto_anyadir(int ID_producto, String comentario)
+
+
+
+# -- 	Interaccion  Reportes ------------------------------------------
+# TODO: Revision de reportes?
+
+'''
+	Pre: 	causa contiene un String no vacio
+
+	Post: 	Crear una instancia en la base de datos que asocia un nuevo reporte con una Causa causa
+			y un identificador. En caso de que el usuario llegue a un número máximo de reportes,
+			será eliminado de la aplicación.
+'''
+
+def Report_anyadir(int ID_usuario, String causa)
+'''
+	Pre: 	ID_usuario contiene el identificador de un producto registrado y calificacion
+			contiene un valor [0,5]
+
+	Post: 	Crear una instancia en la base de datos que asocia una valoración a un producto
+'''
+
+
+
+
+
+
 fetch_productos(filtrado)
 fetch(productos(busqueda)
 fetch_info_producto(clave_producto)
