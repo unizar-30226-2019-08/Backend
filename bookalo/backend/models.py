@@ -175,11 +175,13 @@ class ValidacionProducto(models.Model):
         to=User,
         null=False,
         on_delete=models.CASCADE,
+        related_name='usuario_valorado',
         verbose_name='Usuario que ha sido valorado')
     usuario_que_valora = models.ForeignKey(
         to=User,
         null=False,
         on_delete=models.CASCADE,
+        related_name='usuario_que_valora',
         verbose_name='Usuario que ha valorado al otro usuario')
 # 	'''
 # 	Validación estrella :
@@ -196,11 +198,13 @@ class ValidacionEstrella(models.Model):
         to=User,
         null=False,
         on_delete=models.CASCADE,
+        related_name='usuario_valorado',
         verbose_name='Usuario que ha sido valorado')
     usuario_que_valora = models.ForeignKey(
         to=User,
         null=False,
         on_delete=models.CASCADE,
+        related_name='usuario_que_valora',
         verbose_name='Usuario que ha valorado al otro usuario')
 # 	'''
 # 	Validación estrella :
