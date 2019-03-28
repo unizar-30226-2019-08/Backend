@@ -2,11 +2,6 @@
 
 # Variables_globales
 
-const int MAX_Reportes = X		# Numero de reportes antes de una eliminacion de un usuario
-								# hasta su posterior revisión por parte de los administradores.
-
-
-
 
 # -- 	Funciones de aplicación			------------------------------------------
 

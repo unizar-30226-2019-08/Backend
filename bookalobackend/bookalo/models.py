@@ -16,7 +16,8 @@ from datetime import datetime
 from enum import Enum
 # 	'''
 # 	Tag :
-# 		nombre_tag : String
+# 		nombre_tag          : String
+#       es_predeterminado   : Booleano que indica si un tag es predeterminado o no
 # 	'''
 
 
@@ -24,6 +25,7 @@ class Tag(models.Model):
     nombre = models.CharField(
         max_length=50,
         verbose_name='Nombre del tag')
+    es_predecterminado = models.CharField(max_length=1,default = 'F')
 
 # 	'''
 # 	EleccionEstadoProducto :
@@ -147,9 +149,6 @@ class Mensaje(models.Model):
 
 
 class Report(models.Model):
-    identificador = models.IntegerField(
-        unique=True,
-        verbose_name='Identificador unico del report')
     usuario_reportado = models.ForeignKey(
         to=User,
         null=False,
