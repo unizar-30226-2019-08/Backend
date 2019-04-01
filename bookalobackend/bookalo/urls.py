@@ -1,0 +1,14 @@
+from django.contrib import admin
+from django.urls import path, include
+from bookalo import views
+from rest_framework.urlpatterns import format_suffix_patterns
+
+urlpatterns = [
+    path(r'api/login', views.Login),
+    path(r'api/get_user', views.GetUser),
+    path(r'api/get_user_profile', views.GetUserProfile),
+    path(r'api/search_product', views.SearchProduct),
+    path(r'api/filter_product', views.FilterProduct),
+    path(r'api/get_user_products', views.GetUserProducts),
+    path(r'api/create_product', views.CreateProduct),
+]

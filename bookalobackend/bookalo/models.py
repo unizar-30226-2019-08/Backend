@@ -21,11 +21,26 @@ from enum import Enum
 # 	'''
 
 
+class Usuario(models.Model):
+    uid = models.CharField(
+        unique=True,
+        max_length=100,
+        verbose_name='UID del usuario en Firebase')
+    access_token = models.CharField(
+        unique=True,
+        max_length=1000,
+        verbose_name='Token temporal de sesion del usuario')
+    nombre = models.CharField(
+        max_length=100,
+        verbose_name='Nombre del usuario asociado al login social')
+
 class Tag(models.Model):
     nombre = models.CharField(
         max_length=50,
         verbose_name='Nombre del tag')
-    es_predecterminado = models.CharField(max_length=1,default = 'F')
+    es_predeterminado = models.BooleanField(
+        default=False,
+        verbose_name='Marca si un tag ha sido creado por los administradores de la aplicacion')
 
 # 	'''
 # 	EleccionEstadoProducto :
@@ -55,10 +70,11 @@ class EleccionEstadoProducto(Enum):
 
 class Producto(models.Model):
     vendido_por = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Usuario que ha puesto a la venta el producto')
+        verbose_name='Usuario que ha puesto a la venta el producto',
+        related_name='vendido_por')
     latitud = models.DecimalField(
         verbose_name='Latitud del producto',
         max_digits=9,
@@ -88,6 +104,14 @@ class Producto(models.Model):
         blank=True,
         editable=True,
         related_name='tiene_tags')
+    le_gusta_a = models.ManyToManyField(
+        Usuario,
+        blank=True,
+        editable=True,
+        related_name='le_gusta_a')
+    num_likes = models.IntegerField(
+        default=0,
+        verbose_name='Likes acumulados por el producto')
 
 # 	'''
 # 	Chat :
@@ -100,13 +124,13 @@ class Producto(models.Model):
 
 class Chat(models.Model):
     vendedor = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Usuario que ha puesto a la venta el producto',
         related_name='vendedor')
     comprador = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Usuario que esta interesado en el producto',
@@ -137,7 +161,8 @@ class Mensaje(models.Model):
         to=Chat,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Chat en el que se encuentra el mensaje')
+        verbose_name='Chat en el que se encuentra el mensaje',
+        related_name='chat_del_mensaje')
 
 # 	'''
 # 	Report :
@@ -150,38 +175,15 @@ class Mensaje(models.Model):
 
 class Report(models.Model):
     usuario_reportado = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Usuario que ha sido reportado')
+        verbose_name='Usuario que ha sido reportado',
+        related_name='usuario_reportado')
     causa = models.CharField(
         max_length=1000,
         verbose_name='Causa del reporte')
 
-# 	'''
-# 	Validación producto :
-# 		Comentario:			String
-# 		Usuario_reportado:	String (PK de usuario)
-# 	'''
-#
-
-
-class ValidacionProducto(models.Model):
-    comentario = models.CharField(
-        max_length=1000,
-        verbose_name='Comentario de la validacion')
-    usuario_valorado = models.ForeignKey(
-        to=User,
-        null=False,
-        on_delete=models.CASCADE,
-        related_name='usuario_valorado_producto',
-        verbose_name='Usuario que ha sido valorado')
-    usuario_que_valora = models.ForeignKey(
-        to=User,
-        null=False,
-        on_delete=models.CASCADE,
-        related_name='usuario_que_valora_producto',
-        verbose_name='Usuario que ha valorado al otro usuario')
 # 	'''
 # 	Validación estrella :
 # 		estrellas:			Integer
@@ -194,13 +196,13 @@ class ValidacionEstrella(models.Model):
     estrellas = models.IntegerField(
         verbose_name='Numero de estrellas que ha recibido')
     usuario_valorado = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
         related_name='usuario_valorado_estrella',
         verbose_name='Usuario que ha sido valorado')
     usuario_que_valora = models.ForeignKey(
-        to=User,
+        to=Usuario,
         null=False,
         on_delete=models.CASCADE,
         related_name='usuario_que_valora_estrella',
@@ -214,9 +216,11 @@ class ValidacionEstrella(models.Model):
 
 
 class ContenidoMultimedia(models.Model):
-    contenido = models.FileField()
+    contenido = models.FileField(upload_to='media_files/')
+    timestamp = models.DateTimeField(default=datetime.now)
     producto = models.ForeignKey(
         to=Producto,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Producto al que pertenece el cotenido multimedia')
+        verbose_name='Producto al que pertenece el cotenido multimedia',
+        related_name='contenido_multimedia')
