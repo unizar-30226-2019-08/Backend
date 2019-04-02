@@ -26,13 +26,12 @@ class Usuario(models.Model):
         unique=True,
         max_length=100,
         verbose_name='UID del usuario en Firebase')
-    access_token = models.CharField(
-        unique=True,
-        max_length=1000,
-        verbose_name='Token temporal de sesion del usuario')
     nombre = models.CharField(
         max_length=100,
         verbose_name='Nombre del usuario asociado al login social')
+    esta_baneado = models.BooleanField(
+        default=False,
+        verbose_name='Indica si un usuario ha llegado al limite de reportes y se le prohibe el acceso a la aplicacion')
 
 class Tag(models.Model):
     nombre = models.CharField(
@@ -74,7 +73,7 @@ class Producto(models.Model):
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Usuario que ha puesto a la venta el producto',
-        related_name='vendido_por')
+        related_name='producto_del_usuario')
     latitud = models.DecimalField(
         verbose_name='Latitud del producto',
         max_digits=9,
