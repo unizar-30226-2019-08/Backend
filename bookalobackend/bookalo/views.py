@@ -10,22 +10,37 @@ from operator import itemgetter
 from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
 from django.db.models import Q
+from django.contrib.gis.utils import GeoIP
 
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid)
+		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
 		return True
 	except:
 		return False
 
+def update_last_connection(user):
+	try:
+		Usuario.objects.get(uid=user.uid).update(ultima_conexion=datetime.now())
+		return True
+	except:
+		return False
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def Login(request, format=None):
-	token = request.META.get('HTTP_TOKEN', 'nothing')
+	token = request.POST.get('token', 'nothing')
+	latitud_registro = 0.0
+	longitud_registro = 0.0
+	g = GeoIP()
+	ip = request.META.get('REMOTE_ADDR', None)
+	if ip:
+		latitud_registro = g.city(ip)['latitude']
+		longitud_registro = g.city(ip)['longitude']
+	#latitud_registro =
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	if token == 'nothing':
@@ -33,23 +48,22 @@ def Login(request, format=None):
 	else:
 		try:
 			user_info = auth.get_account_info(token)
-			print(token)
 			user_uid = user_info['users'][0]['localId']
-			print(user_uid)
 			name = user_info['users'][0]['email'].split("@")[0]
-			print(name)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 		
 		try:
-			user = Usuario.objects.get(uid=user_uid)
+			user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
+
 			if user.esta_baneado:
 				return Response(UserSerializer(user).data, status=status.HTTP_401_UNAUTHORIZED)
 			else:
+				update_last_connection(user)
 				return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
 
 		except Usuario.DoesNotExist:
-			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name)
+			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
 			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
