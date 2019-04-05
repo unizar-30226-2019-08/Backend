@@ -37,12 +37,13 @@ def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	latitud_registro = 0.0
 	longitud_registro = 0.0
-	g = GeoIP()
-	ip = request.META.get('REMOTE_ADDR', None)
-	if ip:
-		latitud_registro = g.city(ip)['latitude']
-		longitud_registro = g.city(ip)['longitude']
-	#latitud_registro =
+	g = GeoIP2()
+	#ip = request.META.get('REMOTE_ADDR', None)
+	#if ip:
+	#	latitud_registro = g.city(ip)['latitude']
+	#	longitud_registro = g.city(ip)['longitude']
+	latitud_registro = 41.683490
+	longitud_registro = -0.888479
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	if token == 'nothing':
