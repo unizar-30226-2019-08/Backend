@@ -1,0 +1,54 @@
+//Hace login de un usuario o lo registra si no esta en el sistema
+def Login(request, format=None): E
+
+//Devuelve los productos ordenados por numero de likes para la vista
+//general cuando se inicia la aplicacion
+def GenericProductView(request, format=None): N
+
+//Funcion especifica para web que devuelve los datos de un producto
+//concreto para que web pueda redireccionar a la pagina del producto
+def ViewProductWeb(request, format=None): ?
+
+//Busca los productos mas relacionados en base a lo escrito en la barra
+//de busqueda
+def SearchProduct(request, format=None): N
+
+//Busca los productos mas relacionados que cumplan con el filtrado
+//enviado por el usuario
+def FilterProduct(request, format=None): E
+
+//Devuelve los productos que tiene en venta el propio usuario
+def GetUserProducts(request, format=None): N
+
+//Funcion para la subida de un producto
+def UploadProduct(request, format=None): E
+
+//Devuelve todo el perfil de un usuario, incluyendo sus productos y
+//sus valoraciones
+def GetUserProfile(request, format=None): E
+
+//Crea un reporte hacia un usuario
+def CreateReport(request, format=None): N
+
+
+
+/////////////////////////////////////////
+//Mas tarde
+/////////////////////////////////////////
+//Devuelve todos los chats de un usuario
+def GetChats(request, format=None): E
+
+//Devuelve todos los mensajes que hay en un chat
+def GetChatMessages(request, format=None): N
+
+//Crea un nuevo chat entre dos usuarios
+def CreateChat(request, format=None): N
+
+//Crea el mensaje en la base de datos y tiene opcion de emitir a todos los usuarios
+def SendMessage(request, format=None): E
+
+//Borra un chat concreto del usuario
+def DeleteChat(request, format=None): ?
+
+//Borra un producto concreto del usuario
+def DeleteProduct(request, format=None): N

@@ -32,6 +32,19 @@ class Usuario(models.Model):
     esta_baneado = models.BooleanField(
         default=False,
         verbose_name='Indica si un usuario ha llegado al limite de reportes y se le prohibe el acceso a la aplicacion')
+    ultima_conexion = models.DateTimeField(
+        default=datetime.now()
+        verbose_name='Ultima conexion del usuario')
+    latitud_registro = models.DecimalField(
+        null=True,
+        verbose_name='Latitud del usuario cuando se registro',
+        max_digits=9,
+        decimal_places=6)
+    longitud_registro = models.DecimalField(
+        null=True,
+        verbose_name='Longitud del usuario cuando se registro',
+        max_digits=9,
+        decimal_places=6)
 
 class Tag(models.Model):
     nombre = models.CharField(
@@ -53,6 +66,16 @@ class EleccionEstadoProducto(Enum):
 	antiguo = "Antigüedad"
 	roto = "Roto"
 	desgastado = "Desgastado"
+
+# 	'''
+# 	EleccionEstadoVenta :
+# 		tag = valor : 	Enumeración de los distintos posibles estados de una
+#						venta.
+# 	'''
+class EleccionEstadoVenta(Enum):
+	en_venta = "En venta"
+    reservado = "Reservado"
+    vendido = "Vendido"
 
 # 	'''
 # 	Producto :
@@ -91,7 +114,14 @@ class Producto(models.Model):
     estado_producto = models.CharField(
         max_length=50,
 		choices=[(tag, tag.value) for tag in EleccionEstadoProducto],
-        verbose_name='Estado en el que se encuentra el producto: Vendido, Reservado o En Venta')
+        verbose_name='Estado en el que se encuentra el producto: Nuevo, Semi-nuevo, etc')
+    estado_venta = models.CharField(
+        max_length=50,
+		choices=[(tag, tag.value) for tag in EleccionEstadoVenta],
+        verbose_name='Estado en el que se encuentra la venta')
+    num_acciones = models.IntegerField(
+        default=0,
+        verbose_name='Marca si uno o los dos usuarios han confirmado el estado de venta')
     tipo_envio = models.CharField(
         max_length=50,
         verbose_name='Si el usuario que ha colgado el producto esta dispuestos a enviar a domicilio o no')
@@ -206,8 +236,17 @@ class ValidacionEstrella(models.Model):
         on_delete=models.CASCADE,
         related_name='usuario_que_valora_estrella',
         verbose_name='Usuario que ha valorado al otro usuario')
+    comentario = models.CharField(
+        max_length=1000,
+        verbose_name='Comentario de la valoracion')
+    producto = models.ForeignKey(
+        to=Producto,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Producto valorado')
+    timestamp = models.DateTimeField(auto_now_add=True)
 # 	'''
-# 	Validación estrella :
+# 	Contenido Multimedia :
 # 		Contenido:	String (Indica el path del archivo)
 # 		producto:	Integer (PK de producto)
 # 	'''
@@ -216,10 +255,13 @@ class ValidacionEstrella(models.Model):
 
 class ContenidoMultimedia(models.Model):
     contenido = models.FileField(upload_to='media_files/')
-    timestamp = models.DateTimeField(default=datetime.now)
+    timestamp = models.DateTimeField(auto_now_add=True)
     producto = models.ForeignKey(
         to=Producto,
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Producto al que pertenece el cotenido multimedia',
         related_name='contenido_multimedia')
+    orden_en_producto = models.IntegerField(
+        default=0,
+        verbose_name='Orden del contenido dentro del producto')   
