@@ -10,4 +10,6 @@ urlpatterns = [
     path(r'api/filter_product', views.FilterProduct),
     path(r'api/get_user_products', views.GetUserProducts),
     path(r'api/create_product', views.CreateProduct),
+    path(r'api/create_report', views.CreateReport),
+    path(r'api/prueba', views.prueba),
 ]

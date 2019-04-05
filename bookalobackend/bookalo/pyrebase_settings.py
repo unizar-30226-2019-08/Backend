@@ -1,6 +1,6 @@
 import pyrebase
 config = {
-    "apiKey": "AIzaSyDdIfkRbI2nbeYd080yulCjHglJN5S1aOQ",
+    "apiKey": "AIzaSyBj3cdsnqqdapIOjts02y8kRiiLsZg6ETY",
     "authDomain": "bookalo-234418.firebaseapp.com",
     "databaseURL": "https://bookalo-234418.firebaseio.com",
     "storageBucket": "bookalo-234418.appspot.com",
