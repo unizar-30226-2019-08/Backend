@@ -33,7 +33,7 @@ class Usuario(models.Model):
         default=False,
         verbose_name='Indica si un usuario ha llegado al limite de reportes y se le prohibe el acceso a la aplicacion')
     ultima_conexion = models.DateTimeField(
-        default=datetime.now()
+        default=datetime.now(),
         verbose_name='Ultima conexion del usuario')
     latitud_registro = models.DecimalField(
         null=True,
@@ -74,8 +74,8 @@ class EleccionEstadoProducto(Enum):
 # 	'''
 class EleccionEstadoVenta(Enum):
 	en_venta = "En venta"
-    reservado = "Reservado"
-    vendido = "Vendido"
+	reservado = "Reservado"
+	vendido = "Vendido"
 
 # 	'''
 # 	Producto :

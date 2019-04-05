@@ -10,7 +10,9 @@ from operator import itemgetter
 from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
 from django.db.models import Q
-from django.contrib.gis.utils import GeoIP
+#from django.contrib.gis.utils import GeoIP
+#from django.contrib.gis.geoip2 import GeoIP
+from django.contrib.gis.geoip2 import GeoIP2
 
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
