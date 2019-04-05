@@ -118,7 +118,21 @@ def FilterProduct(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProducts(request, format=None):
-	return Response()
+	token = request.POST.get('token', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		user = Usuario.objects.get(uid=user_uid)
+		products = Producto.objects.get(vendido_por=user)
+		return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -128,23 +142,21 @@ def CreateProduct(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateReport(request, format=None):
-	token = request.META.get('HTTP_TOKEN', 'nothing')
+	token = request.POST.get('token', 'nothing')
 	#auth.refresh(token)
 	reporteduser_uid = request.POST.get('uid', 'nothing')
+	Comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	if token == 'nothing' or reporteduser_uid == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		if check_user_logged_in(token):
-			try:
-				Comment = request.POST.get('comentario')
-				report = Report.objects.create(usuario_reportado=reporteduser_uid, causa=Comment)
-				return Response(ReportSerializer(report).data, status=status.HTTP_200_OK)
-			except:
-				return Response(status=status.HTTP_404_NOT_FOUND)
-		else:
-			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		#try:
+			reporteduser = Usuario.objects.get(uid=reporteduser_uid)
+			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
+			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+		#except:
+		#	return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 

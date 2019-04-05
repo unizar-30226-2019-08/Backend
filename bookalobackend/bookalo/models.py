@@ -113,11 +113,11 @@ class Producto(models.Model):
         verbose_name='Precio del producto')
     estado_producto = models.CharField(
         max_length=50,
-		choices=[(tag, tag.value) for tag in EleccionEstadoProducto],
+		choices=[(tag.name, tag.value) for tag in EleccionEstadoProducto],
         verbose_name='Estado en el que se encuentra el producto: Nuevo, Semi-nuevo, etc')
     estado_venta = models.CharField(
         max_length=50,
-		choices=[(tag, tag.value) for tag in EleccionEstadoVenta],
+		choices=[(tag.name, tag.value) for tag in EleccionEstadoVenta],
         verbose_name='Estado en el que se encuentra la venta')
     num_acciones = models.IntegerField(
         default=0,

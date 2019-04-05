@@ -75,6 +75,13 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         return ValidacionEstrellaSerializer(validaciones, many=True, read_only=True)
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
+    usuario_reportado = serializers.SerializerMethodField()
     class Meta:
         model = Report
         fields = ('usuario_reportado', 'causa')
+
+    def get_usuario_reportado(self, obj):
+        reporteduser = Usuario.objects.get(pk=obj.pk)
+        return UserSerializer(reporteduser, read_only=True)
+        #reporte = Report.objects.get(pk=obj.pk)
+        #return ReportSerializer(reporte, read_only=True)
