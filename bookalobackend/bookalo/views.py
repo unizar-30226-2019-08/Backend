@@ -57,7 +57,9 @@ def Login(request, format=None):
 			return Response(status=status.HTTP_404_NOT_FOUND)
 		
 		try:
-			user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
+			user = Usuario.objects.get(uid=user_uid)
+			user.ultima_conexion = datetime.now()
+			user.save(update_fields=['ultima_conexion'])
 
 			if user.esta_baneado:
 				return Response(UserSerializer(user).data, status=status.HTTP_401_UNAUTHORIZED)
