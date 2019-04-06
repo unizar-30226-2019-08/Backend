@@ -3,6 +3,8 @@ from rest_framework import serializers
 from geopy import Nominatim
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from django.utils import timezone
+
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.SerializerMethodField()
@@ -16,7 +18,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return location.raw['address']['city']
     
     def get_conectado(self, obj):
-        result = relativedelta(datetime.now(), obj.ultima_conexion)
+        ahora = timezone.now()
+        result = relativedelta(ahora, obj.ultima_conexion)
         return result.days == 0 and result.hours == 0 and result.months == 0 and result.years == 0 and result.minutes < 5
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
@@ -75,13 +78,8 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         return ValidacionEstrellaSerializer(validaciones, many=True, read_only=True)
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
-    usuario_reportado = serializers.SerializerMethodField()
+    #usuario_reportado = serializers.SerializerMethodField()
+    usuario_reportado = UserSerializer(read_only=True)
     class Meta:
         model = Report
         fields = ('usuario_reportado', 'causa')
-
-    def get_usuario_reportado(self, obj):
-        reporteduser = Usuario.objects.get(pk=obj.pk)
-        return UserSerializer(reporteduser, read_only=True)
-        #reporte = Report.objects.get(pk=obj.pk)
-        #return ReportSerializer(reporte, read_only=True)

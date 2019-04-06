@@ -71,6 +71,13 @@ def Login(request, format=None):
 			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
 			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
 
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def GenericProductView(request, format=None):
+	products = Product.objects.annotate()
+
+
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
@@ -131,7 +138,7 @@ def GetUserProducts(request, format=None):
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
 		user = Usuario.objects.get(uid=user_uid)
-		products = Producto.objects.get(vendido_por=user)
+		products = Producto.objects.filter(vendido_por=user)
 		return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
 
 @api_view(['POST'])
@@ -144,17 +151,17 @@ def CreateProduct(request, format=None):
 def CreateReport(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	#auth.refresh(token)
-	reporteduser_uid = request.POST.get('uid', 'nothing')
+	reporteduserUid = request.POST.get('uid', 'nothing')
 	Comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or reporteduser_uid == 'nothing':
+	if token == 'nothing' or reporteduserUid == 'nothing' or Comment == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
 		#try:
-			reporteduser = Usuario.objects.get(uid=reporteduser_uid)
-			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
-			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+		reporteduser = Usuario.objects.get(uid=reporteduserUid)
+		reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
+		return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
 		#except:
 		#	return Response(status=status.HTTP_404_NOT_FOUND)
 
