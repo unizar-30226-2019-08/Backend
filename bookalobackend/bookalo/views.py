@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from operator import itemgetter
 from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
-from django.db.models import Q
+from django.db.models import Q, Count
 #from django.contrib.gis.utils import GeoIP
 #from django.contrib.gis.geoip2 import GeoIP
 from django.contrib.gis.geoip2 import GeoIP2
@@ -75,7 +75,14 @@ def Login(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GenericProductView(request, format=None):
-	products = Product.objects.annotate()
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	#try:
+	products = Producto.objects.annotate(likes_count=Count('num_likes')).order_by('-likes_count')
+	return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
+	#except:
+	#	return Response(status=status.HTTP_404_NOT_FOUND)
+	
 
 
 @api_view(['POST'])
