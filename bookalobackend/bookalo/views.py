@@ -9,8 +9,10 @@ from rest_framework.response import Response
 from operator import itemgetter
 from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
-from django.db.models import Q
-from django.contrib.gis.utils import GeoIP
+from django.db.models import Q, Count
+#from django.contrib.gis.utils import GeoIP
+#from django.contrib.gis.geoip2 import GeoIP
+from django.contrib.gis.geoip2 import GeoIP2
 
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
@@ -35,12 +37,13 @@ def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	latitud_registro = 0.0
 	longitud_registro = 0.0
-	g = GeoIP()
-	ip = request.META.get('REMOTE_ADDR', None)
-	if ip:
-		latitud_registro = g.city(ip)['latitude']
-		longitud_registro = g.city(ip)['longitude']
-	#latitud_registro =
+	g = GeoIP2()
+	#ip = request.META.get('REMOTE_ADDR', None)
+	#if ip:
+	#	latitud_registro = g.city(ip)['latitude']
+	#	longitud_registro = g.city(ip)['longitude']
+	latitud_registro = 41.683490
+	longitud_registro = -0.888479
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	if token == 'nothing':
@@ -54,7 +57,9 @@ def Login(request, format=None):
 			return Response(status=status.HTTP_404_NOT_FOUND)
 		
 		try:
-			user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
+			user = Usuario.objects.get(uid=user_uid)
+			user.ultima_conexion = datetime.now()
+			user.save(update_fields=['ultima_conexion'])
 
 			if user.esta_baneado:
 				return Response(UserSerializer(user).data, status=status.HTTP_401_UNAUTHORIZED)
@@ -65,6 +70,20 @@ def Login(request, format=None):
 		except Usuario.DoesNotExist:
 			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
 			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def GenericProductView(request, format=None):
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	#try:
+	products = Producto.objects.annotate(likes_count=Count('num_likes')).order_by('-likes_count')
+	return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
+	#except:
+	#	return Response(status=status.HTTP_404_NOT_FOUND)
+	
+
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -113,7 +132,21 @@ def FilterProduct(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProducts(request, format=None):
-	return Response()
+	token = request.POST.get('token', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		user = Usuario.objects.get(uid=user_uid)
+		products = Producto.objects.filter(vendido_por=user)
+		return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -123,23 +156,21 @@ def CreateProduct(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateReport(request, format=None):
-	token = request.META.get('HTTP_TOKEN', 'nothing')
+	token = request.POST.get('token', 'nothing')
 	#auth.refresh(token)
-	reporteduser_uid = request.POST.get('uid', 'nothing')
+	reporteduserUid = request.POST.get('uid', 'nothing')
+	Comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or reporteduser_uid == 'nothing':
+	if token == 'nothing' or reporteduserUid == 'nothing' or Comment == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		if check_user_logged_in(token):
-			try:
-				Comment = request.POST.get('comentario')
-				report = Report.objects.create(usuario_reportado=reporteduser_uid, causa=Comment)
-				return Response(ReportSerializer(report).data, status=status.HTTP_200_OK)
-			except:
-				return Response(status=status.HTTP_404_NOT_FOUND)
-		else:
-			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		#try:
+		reporteduser = Usuario.objects.get(uid=reporteduserUid)
+		reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
+		return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+		#except:
+		#	return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 

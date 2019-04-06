@@ -33,7 +33,7 @@ class Usuario(models.Model):
         default=False,
         verbose_name='Indica si un usuario ha llegado al limite de reportes y se le prohibe el acceso a la aplicacion')
     ultima_conexion = models.DateTimeField(
-        default=datetime.now()
+        default=datetime.now(),
         verbose_name='Ultima conexion del usuario')
     latitud_registro = models.DecimalField(
         null=True,
@@ -74,8 +74,8 @@ class EleccionEstadoProducto(Enum):
 # 	'''
 class EleccionEstadoVenta(Enum):
 	en_venta = "En venta"
-    reservado = "Reservado"
-    vendido = "Vendido"
+	reservado = "Reservado"
+	vendido = "Vendido"
 
 # 	'''
 # 	Producto :
@@ -113,11 +113,11 @@ class Producto(models.Model):
         verbose_name='Precio del producto')
     estado_producto = models.CharField(
         max_length=50,
-		choices=[(tag, tag.value) for tag in EleccionEstadoProducto],
+		choices=[(tag.name, tag.value) for tag in EleccionEstadoProducto],
         verbose_name='Estado en el que se encuentra el producto: Nuevo, Semi-nuevo, etc')
     estado_venta = models.CharField(
         max_length=50,
-		choices=[(tag, tag.value) for tag in EleccionEstadoVenta],
+		choices=[(tag.name, tag.value) for tag in EleccionEstadoVenta],
         verbose_name='Estado en el que se encuentra la venta')
     num_acciones = models.IntegerField(
         default=0,
