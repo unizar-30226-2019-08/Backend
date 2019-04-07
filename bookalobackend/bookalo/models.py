@@ -45,6 +45,9 @@ class Usuario(models.Model):
         verbose_name='Longitud del usuario cuando se registro',
         max_digits=9,
         decimal_places=6)
+    media_valoraciones = models.IntegerField(
+        default=-1,
+        verbose_name='Media aritmetica de las valoraciones que ha recibido el usuario')
 
 class Tag(models.Model):
     nombre = models.CharField(
