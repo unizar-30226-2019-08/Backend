@@ -25,7 +25,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ('nombre')
+        fields = ('nombre','es_predeterminado')
 
 class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -53,6 +53,15 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     def get_contenido_multimedia(self, obj):
         contenido = ContenidoMultimedia.objects.filter(producto=obj.pk).order_by('orden_en_producto')
         return MultimediaSerializer(contenido, many=True)
+
+class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
+    vendido_por = UserSerializer(read_only=True)
+    tiene_tags = TagSerializer(many=True, read_only=True)
+    contenido_multimedia = MultimediaSerializer(many=True, read_only=True)
+    class Meta:
+        model = Producto
+        fields = (('nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia'))
+
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
