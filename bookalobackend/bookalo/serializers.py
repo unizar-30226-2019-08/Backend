@@ -28,9 +28,13 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('nombre')
 
 class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
+    contenido_url = serializers.SerializerMethodField()
     class Meta:
         model = ContenidoMultimedia
-        fields = ('contenido', 'orden_en_producto')
+        fields = ('contenido_url', 'orden_en_producto')
+
+    def get_contenido_url(self, obj):
+        return obj.contenido.url
 
 class MiniProductoSerializer(serializers.HyperlinkedModelSerializer):
     contenido_multimedia = serializers.SerializerMethodField()
@@ -46,6 +50,7 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
     tiene_tags = TagSerializer(many=True, read_only=True)
     contenido_multimedia = serializers.SerializerMethodField()
+    valoracion_media_usuario = serializers.SerializerMethodField()
     class Meta:
         model = Producto
         fields = ('nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia')
@@ -53,6 +58,9 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     def get_contenido_multimedia(self, obj):
         contenido = ContenidoMultimedia.objects.filter(producto=obj.pk).order_by('orden_en_producto')
         return MultimediaSerializer(contenido, many=True)
+    
+    def get_valoracion_media_usuario(self, obj):
+        return Usuario.objects.get(pk=obj.vendido_por).media_valoraciones
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
@@ -65,10 +73,9 @@ class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
         producto = Producto.objects.get(pk=obj.producto)
         return MiniProductoSerializer(producto)
 
-
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     usuario_valorado_estrella = serializers.SerializerMethodField()
-    producto_del_usuario = ProductoSerializer(many=True, read_only=True)
+    productos_favoritos = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
         fields = ('uid', 'nombre', 'esta_baneado', 'usuario_valorado_estrella', 'producto_del_usuario')
@@ -76,6 +83,10 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     def get_usuario_valorado_estrella(self, obj):
         validaciones = ValidacionEstrella.objects.filter(usuario_valorado=obj.pk).order_by('-timestamp')
         return ValidacionEstrellaSerializer(validaciones, many=True, read_only=True)
+    
+    def get_productos_favoritos(self, obj):
+        favoritos = Producto.objects.filter(le_gusta_a__in=[obj.pk])
+        return ProductoSerializer(favoritos, many=True, read_only=True)
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_reportado = serializers.SerializerMethodField()
