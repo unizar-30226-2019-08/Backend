@@ -77,11 +77,14 @@ def Login(request, format=None):
 def GenericProductView(request, format=None):
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	#try:
-	products = Producto.objects.annotate(likes_count=Count('num_likes')).order_by('-likes_count')
-	return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
-	#except:
-	#	return Response(status=status.HTTP_404_NOT_FOUND)
+	try:
+		products = Producto.objects.annotate(likes_count=Count('num_likes')).order_by('-likes_count')
+		product_list = []
+		for prod in products:
+			product_list.append(ProductoSerializer(prod).data)
+		return Response({'productos': product_list}, status=status.HTTP_200_OK)
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 	
 
 
@@ -105,24 +108,30 @@ def GetUserProfile(request, format=None):
 		else:
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def SearchProduct(request, format=None):
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	#try:
-	#Producto.objects.create(usuario_reportado=reporteduser_uid, causa=Comment)
 	preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 	'hacia','hasta','para','por','segun','sin','so','sobre','tras']
-	#products = Producto.objects.filter(nombre="Hola").distinct()
-	search = request.POST.get('busqueda')
-	products = Q()
+	try:
+		search = request.POST.get('busqueda')
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+	products = Producto.objects.none()
 	for word in search.split():
 		if word not in preposiciones:
-			products &= Q(Producto_nombre__icontains=word)
-	return Response(UserProfileSerializer(products).data, status=status.HTTP_200_OK, many=True)
-	#except:
-	#	return Response(status=status.HTTP_404_NOT_FOUND)
+			productos_palabra = Producto.objects.filter(nombre__contains=word)
+			products = products | productos_palabra
+	products.distinct()
+	product_list = []
+	for prod in products:
+		product_list.append(ProductoSerializer(prod).data)
+	return Response({'productos': product_list}, status=status.HTTP_200_OK)
+
+
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -146,7 +155,11 @@ def GetUserProducts(request, format=None):
 
 		user = Usuario.objects.get(uid=user_uid)
 		products = Producto.objects.filter(vendido_por=user)
-		return Response(ProductoSerializer(products).data, status=status.HTTP_200_OK, many=True)
+		product_list = []
+		for prod in products:
+			product_list.append(ProductoSerializer(prod).data)
+		return Response({'productos': product_list}, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -157,7 +170,6 @@ def CreateProduct(request, format=None):
 @permission_classes((permissions.AllowAny,))
 def CreateReport(request, format=None):
 	token = request.POST.get('token', 'nothing')
-	#auth.refresh(token)
 	reporteduserUid = request.POST.get('uid', 'nothing')
 	Comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST':
@@ -165,12 +177,12 @@ def CreateReport(request, format=None):
 	if token == 'nothing' or reporteduserUid == 'nothing' or Comment == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		#try:
-		reporteduser = Usuario.objects.get(uid=reporteduserUid)
-		reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
-		return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
-		#except:
-		#	return Response(status=status.HTTP_404_NOT_FOUND)
+		try:
+			reporteduser = Usuario.objects.get(uid=reporteduserUid)
+			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
+			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 
