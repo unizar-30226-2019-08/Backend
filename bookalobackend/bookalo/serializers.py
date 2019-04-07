@@ -92,3 +92,12 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Report
         fields = ('usuario_reportado', 'causa')
+
+
+class ChatSerializer(serializers.HyperlinkedModelSerializer):
+    vendedor = UserSerializer(read_only=True)
+    comprador = UserSerializer(read_only=True)
+    producto = ProductoSerializer(read_only=True)
+    class Meta:
+        model = Chat
+        fields = ('__all__')   

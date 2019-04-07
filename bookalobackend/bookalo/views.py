@@ -183,6 +183,53 @@ def CreateReport(request, format=None):
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
+def CreateChat(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	otroUserUid = request.POST.get('uidUsuario', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		#NO FUNCIONA TODAVIA
+		#try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+			user = Usuario.objects.get(uid=user_uid)
+			otroUser = Usuario.objects.get(uid=otroUserUid)
+			product = Producto.objects.get(id=productId)
+			chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
+			print('hey')
+			return Response(ChatSerializer(chat).data, status=status.HTTP_200_OK)
+		#except:
+		#	return Response(status=status.HTTP_404_NOT_FOUND)	
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def DeleteProduct(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing' or productId == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+			user = Usuario.objects.get(uid=user_uid)
+			Producto.objects.get(id=productId).delete()
+			return Response(status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
+			
+
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
 def prueba(request, format=None):
 	Comment = request.POST.get('comentario')
 	report = Report.objects.create(causa=Comment)
