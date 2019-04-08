@@ -31,6 +31,9 @@ def update_last_connection(user):
 	except:
 		return False
 
+def index(request):
+	return render(request, 'index.html')
+
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def Login(request, format=None):
@@ -135,7 +138,33 @@ def SearchProduct(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def FilterProduct(request, format=None):
-	return Response()
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	token = request.POST.get('token', 'nothing')
+	if token == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			tags = request.POST.get('tags', '')
+			tags_pk = []
+			for tag_search in tags:
+				tag = Tag.objects.filter(nombre=tag_search)
+				if tag != None:
+					tags_pk.append(tag.pk)
+
+			user_latitude = request.POST.get('latitud', '')
+			user_longitude = request.POST.get('longitud', '')
+			max_distance = request.POST.get('distancia_maxima', '')
+			min_price = request.POST.get('precio_minimo', '')
+			max_price = request.POST.get('precio_maximo', '')
+			min_score = request.POST.get('calificacion_minima', '')
+			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			products = Productos.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tags_pk)
+			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -162,7 +191,52 @@ def GetUserProducts(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateProduct(request, format=None):
-	return Response()
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	token = request.POST.get('token', 'nothing')
+	if token == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			user = get_user(token)
+			if user == None:
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			#Get all the required parameters for the product
+			files = request.FILES.iteritems()
+			latitud = request.POST.get('latitud', '')
+			longitud = request.POST.get('longitud', '')
+			nombre = request.POST.get('nombre', '')
+			precio = request.POST.get('precio', '')
+			estado_producto = request.POST.get('estado_producto', '')
+			tipo_envio = request.POST.get('tipo_envio', '')
+			descripcion = request.POST.get('descripcion', '')
+			tags = request.POST.get('tags', '')
+			#Check that the request is correct
+			if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			tag_pk = []
+			estado_producto = EleccionEstadoProducto(estado_producto)
+			for tag in tags:
+				tag_obj = Tag.objects.get_or_create(nombre=tag)
+				tag_pk.append(tag_obj.pk)
+			producto = Producto(vendido_por=user, 
+								latitud=latitud, 
+								longitud=longitud, 
+								nombre=nombre, 
+								precio=precio, 
+								estado_producto=estado_producto, 
+								estado_venta=EleccionEstadoVenta.en_venta,
+								tipo_envio=tipo_envio,
+								descripcion=descripcion)
+			producto.save()
+			producto.tiene_tags = tag_pk
+			i = 0
+			for filename, file in files:
+				ContenidoMultimedia.objects.create(contenido=files[filename], producto=producto, orden_en_producto=i)
+				i = i + 1
+			return Response(status=status.HTTP_201_CREATED)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
