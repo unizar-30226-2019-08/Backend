@@ -1,0 +1,456 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Bookalo</title>
+    <meta property="og:image" content="assets/img/icono.png">
+    <meta name="description" content="Tu sitio web de compra y venta de material escolar de segunda mano. En Bookalo, puedes encontrar material de todas las etapas educativas, incluyendo infantil, primaria, ESO, bachillerato y universidad!">
+    <meta property="og:type" content="website">
+    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
+    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
+    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
+    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
+    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
+    <link rel="stylesheet" href="assets/fonts/material-icons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Actor">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alef">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Antic">
+    <link rel="stylesheet" href="assets/css/-Filterable-Cards-.css">
+    <link rel="stylesheet" href="assets/css/best-carousel-slide.css">
+    <link rel="stylesheet" href="assets/css/Bold-BS4-Animated-Back-To-Top.css">
+    <link rel="stylesheet" href="assets/css/Bootstrap-Tags-Input-1.css">
+    <link rel="stylesheet" href="assets/css/Bootstrap-Tags-Input.css">
+    <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
+    <link rel="stylesheet" href="assets/css/Contact-FormModal-Contact-Form-with-Google-Map.css">
+    <link rel="stylesheet" href="assets/css/fileinput.css">
+    <link rel="stylesheet" href="assets/css/filtroSideBar.css">
+    <link rel="stylesheet" href="assets/css/Footer-Dark.css">
+    <link rel="stylesheet" href="assets/css/Map-Clean.css">
+    <link rel="stylesheet" href="assets/css/MUSA_carousel-extended-1.css">
+    <link rel="stylesheet" href="assets/css/MUSA_carousel-extended.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
+    <link rel="stylesheet" href="assets/css/News-Cards.css">
+    <link rel="stylesheet" href="assets/css/Profile-Card-1.css">
+    <link rel="stylesheet" href="assets/css/Profile-Card.css">
+    <link rel="stylesheet" href="assets/css/Profile-Picture-With-Badge-1.css">
+    <link rel="stylesheet" href="assets/css/Profile-Picture-With-Badge.css">
+    <link rel="stylesheet" href="assets/css/Sidebar-Menu-1-Filtro.css">
+    <link rel="stylesheet" href="assets/css/Sidebar-Menu-1.css">
+    <link rel="stylesheet" href="assets/css/Sidebar-Menu.css">
+    <link rel="stylesheet" href="assets/css/SIdebar-Responsive-2-1.css">
+    <link rel="stylesheet" href="assets/css/SIdebar-Responsive-2.css">
+    <link rel="stylesheet" href="assets/css/slider.css">
+    <link rel="stylesheet" href="assets/css/Social-Icon-Circle.css">
+    <link rel="stylesheet" href="assets/css/Social-Icons.css">
+    <link rel="stylesheet" href="assets/css/starrating.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/Tag-cloud.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-light navbar-expand-md d-xl-flex justify-content-xl-start navigation-clean-search fixed-top" style="background-color: #e91e63;padding: 16px;">
+        <div class="container-fluid"><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="index.html" style="color: #ffffff;font-size: 16px;font-weight: bold;"><img src="assets/img/bookalo_logo.png" style="width: 97px;height: 25px;margin: -5px 0px 0px 0px;"></a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="index.html" style="color: #ffffff;font-size: 16px;font-weight: bold;">Comprar</a></li>
+                </ul>
+                <form class="form-inline mr-auto" target="_self">
+                    <div class="form-group"><label for="search-field"><i class="fa fa-search"></i></label><input class="form-control search-field" type="search" name="search" id="search-field" style="background-color: #ffffff;filter: hue-rotate(0deg);border-radius: 1.25rem;margin-left: 5px;height: 27px;width: 200px;"></div>
+                </form>
+                <ul class="nav navbar-nav">
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="guardados.html" style="color: #ffffff;;">Productos guardados</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" href="nuevoproducto.html" style="color: #ffffff;;">Subir producto</a></li>
+                </ul><a class="btn btn-light action-button" role="button" href="#" style="background-color: rgb(194,194,194);" data-toggle="modal" data-target="#modalLogin">Iniciar Sesion</a><a class="btn btn-link" role="button" href="#menu-toggle" id="menu-toggle"
+                    style="color: #e91e63;"><i class="fa fa-bars" style="color: rgb(0,0,0);"></i></a></div>
+        </div>
+    </nav>
+    <div id="wrapper" class="toggled" style="margin: -3px 0px 0px 0px;color: rgb(40, 45, 50);">
+        <div class="text-left d-lg-flex" id="sidebar-wrapper" style="background-color: rgb(40,45,50);margin: 0px 0px 50px -250px;">
+            <div class="col" style="padding: 0px;margin: 0px;color: rgb(40, 45, 50);">
+                <div class="row" style="padding: 0px;margin: 0px;">
+                    <div class="col text-center" style="padding: 0px;"><a href="perfilusuario.html"><img src="assets/img/Depilacion-Hombre.jpg" style="width: 100%;height: 160px;bottom: 20px;"></a></div>
+                </div>
+                <div class="row" style="width: 100%;margin: 25px 0px 0px 10px;">
+                    <div class="col" style="padding: 0px;">
+                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">Juan López</h2>
+                    </div>
+                </div>
+                <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
+                    <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
+                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">5<img src="assets/img/star.png" style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;"></h6>
+                    </div>
+                </div>
+                <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
+                    <div class="col" style="padding: 0px;"><a class="btn btn-outline-primary text-center d-xl-flex justify-content-xl-center align-items-xl-center" role="button" href="chat.html" style="width: 100%;height: 40px;background-color: #e91e63;font-size: 22px;border-color: transparent;margin: 0px 0px 0px 0px;color: rgb(255,255,255);">Mis chats</a></div>
+                </div>
+                <div class="row" style="margin: 0px 0px 0px 0px;padding: 0px;">
+                    <div class="col" style="padding: 0px;font-size: 22px;"><button class="btn btn-secondary text-center d-xl-flex justify-content-xl-center align-items-xl-center" type="button" style="width: 100%;padding: -81px;height: 40px;background-color: #e91e63;font-size: 22px;border-color: transparent;margin: 3px 0px 0px 0px;">Mis productos</button></div>
+                </div>
+                <div class="row" style="margin: 0px;width: 100%;">
+                    <div class="col" style="width: 100%;padding: 0px;margin: 0px 0px 55px 0px;">
+                        <div role="tablist" id="accordion-1" style="width: 100%;height: 100%;">
+                            <div class="card" style="margin: 2px 0px 0px 0px;">
+                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px 0px -1px 0px;">
+                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-1" href="div#accordion-1 .item-1" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Lengua castellana y literatura</a></h5>
+                                </div>
+                                <div class="collapse item-1 text-center" role="tabpanel" data-parent="#accordion-1">
+                                    <div class="card-body">
+                                        <div class="row" style="margin: -19px -20px;">
+                                            <div class="col" style="padding: 0px;"><img src="assets/img/Imagen8.png" style="width: 100%;height: 100%;"></div>
+                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
+                                                <p style="margin: 0px 0px 0px;">50 likes</p>
+                                                <p><strong>100 €</strong></p><button class="btn btn-primary" type="button" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent">Ver más</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: 2px 0px 0px 0px;">
+                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px 0px -1px 0px;">
+                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="div#accordion-1 .item-2" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Matemáticas 1ESO</a></h5>
+                                </div>
+                                <div class="collapse item-2 text-center" role="tabpanel" data-parent="#accordion-1">
+                                    <div class="card-body">
+                                        <div class="row" style="margin: -19px -20px;">
+                                            <div class="col" style="padding: 0px;"><img src="assets/img/Imagen8.png" style="width: 100%;height: 100%;"></div>
+                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
+                                                <p style="margin: 0px 0px 0px;">50 likes</p>
+                                                <p><strong>100 €</strong></p><button class="btn btn-primary" type="button" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent">Ver más</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: 2px 0px 0px 0px;">
+                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px 0px -1px 0px;">
+                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-3" href="div#accordion-1 .item-3" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Acuarelas</a></h5>
+                                </div>
+                                <div class="collapse item-3 text-center" role="tabpanel" data-parent="#accordion-1">
+                                    <div class="card-body">
+                                        <div class="row" style="margin: -19px -20px;">
+                                            <div class="col" style="padding: 0px;"><img src="assets/img/Imagen8.png" style="width: 100%;height: 100%;"></div>
+                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
+                                                <p style="margin: 0px 0px 0px;">50 likes</p>
+                                                <p><strong>100 €</strong></p><button class="btn btn-primary" type="button" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent">Ver más</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card" style="margin: 2px 0px 0px 0px;">
+                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px 0px -1px 0px;">
+                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-4" href="div#accordion-1 .item-4" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Workbook Inglés 2ESO</a></h5>
+                                </div>
+                                <div class="collapse item-4 text-center" role="tabpanel" data-parent="#accordion-1">
+                                    <div class="card-body">
+                                        <div class="row" style="margin: -19px -20px;">
+                                            <div class="col" style="padding: 0px;"><img src="assets/img/Imagen8.png" style="width: 100%;height: 100%;"></div>
+                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
+                                                <p style="margin: 0px 0px 0px;">50 likes</p>
+                                                <p><strong>100 €</strong></p><button class="btn btn-primary" type="button" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent">Ver más</button></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modalLogin">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Iniciar sesión</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                <div class="modal-body">
+                    <div class="col" style="padding: 0px;">
+                        <div class="row" style="margin: 0px;">
+                            <div class="col" style="padding: 0px;">
+                                <p style="margin: 0px;">Para iniciar sesión, escoge una de las alternativas que se ofrecen a continuación.</p>
+                            </div>
+                        </div>
+                        <div class="row" style="margin: 20px 0px 0px 0px;">
+                            <div class="col text-center"><button class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button
+                                    class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button><button class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal" style="background-color: #e91e63;color: rgb(255,255,255);">Cerrar</button></div>
+            </div>
+        </div>
+    </div>
+    <div id="wrapperFilter" class="toggled" style="margin: 75px 0px 0px 0px;">
+        <div class="text-left d-lg-flex" id="sidebar-wrapper-filtro" style="background-color: rgb(0,0,0);">
+            <div class="col" style="padding: 0px;margin: 60px 0px 0px 0px;">
+                <div class="row" style="margin: 0px;">
+                    <div class="col">
+                        <h1 style="color: rgb(255,255,255);font-family: Antic, sans-serif;font-size: 35px;">Filtros</h1>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col">
+                        <h3 style="font-family: Antic, sans-serif;color: rgb(255,255,255);margin: 20px 0px 0px 10px;font-size: 25px;">Valoración</h3>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col" style="padding: 0px;">
+                        <div class="text-center star-rating" style="margin: 15px 0px 0px 0px;"><span class="fa fa-star-o" data-rating="1"></span><span class="fa fa-star-o" data-rating="2"></span><span class="fa fa-star-o" data-rating="3"></span><span class="fa fa-star-o" data-rating="4"></span><span class="fa fa-star-o"
+                                data-rating="5"></span><input type="hidden" class="rating-value" name="whatever1" value="2.56"></div>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col">
+                        <h3 style="font-family: Antic, sans-serif;color: rgb(255,255,255);margin: 20px 0px 0px 10px;font-size: 25px;">Precio</h3>
+                    </div>
+                </div>
+                <div class="row text-center d-xl-flex justify-content-center justify-content-xl-center" style="margin: 25px 0px 0px 0px;"><input type="range" min="1" max="100" value="50" class="slider" id="myRange"></div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col">
+                        <h3 style="font-family: Antic, sans-serif;color: rgb(255,255,255);margin: 20px 0px 0px 10px;font-size: 25px;">Distancia</h3>
+                    </div>
+                </div>
+                <div class="row text-center d-xl-flex justify-content-center justify-content-xl-center" style="margin: 25px 0px 0px 0px;"><input type="range" min="1" max="100" value="50" class="slider" id="myRange2"></div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col">
+                        <h3 style="font-family: Antic, sans-serif;color: rgb(255,255,255);margin: 20px 0px 0px 10px;font-size: 25px;">Etiquetas del producto</h3>
+                    </div>
+                </div>
+                <div class="row d-xl-flex" style="margin: 20px 0px 0px 0px;">
+                    <div class="col text-center"><input type="text" placeholder="Add a new tag here" data-role="tagsinput" data-class="label-info"></div>
+                </div>
+                <div class="row" style="margin: 0px;">
+                    <div class="col text-center" style="margin: 40px 0px 0px 0px;"><button class="btn btn-secondary" type="button" style="background-color: #e91e63;">Filtrar</button></div>
+                </div>
+            </div>
+        </div>
+        <main id="page-content-wrapper" style="margin-top: 5%;">
+            <div class="row">
+                <div class="col">
+                    <h1 class="text-center" style="font-family: Antic, sans-serif;margin: 15px 0px 0px 0px;"><strong>Bookalo</strong></h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5 class="text-center" style="font-family: Antic, sans-serif;">Compra y vende tus productos en un clic</h5>
+                </div>
+            </div>
+            <div class="row" style="margin: 0px;height: 19px;">
+                <div class="col text-center d-md-flex d-xl-flex align-self-center justify-content-md-center justify-content-xl-center" style="margin: 20px 0px 0px 0px;"><a class="btn btn-link text-center d-inline-block float-left d-xl-flex" role="button" href="#menu-toggle" id="menu-toggle-Filtro" style="color: #e91e63;border-color: #e91e63;border-radius:20px" data-toggle="&quot;wrapperFilter&quot;">Filtrar productos&nbsp;</a></div>
+            </div>
+            <section class="py-5" style="padding: 0;margin: 0;">
+                <div class="container">
+                    <div class="row filtr-container">
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><a class="btn btn-outline-dark btn-sm ml-auto" role="button"
+                                        href="productodetallado.html"><i class="fa fa-eye"></i>&nbsp;Ver producto</a></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
+                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
+                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
+                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                            <div class="card border-dark" style="border-radius:20px">
+                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" type="button" style="background-color: transparent;border-color: transparent;box-shadow: 0;"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
+                                    src="assets/img/th-01.jpg">
+                                <div class="card-body">
+                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                    </div>
+                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.Nullam id dolor id nibh ultricies vehicula ut id elit.<br></p>
+                                </div>
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><button class="btn btn-outline-dark btn-sm ml-auto"
+                                        type="button"><i class="fa fa-eye"></i>&nbsp;Ver producto</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div class="footer-dark">
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-md-3 col-xl-2 item">
+                        <h3>Servicios</h3>
+                        <p style="font-size: 14px;margin: 0px;opacity: 0.80;">Chat integrado</p>
+                        <p style="font-size: 14px;margin: 0px;opacity: 0.80;">Productos favoritos</p>
+                        <p style="font-size: 14px;margin: 0px;opacity: 0.80;">Valoración de usuarios</p>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-xl-4 item">
+                        <h3>El proyecto</h3>
+                        <p style="opacity: 0.60;font-size: 14px;">El proyecto Bookalo nace como el resultado del trabajo de nueve estudiantes de Ingeniería Informática en la Universidad de Zaragoza, en el marco de la asignatura de Proyecto Software</p>
+                    </div>
+                    <div class="col-md-6 item text">
+                        <h3>Bookalo</h3>
+                        <p>Bookalo nace como una plataforma para la compraventa de productos nuevos y de segunda mano, enfocándose en el material escolar de todas las etapas educativas. ¿Aún no eres parte de Bookalo? ¡Únete!</p>
+                    </div>
+                    <div class="col item social" style="margin: 30px 0px 0px 0px;"><a href="#"><i class="icon ion-social-facebook"></i></a><a href="#"><i class="icon ion-social-twitter"></i></a><a href="#"><i class="icon ion-social-snapchat"></i></a><a href="#"><i class="icon ion-social-instagram"></i></a></div>
+                </div>
+                <p class="copyright">Bookalo</p>
+            </div>
+        </footer>
+    </div><a href="#0" class="cd-top js-cd-top cd-top--fade-out cd-top--show" style="background-image: url(&quot;assets/img/cd-top-arrow.svg&quot;);background-color: #e91e63;">Top</a>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/-Filterable-Cards-.js"></script>
+    <script src="assets/js/Bold-BS4-Animated-Back-To-Top.js"></script>
+    <script src="assets/js/Bootstrap-Tags-Input-1.js"></script>
+    <script src="assets/js/Bootstrap-Tags-Input.js"></script>
+    <script src="assets/js/Contact-FormModal-Contact-Form-with-Google-Map.js"></script>
+    <script src="assets/js/favoritos.js"></script>
+    <script src="assets/js/fileinput.js"></script>
+    <script src="assets/js/fileinput.min.js"></script>
+    <script src="assets/js/MUSA_carousel-extended.js"></script>
+    <script src="assets/js/piexif.js"></script>
+    <script src="assets/js/piexif.min.js"></script>
+    <script src="assets/js/purify.js"></script>
+    <script src="assets/js/purify.min.js"></script>
+    <script src="assets/js/Sidebar-Menu.js"></script>
+    <script src="assets/js/slider.js"></script>
+    <script src="assets/js/sortable.js"></script>
+    <script src="assets/js/sortable.min.js"></script>
+    <script src="assets/js/starrating.js"></script>
+</body>
+
+</html>
