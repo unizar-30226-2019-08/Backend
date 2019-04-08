@@ -13,7 +13,8 @@ from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
 from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
-
+from math import sin, cos, sqrt, atan2, radians
+from decimal import Decimal
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
 	try:
@@ -30,6 +31,20 @@ def update_last_connection(user):
 		return True
 	except:
 		return False
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+	R = 6373.0
+	lat1_rad = radians(lat1)
+	lon1_rad = radians(lon1)
+	lat2_rad = radians(lat2)
+	lon2_rad = radians(lon2)
+
+	dlon = lon2_rad - lon1_rad
+	dlat = lat2_rad - lat1_rad
+	a = sin(dlat / 2)**2 + cos(lat1_rad) * cos(lat2_rad) * sin(dlon / 2)**2
+	c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+	return R * c
 
 def index(request):
 	return render(request, 'index.html')
@@ -146,12 +161,6 @@ def FilterProduct(request, format=None):
 	else:
 		try:
 			tags = request.POST.get('tags', '')
-			tags_pk = []
-			for tag_search in tags:
-				tag = Tag.objects.filter(nombre=tag_search)
-				if tag != None:
-					tags_pk.append(tag.pk)
-
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
 			max_distance = request.POST.get('distancia_maxima', '')
@@ -160,8 +169,14 @@ def FilterProduct(request, format=None):
 			min_score = request.POST.get('calificacion_minima', '')
 			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-			products = Productos.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tags_pk)
-			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			tag_queryset = Tag.objects.filter(nombre__in=tags)
+			products = Productos.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+
+			filtered_products = []
+			for product in products:
+				if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
+					filtered_products.append(product)
+			serializer = ProductoSerializerList(filtered_products, many=True, read_only=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -219,10 +234,10 @@ def CreateProduct(request, format=None):
 				tag_obj = Tag.objects.get_or_create(nombre=tag)
 				tag_pk.append(tag_obj.pk)
 			producto = Producto(vendido_por=user, 
-								latitud=latitud, 
-								longitud=longitud, 
+								latitud=Decimal(latitud), 
+								longitud=Decimal(longitud), 
 								nombre=nombre, 
-								precio=precio, 
+								precio=Decimal(precio), 
 								estado_producto=estado_producto, 
 								estado_venta=EleccionEstadoVenta.en_venta,
 								tipo_envio=tipo_envio,
@@ -300,13 +315,3 @@ def DeleteProduct(request, format=None):
 			return Response(status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
-			
-
-
-
-@api_view(['POST'])
-@permission_classes((permissions.AllowAny,))
-def prueba(request, format=None):
-	Comment = request.POST.get('comentario')
-	report = Report.objects.create(causa=Comment)
-	return Response(ReportSerializer(report).data, status=status.HTTP_200_OK)
