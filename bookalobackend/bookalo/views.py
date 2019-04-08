@@ -119,13 +119,16 @@ def SearchProduct(request, format=None):
 	except:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 	products = Producto.objects.none()
-	for word in search.split():
-		if word not in preposiciones:
-			productos_palabra = Producto.objects.filter(nombre__contains=word)
-			products = products | productos_palabra
-	products.distinct()
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
-	return Response(serializer.data, status=status.HTTP_200_OK)
+	try:
+		for word in search.split():
+			if word not in preposiciones:
+				productos_palabra = Producto.objects.filter(nombre__contains=word)
+				products = products | productos_palabra
+		products.distinct()
+		serializer = ProductoSerializerList(products, many=True, read_only=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 

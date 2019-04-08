@@ -1,7 +1,7 @@
 from bookalo.models import *
 from rest_framework import serializers
 from geopy import Nominatim
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
@@ -18,8 +18,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return location.raw['address']['city']
     
     def get_conectado(self, obj):
-        ahora = timezone.now()
-        result = relativedelta(ahora, obj.ultima_conexion)
+        ahora = datetime.now()
+        ahora = ahora.replace(tzinfo=None)
+        ultimaConexion = obj.ultima_conexion.replace(tzinfo=None)
+        result = relativedelta(ahora, ultimaConexion)
         return result.days == 0 and result.hours == 0 and result.months == 0 and result.years == 0 and result.minutes < 5
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
