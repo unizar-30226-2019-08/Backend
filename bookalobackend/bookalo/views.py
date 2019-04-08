@@ -122,13 +122,16 @@ def SearchProduct(request, format=None):
 	except:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 	products = Producto.objects.none()
-	for word in search.split():
-		if word not in preposiciones:
-			productos_palabra = Producto.objects.filter(nombre__contains=word)
-			products = products | productos_palabra
-	products.distinct()
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
-	return Response(serializer.data, status=status.HTTP_200_OK)
+	try:
+		for word in search.split():
+			if word not in preposiciones:
+				productos_palabra = Producto.objects.filter(nombre__contains=word)
+				products = products | productos_palabra
+		products.distinct()
+		serializer = ProductoSerializerList(products, many=True, read_only=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -175,15 +178,14 @@ def GetUserProducts(request, format=None):
 		try:
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
+			user = Usuario.objects.get(uid=user_uid)
+			products = Producto.objects.filter(vendido_por=user)
+			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			return Response(serializer.data, status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
-		user = Usuario.objects.get(uid=user_uid)
-		products = Producto.objects.filter(vendido_por=user)
-		serializer = ProductoSerializerList(products, many=True, read_only=True)
-		return Response(serializer.data, status=status.HTTP_200_OK)
-
-
+		
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
