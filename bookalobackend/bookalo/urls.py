@@ -16,5 +16,4 @@ urlpatterns = [
     path(r'api/create_report', views.CreateReport),
     path(r'api/create_chat', views.CreateChat),
     path(r'api/delete_product', views.DeleteProduct),
-    path(r'api/prueba', views.prueba),
 ]

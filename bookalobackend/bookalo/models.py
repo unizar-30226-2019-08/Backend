@@ -111,9 +111,10 @@ class Producto(models.Model):
     nombre = models.CharField(
         max_length=50,
         verbose_name='Nombre del producto')
-    precio = models.CharField(
-        max_length=10,
-        verbose_name='Precio del producto')
+    precio = models.DecimalField(
+        verbose_name='Precio del producto',
+        max_digits=9,
+        decimal_places=2)
     estado_producto = models.CharField(
         max_length=50,
 		choices=[(tag.name, tag.value) for tag in EleccionEstadoProducto],
