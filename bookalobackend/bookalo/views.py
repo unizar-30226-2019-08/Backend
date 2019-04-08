@@ -157,8 +157,11 @@ def FilterProduct(request, format=None):
 			min_score = request.POST.get('calificacion_minima', '')
 			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-			products = Productos.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score)
-	return Response()
+			products = Productos.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tags_pk)
+			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			return Response(serializer.data, status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
