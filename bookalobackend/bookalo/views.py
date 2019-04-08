@@ -6,12 +6,12 @@ from bookalo.serializers import *
 from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
 from operator import itemgetter
 from django.http import HttpResponse
 from datetime import datetime, timedelta, timezone
 from django.db.models import Q, Count
-#from django.contrib.gis.utils import GeoIP
-#from django.contrib.gis.geoip2 import GeoIP
 from django.contrib.gis.geoip2 import GeoIP2
 
 #Comprueba que el usuario este logeado en el sistema
@@ -78,11 +78,9 @@ def GenericProductView(request, format=None):
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	try:
-		products = Producto.objects.annotate(likes_count=Count('num_likes')).order_by('-likes_count')
-		product_list = []
-		for prod in products:
-			product_list.append(ProductoSerializer(prod).data)
-		return Response({'productos': product_list}, status=status.HTTP_200_OK)
+		products = Producto.objects.order_by('-num_likes')
+		serializer = ProductoSerializerList(products, many=True, read_only=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
 	except:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 	
@@ -126,10 +124,8 @@ def SearchProduct(request, format=None):
 			productos_palabra = Producto.objects.filter(nombre__contains=word)
 			products = products | productos_palabra
 	products.distinct()
-	product_list = []
-	for prod in products:
-		product_list.append(ProductoSerializer(prod).data)
-	return Response({'productos': product_list}, status=status.HTTP_200_OK)
+	serializer = ProductoSerializerList(products, many=True, read_only=True)
+	return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -155,10 +151,9 @@ def GetUserProducts(request, format=None):
 
 		user = Usuario.objects.get(uid=user_uid)
 		products = Producto.objects.filter(vendido_por=user)
-		product_list = []
-		for prod in products:
-			product_list.append(ProductoSerializer(prod).data)
-		return Response({'productos': product_list}, status=status.HTTP_200_OK)
+		serializer = ProductoSerializerList(products, many=True, read_only=True)
+		return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
@@ -183,6 +178,53 @@ def CreateReport(request, format=None):
 			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def CreateChat(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	otroUserUid = request.POST.get('uidUsuario', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		#NO FUNCIONA TODAVIA
+		#try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+			user = Usuario.objects.get(uid=user_uid)
+			otroUser = Usuario.objects.get(uid=otroUserUid)
+			product = Producto.objects.get(id=productId)
+			chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
+			print('hey')
+			return Response(ChatSerializer(chat).data, status=status.HTTP_200_OK)
+		#except:
+		#	return Response(status=status.HTTP_404_NOT_FOUND)	
+
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def DeleteProduct(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing' or productId == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']
+			user = Usuario.objects.get(uid=user_uid)
+			Producto.objects.get(id=productId).delete()
+			return Response(status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
+			
 
 
 

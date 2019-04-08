@@ -25,7 +25,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ('nombre')
+        fields = ('nombre','es_predeterminado')
 
 class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
     contenido_url = serializers.SerializerMethodField()
@@ -62,6 +62,15 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     def get_valoracion_media_usuario(self, obj):
         return Usuario.objects.get(pk=obj.vendido_por).media_valoraciones
 
+class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
+    vendido_por = UserSerializer(read_only=True)
+    tiene_tags = TagSerializer(many=True, read_only=True)
+    contenido_multimedia = MultimediaSerializer(many=True, read_only=True)
+    class Meta:
+        model = Producto
+        fields = (('nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia'))
+
+
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
     producto_asociado = serializers.SerializerMethodField()
@@ -94,3 +103,12 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Report
         fields = ('usuario_reportado', 'causa')
+
+
+class ChatSerializer(serializers.HyperlinkedModelSerializer):
+    vendedor = UserSerializer(read_only=True)
+    comprador = UserSerializer(read_only=True)
+    producto = ProductoSerializer(read_only=True)
+    class Meta:
+        model = Chat
+        fields = ('__all__')   
