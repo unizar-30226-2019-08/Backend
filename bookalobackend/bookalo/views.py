@@ -31,6 +31,9 @@ def update_last_connection(user):
 	except:
 		return False
 
+def index(request):
+	return render(request, 'index.html')
+
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def Login(request, format=None):
