@@ -263,7 +263,7 @@ class ContenidoMultimedia(models.Model):
         to=Producto,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Producto al que pertenece el cotenido multimedia',
+        verbose_name='Producto al que pertenece el contenido multimedia',
         related_name='contenido_multimedia')
     orden_en_producto = models.IntegerField(
         default=0,
