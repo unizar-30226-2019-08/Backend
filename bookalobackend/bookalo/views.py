@@ -90,10 +90,10 @@ def Login(request, format=None):
 			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def GenericProductView(request, format=None):
-	if request.method != 'POST':
+	if request.method != 'GET':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	try:
 		products = Producto.objects.order_by('-num_likes')
