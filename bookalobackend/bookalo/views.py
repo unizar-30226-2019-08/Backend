@@ -32,6 +32,15 @@ def update_last_connection(user):
 	except:
 		return False
 
+def get_user(token):
+	try:
+		user_info = auth.get_account_info(token)
+		user_uid = user_info['users'][0]['localId']
+		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
+		return user
+	except:
+		return None
+
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
 	lat1_rad = radians(lat1)
@@ -315,3 +324,22 @@ def DeleteProduct(request, format=None):
 			return Response(status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def LikeProduct(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if token == 'nothing' or productId == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			product = Producto.objects.get(id=int(productId))
+			product.num_likes = product.num_likes + 1
+			product.le_gusta_a.add(get_user(token))
+			product.save()
+			return Response(status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
