@@ -203,15 +203,15 @@ def GetUserProducts(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		try:
+		#try:
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
 			user = Usuario.objects.get(uid=user_uid)
 			products = Producto.objects.filter(vendido_por=user)
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		#except:
+		#	return Response(status=status.HTTP_404_NOT_FOUND)
 
 		
 
@@ -224,7 +224,7 @@ def CreateProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		#try:
+		try:
 			user = get_user(token)
 			if user == None:
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -262,8 +262,8 @@ def CreateProduct(request, format=None):
 				ContenidoMultimedia.objects.create(contenido=files[filename], producto=producto, orden_en_producto=i)
 				i = i + 1
 			return Response(status=status.HTTP_201_CREATED)
-		#except:
-		#	return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -324,8 +324,13 @@ def DeleteProduct(request, format=None):
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
 			user = Usuario.objects.get(uid=user_uid)
-			Producto.objects.get(id=productId).delete()
-			return Response(status=status.HTTP_200_OK)
+			#Producto.objects.get(id=productId).delete()
+			product = Producto.objects.get(id=productId)
+			if product.vendido_por == user:
+				product.delete()
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_401_UNAUTHORIZED)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
 
