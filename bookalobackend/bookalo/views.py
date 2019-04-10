@@ -37,7 +37,9 @@ def get_user(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
+		#user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
+		user = Usuario.objects.get(uid=user_uid)
+		user.update(ultima_conexion=datetime.now())
 		return user
 	except:
 		return None
@@ -110,7 +112,7 @@ def GenericProductView(request, format=None):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	
 
 
@@ -224,12 +226,15 @@ def CreateProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		#try:
-			user = get_user(token)
+		try:
+			#Cambiar esto
+			user_info = auth.get_account_info(token)
+			user_uid = user_info['users'][0]['localId']	
+			user = Usuario.objects.get(uid=user_uid)
 			if user == None:
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			#Get all the required parameters for the product
-			files = request.FILES.iteritems()
+			files = request.FILES.items()
 			latitud = request.POST.get('latitud', '')
 			longitud = request.POST.get('longitud', '')
 			nombre = request.POST.get('nombre', '')
@@ -243,8 +248,9 @@ def CreateProduct(request, format=None):
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			tag_pk = []
 			estado_producto = EleccionEstadoProducto(estado_producto)
-			for tag in tags:
-				tag_obj = Tag.objects.get_or_create(nombre=tag)
+			lista_tags = [x.strip() for x in tags.split(',')]
+			for tag in lista_tags:
+				tag_obj,created = Tag.objects.get_or_create(nombre=tag)
 				tag_pk.append(tag_obj.pk)
 			producto = Producto(vendido_por=user, 
 								latitud=Decimal(latitud), 
@@ -256,14 +262,16 @@ def CreateProduct(request, format=None):
 								tipo_envio=tipo_envio,
 								descripcion=descripcion)
 			producto.save()
-			producto.tiene_tags = tag_pk
+			#producto.tiene_tags = tag_pk
+			producto.tiene_tags.set(tag_pk)
 			i = 0
-			for filename, file in files:
-				ContenidoMultimedia.objects.create(contenido=files[filename], producto=producto, orden_en_producto=i)
+			for file,created in files:
+				multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
+				multi.save()
 				i = i + 1
 			return Response(status=status.HTTP_201_CREATED)
-		#except:
-		#	return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -324,8 +332,13 @@ def DeleteProduct(request, format=None):
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
 			user = Usuario.objects.get(uid=user_uid)
-			Producto.objects.get(id=productId).delete()
-			return Response(status=status.HTTP_200_OK)
+			#Producto.objects.get(id=productId).delete()
+			product = Producto.objects.get(id=productId)
+			if product.vendido_por == user:
+				product.delete()
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_401_UNAUTHORIZED)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
 
