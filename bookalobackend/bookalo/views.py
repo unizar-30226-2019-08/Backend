@@ -15,6 +15,7 @@ from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
 	try:
@@ -116,8 +117,9 @@ def GenericProductView(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
-	token = request.META.get('HTTP_TOKEN', 'nothing')
-	auth.refresh(token)
+	#token = request.META.get('HTTP_TOKEN', 'nothing')
+	#auth.refresh(token)
+	token = request.POST.get('token', 'nothing')
 	user_uid = request.POST.get('uid', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -144,7 +146,7 @@ def SearchProduct(request, format=None):
 	try:
 		search = request.POST.get('busqueda')
 	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
 	products = Producto.objects.none()
 	try:
 		for word in search.split():
@@ -155,7 +157,7 @@ def SearchProduct(request, format=None):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 
@@ -170,6 +172,7 @@ def FilterProduct(request, format=None):
 	else:
 		try:
 			tags = request.POST.get('tags', '')
+
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
 			max_distance = request.POST.get('distancia_maxima', '')
@@ -178,8 +181,9 @@ def FilterProduct(request, format=None):
 			min_score = request.POST.get('calificacion_minima', '')
 			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
+
 			tag_queryset = Tag.objects.filter(nombre__in=tags)
-			products = Productos.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+			products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 
 			filtered_products = []
 			for product in products:
@@ -220,7 +224,7 @@ def CreateProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		try:
+		#try:
 			user = get_user(token)
 			if user == None:
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -258,8 +262,8 @@ def CreateProduct(request, format=None):
 				ContenidoMultimedia.objects.create(contenido=files[filename], producto=producto, orden_en_producto=i)
 				i = i + 1
 			return Response(status=status.HTTP_201_CREATED)
-		except:
-			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		#except:
+		#	return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -275,7 +279,7 @@ def CreateReport(request, format=None):
 		try:
 			reporteduser = Usuario.objects.get(uid=reporteduserUid)
 			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
-			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+			return Response(status=status.HTTP_201_CREATED)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
