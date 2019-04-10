@@ -120,7 +120,7 @@ def SearchProduct(request, format=None):
 	try:
 		search = request.POST.get('busqueda')
 	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
 	products = Producto.objects.none()
 	try:
 		for word in search.split():
@@ -251,7 +251,7 @@ def CreateReport(request, format=None):
 		try:
 			reporteduser = Usuario.objects.get(uid=reporteduserUid)
 			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
-			return Response(ReportSerializer(reporte).data, status=status.HTTP_200_OK)
+			return Response(ReportSerializer(reporte).data, status=status.HTTP_201_CREATED)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
