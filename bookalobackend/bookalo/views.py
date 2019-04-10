@@ -336,10 +336,14 @@ def LikeProduct(request, format=None):
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
 		try:
-			product = Producto.objects.get(id=int(productId))
-			product.num_likes = product.num_likes + 1
-			product.le_gusta_a.add(get_user(token))
-			product.save()
-			return Response(status=status.HTTP_200_OK)
+			user = get_user(token)
+			if user != None:
+				product = Producto.objects.get(id=int(productId))
+				product.num_likes = product.num_likes + 1
+				product.le_gusta_a.add()
+				product.save()
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_404_NOT_FOUND)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
