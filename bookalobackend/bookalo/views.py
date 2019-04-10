@@ -92,8 +92,9 @@ def GenericProductView(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
-	token = request.META.get('HTTP_TOKEN', 'nothing')
-	auth.refresh(token)
+	#token = request.META.get('HTTP_TOKEN', 'nothing')
+	#auth.refresh(token)
+	token = request.POST.get('token', 'nothing')
 	user_uid = request.POST.get('uid', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -251,7 +252,7 @@ def CreateReport(request, format=None):
 		try:
 			reporteduser = Usuario.objects.get(uid=reporteduserUid)
 			reporte = Report.objects.create(usuario_reportado=reporteduser, causa=Comment)
-			return Response(ReportSerializer(reporte).data, status=status.HTTP_201_CREATED)
+			return Response(status=status.HTTP_201_CREATED)
 		except:
 			return Response(status=status.HTTP_404_NOT_FOUND)
 
