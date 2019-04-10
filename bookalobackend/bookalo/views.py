@@ -145,13 +145,14 @@ def FilterProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		try:
+		#try:
 			tags = request.POST.get('tags', '')
 			tags_pk = []
 			for tag_search in tags:
 				tag = Tag.objects.filter(nombre=tag_search)
-				if tag != None:
-					tags_pk.append(tag.pk)
+				for t in tag:
+					if t != None:
+						tags_pk.append(t.pk)
 
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
@@ -161,11 +162,11 @@ def FilterProduct(request, format=None):
 			min_score = request.POST.get('calificacion_minima', '')
 			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
-			products = Productos.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tags_pk)
+			products = Producto.objects.filter(precio__lte=max_price, precio__gte=min_price, vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tags_pk)
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
-		except:
-			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		#except:
+		#	return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -197,7 +198,7 @@ def CreateProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		try:
+		#try:
 			user = get_user(token)
 			if user == None:
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -235,8 +236,8 @@ def CreateProduct(request, format=None):
 				ContenidoMultimedia.objects.create(contenido=files[filename], producto=producto, orden_en_producto=i)
 				i = i + 1
 			return Response(status=status.HTTP_201_CREATED)
-		except:
-			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		#except:
+		#	return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
