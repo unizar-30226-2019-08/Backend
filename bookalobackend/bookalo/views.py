@@ -110,7 +110,7 @@ def GenericProductView(request, format=None):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 		return Response(serializer.data, status=status.HTTP_200_OK)
 	except:
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	
 
 
