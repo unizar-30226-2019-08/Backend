@@ -87,20 +87,22 @@ class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     usuario_valorado_estrella = serializers.SerializerMethodField()
     productos_favoritos = serializers.SerializerMethodField()
+    producto_del_usuario = ProductoSerializerList(read_only=True, many=True)
+    #usuario_valorado_estrella = ValidacionEstrellaSerializer(read_only=True, many=True)
+    #productos_favoritos = ProductoSerializerList(read_only=True, many=True)
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'esta_baneado', 'usuario_valorado_estrella', 'producto_del_usuario')
+        fields = ('uid', 'nombre', 'esta_baneado', 'usuario_valorado_estrella', 'producto_del_usuario', 'productos_favoritos')
 
     def get_usuario_valorado_estrella(self, obj):
         validaciones = ValidacionEstrella.objects.filter(usuario_valorado=obj.pk).order_by('-timestamp')
-        return ValidacionEstrellaSerializer(validaciones, many=True, read_only=True)
+        return ValidacionEstrellaSerializer(validaciones, many=True, read_only=True).data
     
     def get_productos_favoritos(self, obj):
         favoritos = Producto.objects.filter(le_gusta_a__in=[obj.pk])
-        return ProductoSerializer(favoritos, many=True, read_only=True)
+        return ProductoSerializer(favoritos, many=True, read_only=True).data
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
-    #usuario_reportado = serializers.SerializerMethodField()
     usuario_reportado = UserSerializer(read_only=True)
     class Meta:
         model = Report
@@ -110,7 +112,7 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
 class ChatSerializer(serializers.HyperlinkedModelSerializer):
     vendedor = UserSerializer(read_only=True)
     comprador = UserSerializer(read_only=True)
-    producto = ProductoSerializer(read_only=True)
+    producto = ProductoSerializerList(read_only=True)
     class Meta:
         model = Chat
-        fields = ('__all__')   
+        fields = ('vendedor', 'comprador', 'producto')
