@@ -75,7 +75,8 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
-    producto_asociado = serializers.SerializerMethodField()
+    #producto_asociado = serializers.SerializerMethodField()
+    producto_asociado = ProductoSerializerList(read_only=True, many=True)
     class Meta:
         model = ValidacionEstrella
         fields = ('estrellas', 'comentario', 'timestamp', 'usuario_que_valora', 'producto_asociado')

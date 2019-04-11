@@ -128,11 +128,11 @@ def GetUserProfile(request, format=None):
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
 		#if check_user_logged_in(token):
-			try:
+			#try:
 				fetch_user = Usuario.objects.get(uid=user_uid)
 				return Response(UserProfileSerializer(fetch_user).data, status=status.HTTP_200_OK)
-			except:
-				return Response(status=status.HTTP_404_NOT_FOUND)
+			#except:
+			#	return Response(status=status.HTTP_404_NOT_FOUND)
 		#else:
 		#	return Response(status=status.HTTP_401_UNAUTHORIZED)
 
