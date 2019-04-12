@@ -119,23 +119,22 @@ def GenericProductView(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
-	#token = request.META.get('HTTP_TOKEN', 'nothing')
-	#auth.refresh(token)
 	token = request.POST.get('token', 'nothing')
+	#auth.refresh(token)
 	user_uid = request.POST.get('uid', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	if token == 'nothing' or user_uid == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		if check_user_logged_in(token):
-			try:
+		#if check_user_logged_in(token):
+			#try:
 				fetch_user = Usuario.objects.get(uid=user_uid)
 				return Response(UserProfileSerializer(fetch_user).data, status=status.HTTP_200_OK)
-			except:
-				return Response(status=status.HTTP_404_NOT_FOUND)
-		else:
-			return Response(status=status.HTTP_401_UNAUTHORIZED)
+			#except:
+			#	return Response(status=status.HTTP_404_NOT_FOUND)
+		#else:
+		#	return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 @api_view(['POST'])
@@ -184,17 +183,20 @@ def FilterProduct(request, format=None):
 			if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 
-			tag_queryset = Tag.objects.filter(nombre__in=tags)
+			lista_tags = [x.strip() for x in tags.split(',')]
+			tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 			products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 
 			filtered_products = []
 			for product in products:
+				print(product.nombre)
 				if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 					filtered_products.append(product)
 			serializer = ProductoSerializerList(filtered_products, many=True, read_only=True)
 			return Response(serializer.data, status=status.HTTP_200_OK)
 		except:
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -262,7 +264,6 @@ def CreateProduct(request, format=None):
 								tipo_envio=tipo_envio,
 								descripcion=descripcion)
 			producto.save()
-			#producto.tiene_tags = tag_pk
 			producto.tiene_tags.set(tag_pk)
 			i = 0
 			for file,created in files:
@@ -304,18 +305,17 @@ def CreateChat(request, format=None):
 	if token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		#NO FUNCIONA TODAVIA
-		#try:
+		try:
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
 			user = Usuario.objects.get(uid=user_uid)
 			otroUser = Usuario.objects.get(uid=otroUserUid)
 			product = Producto.objects.get(id=productId)
 			chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
-			print('hey')
-			return Response(ChatSerializer(chat).data, status=status.HTTP_200_OK)
-		#except:
-		#	return Response(status=status.HTTP_404_NOT_FOUND)	
+			return Response(status=status.HTTP_201_CREATED)
+			#return Response(ChatSerializer(chat).data, status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
 
 
 @api_view(['POST'])
