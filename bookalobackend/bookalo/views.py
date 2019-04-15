@@ -50,7 +50,7 @@ def get_user(token):
 
 
 def index(request):
-	return render(request, 'index.html')
+	return render(request, 'bookalo/index.html')
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
