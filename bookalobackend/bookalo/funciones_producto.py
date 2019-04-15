@@ -44,15 +44,14 @@ def ProductosUsuario(token):
 	serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
-def FiltradoProducto(request):
-	tags = request.POST.get('tags', '')
-
-	user_latitude = request.POST.get('latitud', '')
-	user_longitude = request.POST.get('longitud', '')
-	max_distance = request.POST.get('distancia_maxima', '')
-	min_price = request.POST.get('precio_minimo', '')
-	max_price = request.POST.get('precio_maximo', '')
-	min_score = request.POST.get('calificacion_minima', '')
+def FiltradoProducto(biblio):
+	tags = biblio['tags']
+	user_latitude = biblio['user_latitude']
+	user_longitude = biblio['user_longitude']
+	max_distance = biblio['max_distance']
+	min_price = biblio['min_price']
+	max_price = biblio['max_price']
+	min_score = biblio['min_score']
 	if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 		return 'Bad request'
 
@@ -69,23 +68,23 @@ def FiltradoProducto(request):
 	return serializer
 
 
-def CreacionProducto(request,token):
-	#Cambiar esto
+def CreacionProducto(biblio):
+	token = biblio['token']
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']	
 	user = Usuario.objects.get(uid=user_uid)
 	if user == None:
 		return 'Not found'
 	#Get all the required parameters for the product
-	files = request.FILES.items()
-	latitud = request.POST.get('latitud', '')
-	longitud = request.POST.get('longitud', '')
-	nombre = request.POST.get('nombre', '')
-	precio = request.POST.get('precio', '')
-	estado_producto = request.POST.get('estado_producto', '')
-	tipo_envio = request.POST.get('tipo_envio', '')
-	descripcion = request.POST.get('descripcion', '')
-	tags = request.POST.get('tags', '')
+	files = biblio['files']
+	latitud = biblio['latitud']
+	longitud = biblio['longitud']
+	nombre = biblio['nombre']
+	precio = biblio['precio']
+	estado_producto = biblio['estado_producto']
+	tipo_envio = biblio['tipo_envio']
+	descripcion = biblio['descripcion']
+	tags = biblio['tags']
 	#Check that the request is correct
 	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
 		return 'Bad request'

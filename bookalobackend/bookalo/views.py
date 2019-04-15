@@ -153,7 +153,16 @@ def FilterProduct(request, format=None):
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
 		try:
-			serializer = FiltradoProducto(request)
+			tags = request.POST.get('tags', '')
+			user_latitude = request.POST.get('latitud', '')
+			user_longitude = request.POST.get('longitud', '')
+			max_distance = request.POST.get('distancia_maxima', '')
+			min_price = request.POST.get('precio_minimo', '')
+			max_price = request.POST.get('precio_maximo', '')
+			min_score = request.POST.get('calificacion_minima', '')
+			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
+						'min_price':min_price,'max_price':max_price,'min_score':min_score}
+			serializer = FiltradoProducto(biblioteca)
 			if serializer == 'Bad request':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			return Response(serializer.data, status=status.HTTP_200_OK)
@@ -187,7 +196,19 @@ def CreateProduct(request, format=None):
 	if token == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	try:
-		result = CreacionProducto(request,token)
+		files = request.FILES.items()
+		latitud = request.POST.get('latitud', '')
+		longitud = request.POST.get('longitud', '')
+		nombre = request.POST.get('nombre', '')
+		precio = request.POST.get('precio', '')
+		estado_producto = request.POST.get('estado_producto', '')
+		tipo_envio = request.POST.get('tipo_envio', '')
+		descripcion = request.POST.get('descripcion', '')
+		tags = request.POST.get('tags', '')
+		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
+									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
+									'descripcion':descripcion,'tags':tags,'token':token}
+		result = CreacionProducto(biblioteca)
 		if result == 'Created':
 			return Response(status=status.HTTP_201_CREATED)
 		if result == 'Bad request':
