@@ -1,0 +1,8 @@
+https://firebase.google.com/docs/cloud-messaging/auth-server  - documentacion firebase
+https://github.com/xtrinch/fcm-django - repositorio con django utilizando FCM
+https://django-fcm.readthedocs.io/en/latest/sending_messages.html - documentacion django-fcm
+
+https://www.raywenderlich.com/5359-firebase-tutorial-real-time-chat
+https://github.com/FirebaseExtended/firechat - en html
+https://www.youtube.com/watch?reload=9&v=UjLH-40RHZo - tutorial notificaciones
+http://lucasjackson.io/realtime-ios-chat-with-django/ - tuto con ios

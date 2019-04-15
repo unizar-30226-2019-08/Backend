@@ -45,6 +45,9 @@ class Usuario(models.Model):
         verbose_name='Longitud del usuario cuando se registro',
         max_digits=9,
         decimal_places=6)
+    media_valoraciones = models.IntegerField(
+        default=-1,
+        verbose_name='Media aritmetica de las valoraciones que ha recibido el usuario')
 
 class Tag(models.Model):
     nombre = models.CharField(
@@ -108,9 +111,10 @@ class Producto(models.Model):
     nombre = models.CharField(
         max_length=50,
         verbose_name='Nombre del producto')
-    precio = models.CharField(
-        max_length=10,
-        verbose_name='Precio del producto')
+    precio = models.DecimalField(
+        verbose_name='Precio del producto',
+        max_digits=9,
+        decimal_places=2)
     estado_producto = models.CharField(
         max_length=50,
 		choices=[(tag.name, tag.value) for tag in EleccionEstadoProducto],
@@ -260,7 +264,7 @@ class ContenidoMultimedia(models.Model):
         to=Producto,
         null=False,
         on_delete=models.CASCADE,
-        verbose_name='Producto al que pertenece el cotenido multimedia',
+        verbose_name='Producto al que pertenece el contenido multimedia',
         related_name='contenido_multimedia')
     orden_en_producto = models.IntegerField(
         default=0,
