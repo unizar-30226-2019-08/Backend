@@ -1,62 +1,67 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Bookalo</title>
-    <meta property="og:image" content="assets/img/icono.png">
+    <meta property="og:image" content="{% static 'bookalo/img/icono.png' %}">
     <meta name="description" content="Tu sitio web de compra y venta de material escolar de segunda mano. En Bookalo, puedes encontrar material de todas las etapas educativas, incluyendo infantil, primaria, ESO, bachillerato y universidad!">
     <meta property="og:type" content="website">
-    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
-    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
-    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
-    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
-    <link rel="icon" type="image/png" sizes="401x401" href="assets/img/icono.png">
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="assets/fonts/ionicons.min.css">
-    <link rel="stylesheet" href="assets/fonts/material-icons.min.css">
+    <link rel="icon" type="image/png" sizes="401x401" href="{% static 'bookalo/img/icono.png' %}">
+    <link rel="icon" type="image/png" sizes="401x401" href="{% static 'bookalo/img/icono.png' %}">
+    <link rel="icon" type="image/png" sizes="401x401" href="{% static 'bookalo/img/icono.png' %}">
+    <link rel="icon" type="image/png" sizes="401x401" href="{% static 'bookalo/img/icono.png' %}">
+    <link rel="icon" type="image/png" sizes="401x401" href="{% static 'bookalo/img/icono.png' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/fonts/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/fonts/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/fonts/material-icons.min.css' %}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Actor">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alef">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Antic">
-    <link rel="stylesheet" href="assets/css/-Filterable-Cards-.css">
-    <link rel="stylesheet" href="assets/css/best-carousel-slide.css">
-    <link rel="stylesheet" href="assets/css/Bold-BS4-Animated-Back-To-Top.css">
-    <link rel="stylesheet" href="assets/css/Bootstrap-Tags-Input-1.css">
-    <link rel="stylesheet" href="assets/css/Bootstrap-Tags-Input.css">
-    <link rel="stylesheet" href="assets/css/Contact-Form-Clean.css">
-    <link rel="stylesheet" href="assets/css/Contact-FormModal-Contact-Form-with-Google-Map.css">
-    <link rel="stylesheet" href="assets/css/fileinput.css">
-    <link rel="stylesheet" href="assets/css/filtroSideBar.css">
-    <link rel="stylesheet" href="assets/css/Footer-Dark.css">
-    <link rel="stylesheet" href="assets/css/Map-Clean.css">
-    <link rel="stylesheet" href="assets/css/MUSA_carousel-extended-1.css">
-    <link rel="stylesheet" href="assets/css/MUSA_carousel-extended.css">
-    <link rel="stylesheet" href="assets/css/Navigation-with-Search.css">
-    <link rel="stylesheet" href="assets/css/News-Cards.css">
-    <link rel="stylesheet" href="assets/css/Profile-Card-1.css">
-    <link rel="stylesheet" href="assets/css/Profile-Card.css">
-    <link rel="stylesheet" href="assets/css/Profile-Picture-With-Badge-1.css">
-    <link rel="stylesheet" href="assets/css/Profile-Picture-With-Badge.css">
-    <link rel="stylesheet" href="assets/css/Sidebar-Menu-1-Filtro.css">
-    <link rel="stylesheet" href="assets/css/Sidebar-Menu-1.css">
-    <link rel="stylesheet" href="assets/css/Sidebar-Menu.css">
-    <link rel="stylesheet" href="assets/css/SIdebar-Responsive-2-1.css">
-    <link rel="stylesheet" href="assets/css/SIdebar-Responsive-2.css">
-    <link rel="stylesheet" href="assets/css/slider.css">
-    <link rel="stylesheet" href="assets/css/Social-Icon-Circle.css">
-    <link rel="stylesheet" href="assets/css/Social-Icons.css">
-    <link rel="stylesheet" href="assets/css/starrating.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
-    <link rel="stylesheet" href="assets/css/Tag-cloud.css">
+    <link rel="stylesheet" href="{% static 'bookalo/css/-Filterable-Cards-.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/best-carousel-slide.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Bold-BS4-Animated-Back-To-Top.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Bootstrap-Tags-Input-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Bootstrap-Tags-Input.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/chat.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Contact-Form-Clean.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Contact-FormModal-Contact-Form-with-Google-Map.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/fileinput.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/filtroSideBar.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Footer-Dark.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.min.css">
+    <link rel="stylesheet" href="{% static 'bookalo/css/icon-star-full.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Map-Clean.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/MUSA_carousel-extended-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/MUSA_carousel-extended.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Navigation-with-Search.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/News-Cards.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Profile-Card-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Profile-Card.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Profile-Picture-With-Badge-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Profile-Picture-With-Badge.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/select.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Sidebar-Menu-1-Filtro.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Sidebar-Menu-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Sidebar-Menu.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/SIdebar-Responsive-2-1.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/SIdebar-Responsive-2.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/slider.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Social-Icon-Circle.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Social-Icons.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/starrating.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'bookalo/css/Tag-cloud.css' %}">
 </head>
 
 <body class="text-center" style="background-color: #e91e63;">
     <div class="col">
         <div class="row">
-            <div class="col"><img src="assets/img/bookalo_logo.png" style="width: 80%;margin: 50px 0px 0px 0px;"></div>
+            <div class="col"><img style="width: 80%;margin: 50px 0px 0px 0px;" src="{% static 'bookalo/img/bookalo_logo.png' %}"></div>
         </div>
         <div class="row" style="margin: 50px 0px 0px 0px;color: rgb(255,255,255);font-family: Antic, sans-serif;">
             <div class="col">
@@ -64,32 +69,33 @@
             </div>
         </div>
         <div class="row" style="margin: 30px -15px;">
-            <div class="col"><img src="assets/img/google-play-badge.png" style="width: 80%;"></div>
+            <div class="col"><img style="width: 80%;" src="{% static 'bookalo/img/google-play-badge.png' %}"></div>
         </div>
         <div class="row" style="margin: -20px -15px;">
-            <div class="col"><img src="assets/img/download-on-the-app-store-apple-logo-png-transparent-1024x303.png" style="width: 70%;"></div>
+            <div class="col"><img style="width: 70%;" src="{% static 'bookalo/img/download-on-the-app-store-apple-logo-png-transparent-1024x303.png' %}"></div>
         </div>
     </div>
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/-Filterable-Cards-.js"></script>
-    <script src="assets/js/Bold-BS4-Animated-Back-To-Top.js"></script>
-    <script src="assets/js/Bootstrap-Tags-Input-1.js"></script>
-    <script src="assets/js/Bootstrap-Tags-Input.js"></script>
-    <script src="assets/js/Contact-FormModal-Contact-Form-with-Google-Map.js"></script>
-    <script src="assets/js/favoritos.js"></script>
-    <script src="assets/js/fileinput.js"></script>
-    <script src="assets/js/fileinput.min.js"></script>
-    <script src="assets/js/MUSA_carousel-extended.js"></script>
-    <script src="assets/js/piexif.js"></script>
-    <script src="assets/js/piexif.min.js"></script>
-    <script src="assets/js/purify.js"></script>
-    <script src="assets/js/purify.min.js"></script>
-    <script src="assets/js/Sidebar-Menu.js"></script>
-    <script src="assets/js/slider.js"></script>
-    <script src="assets/js/sortable.js"></script>
-    <script src="assets/js/sortable.min.js"></script>
-    <script src="assets/js/starrating.js"></script>
+    <script src="{% static 'bookalo/js/jquery.min.js' %}"></script>
+    <script src="{% static 'bookalo/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'bookalo/js/-Filterable-Cards-.js' %}"></script>
+    <script src="{% static 'bookalo/js/Bold-BS4-Animated-Back-To-Top.js' %}"></script>
+    <script src="{% static 'bookalo/js/Bootstrap-Tags-Input-1.js' %}"></script>
+    <script src="{% static 'bookalo/js/Bootstrap-Tags-Input.js' %}"></script>
+    <script src="{% static 'bookalo/js/Contact-FormModal-Contact-Form-with-Google-Map.js' %}"></script>
+    <script src="{% static 'bookalo/js/favoritos.js' %}"></script>
+    <script src="{% static 'bookalo/js/fileinput.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/bootstrap-slider.min.js"></script>
+    <script src="{% static 'bookalo/js/MUSA_carousel-extended.js' %}"></script>
+    <script src="{% static 'bookalo/js/piexif.js' %}"></script>
+    <script src="{% static 'bookalo/js/piexif.min.js' %}"></script>
+    <script src="{% static 'bookalo/js/purify.js' %}"></script>
+    <script src="{% static 'bookalo/js/purify.min.js' %}"></script>
+    <script src="{% static 'bookalo/js/Range-selector---slider.js' %}"></script>
+    <script src="{% static 'bookalo/js/Sidebar-Menu.js' %}"></script>
+    <script src="{% static 'bookalo/js/slider.js' %}"></script>
+    <script src="{% static 'bookalo/js/sortable.js' %}"></script>
+    <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
+    <script src="{% static 'bookalo/js/starrating.js' %}"></script>
 </body>
 
 </html>
