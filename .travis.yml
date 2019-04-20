@@ -6,9 +6,9 @@ python:
 env:
   - DJANGO_VERSION=2.2
 before_install:
-  - apt-get install binutils libproj-dev gdal-bin
-  - apt-get install python3-pip python3-dev
-  - apt-get install libpq-dev postgresql postgresql-contrib
+  - sudo apt-get install binutils libproj-dev gdal-bin
+  - sudo apt-get install python3-pip python3-dev
+  - sudo apt-get install libpq-dev postgresql postgresql-contrib
 install:
   - pip install -r requirements.txt
 script:
