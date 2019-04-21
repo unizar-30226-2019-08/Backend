@@ -4,6 +4,13 @@ from .views import *
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 
+def update_last_connection(user):
+	try:
+		Usuario.objects.get(uid=user.uid).update(ultima_conexion=datetime.now())
+		return True
+	except:
+		return False
+
 #Comprueba que el usuario este logeado en el sistema
 def check_user_logged_in(token):
 	try:
@@ -31,6 +38,7 @@ def usuario_login(token):
 			user_uid = user_info['users'][0]['localId']
 			name = user_info['users'][0]['email'].split("@")[0]
 		except:	
+			print("Error aqui")
 			return 'Error'
 		
 		try:
@@ -49,12 +57,8 @@ def usuario_login(token):
 			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
 			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
 
-def usuario_getProfile(token):
-	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or user_uid == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	else:
+def usuario_getProfile(token,user_uid):
+
 		#if check_user_logged_in(token):
 			#try:
 				fetch_user = Usuario.objects.get(uid=user_uid)

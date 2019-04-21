@@ -18,16 +18,11 @@ from decimal import Decimal
 from .funciones_producto import *
 from .funciones_chat import *
 from .funciones_report import *
-from funciones_usuario import *
+from .funciones_usuario import *
 
 
 
-def update_last_connection(user):
-	try:
-		Usuario.objects.get(uid=user.uid).update(ultima_conexion=datetime.now())
-		return True
-	except:
-		return False
+
 
 def get_user(token):
 	try:
@@ -53,11 +48,11 @@ def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	else
+	else:
 		retorno = usuario_login(token)
-		if retorno = 'Error'
+		if retorno == 'Error':
 			return Response(status=status.HTTP_404_NOT_FOUND)
-		else
+		else:
 			return retorno
 
 @api_view(['GET'])
@@ -80,7 +75,9 @@ def GetUserProfile(request, format=None):
 	user_uid = request.POST.get('uid', 'nothing')
 	if request.method != 'POST' or token == 'nothing' or user_uid == 'nothing': 
 			return Response(status=status.HTTP_400_BAD_REQUEST)
-	if retorno = 'Error':
+	else:
+		respuesta = usuario_getProfile(token,user_uid)
+		return respuesta
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
