@@ -96,13 +96,22 @@ def Login(request, format=None):
 @api_view(['GET'])
 @permission_classes((permissions.AllowAny,))
 def GenericProductView(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'GET':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	try:
 		serializer = GenericProducts()
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		if movil == 'true':
+			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+		else:
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	except:
-		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		if movil == 'true':
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
+		
 	
 
 
@@ -130,27 +139,48 @@ def GetUserProfile(request, format=None):
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def SearchProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	search = request.POST.get('busqueda', 'nothing')
 	if search == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	try:
 		serializer = BusquedaProducto(search)
-		return Response(serializer.data, status=status.HTTP_200_OK)
+		if movil == 'true':
+			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+		else:
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	except:
-		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		if movil == 'true':
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 
 
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def FilterProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	token = request.POST.get('token', 'nothing')
 	if token == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	else:
 		try:
 			tags = request.POST.get('tags', '')
@@ -164,32 +194,54 @@ def FilterProduct(request, format=None):
 						'min_price':min_price,'max_price':max_price,'min_score':min_score}
 			serializer = FiltradoProducto(biblioteca)
 			if serializer == 'Bad request':
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+				if movil == 'true':
+					return Response(status=status.HTTP_400_BAD_REQUEST)
+				else:
+					serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+					return render(request, 'bookalo/index.html', {'productos': serializer.data})
+			if movil == 'true':
+				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+			else:
+				return render(request, 'bookalo/index.html', {'productos': serializer.data})
 		except:
-			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			if movil == 'true':
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			else:
+				serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+				return render(request, 'bookalo/index.html', {'productos': serializer.data})
 
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def GetUserProducts(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	token = request.POST.get('token', 'nothing')
-	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if request.method != 'POST' or token == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+			return render(request, 'bookalo/index.html', {'productos': serializer.data})
 	else:
 		try:
 			serializer = ProductosUsuario(token)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+			if movil == 'true':
+				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+			else:
+				return render(request, 'bookalo/index.html', {'productos': serializer.data})
 		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
+				return render(request, 'bookalo/index.html', {'productos': serializer.data})
 
 		
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	token = request.POST.get('token', 'nothing')
@@ -209,73 +261,109 @@ def CreateProduct(request, format=None):
 									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 									'descripcion':descripcion,'tags':tags,'token':token}
 		result = CreacionProducto(biblioteca)
-		if result == 'Created':
-			return Response(status=status.HTTP_201_CREATED)
-		if result == 'Bad request':
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-		if result == 'Not found':
-			return Response(status=status.HTTP_404_NOT_FOUND)
+		if movil == 'true':
+			if result == 'Created':
+				return Response(status=status.HTTP_201_CREATED)
+			if result == 'Bad request':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			if result == 'Not found':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
-			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			if result == 'Created':
+				return redirect('/api/get_user_products/')
+			else:
+				return redirect('/api/generic_product_view')
 	except:
-		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+		if movil == 'true':
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			return redirect('/api/generic_product_view')
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateReport(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	token = request.POST.get('token', 'nothing')
 	reporteduserUid = request.POST.get('uid', 'nothing')
 	comment = request.POST.get('comentario', 'nothing')
-	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/api/generic_product_view')
 	else:
 		try:
 			CrearReport(reporteduserUid,comment)
-			return Response(status=status.HTTP_201_CREATED)
+			if movil == 'true':
+				return Response(status=status.HTTP_201_CREATED)
+			else:
+				return redirect('/api/get_user_profile')
 		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/api/generic_product_view')
+			
 
 
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def CreateChat(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	token = request.POST.get('token', 'nothing')
 	otroUserUid = request.POST.get('uidUsuario', 'nothing')
 	productId = request.POST.get('idProducto', 'nothing')
-	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if request.method != 'POST' or token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/api/generic_product_view')
 	else:
 		try:
 			CrearChat(token,otroUserUid,productId)
-			return Response(status=status.HTTP_201_CREATED)
+			if movil == 'true':
+				return Response(status=status.HTTP_201_CREATED)
+			else:
+				return redirect('/api/get_user_profile')
 		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)	
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/api/generic_product_view')
 
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def DeleteProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	token = request.POST.get('token', 'nothing')
 	productId = request.POST.get('idProducto', 'nothing')
-	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing' or productId == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+	if request.method != 'POST' or token == 'nothing' or productId == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/api/generic_product_view')
 	else:
 		try:
 			result = BorradoProducto(token,productId)
-			if result == 'Unauthorized':
-				return Response(status=status.HTTP_401_UNAUTHORIZED)
-			return Response(status=status.HTTP_200_OK)
-				
+			if movil == 'true':
+				if result == 'Unauthorized':
+					return Response(status=status.HTTP_401_UNAUTHORIZED)
+				else:
+					return Response(status=status.HTTP_200_OK)
+			else:
+				if result == 'Unauthorized':
+					return redirect('/api/generic_product_view')
+				else:
+					return redirect('/api/get_user_products')		
 		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/api/generic_product_view')
 
 
 @api_view(['POST'])
@@ -284,9 +372,15 @@ def LikeProduct(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	productId = request.POST.get('idProducto', 'nothing')
 	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/api/generic_product_view')
 	if token == 'nothing' or productId == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/api/generic_product_view')
 	else:
 		try:
 			user = get_user(token)
