@@ -119,10 +119,11 @@
                             </div>
                         </div>
                         <div class="row" style="margin: 20px 0px 0px 0px;">
-                            <div class="col text-center"><button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button
-                                    class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button><button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;"
-                                        type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button></div>
+                            <div class="col text-center">
+                                <button onclick="facebookLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="googleLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="twitterLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -383,6 +384,98 @@
     <script src="{% static 'bookalo/js/sortable.js' %}"></script>
     <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
-</body>
+    <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
+    <!-- Firebase App is always required and must be first -->
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
 
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-auth.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBUH-4_qFvkszGWxII8HyooOJNDqbltDKo",
+            authDomain: "bookalo-9e0fe.firebaseapp.com",
+            databaseURL: "https://bookalo-9e0fe.firebaseio.com",
+            projectId: "bookalo-9e0fe",
+            storageBucket: "bookalo-9e0fe.appspot.com",
+            messagingSenderId: "305041397855"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script>
+        function facebookLogin(){
+            var provider = new firebase.auth.FacebookAuthProvider();
+            firebase.auth().useDeviceLanguage();
+            provider.setCustomParameters({
+                'display': 'popup'
+            });
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                // ...
+                }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+        }
+    </script>
+    <script>
+        function googleLogin(){
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().useDeviceLanguage();
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                // ...
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
+                }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+        }
+    </script>
+    <script>
+        function twitterLogin(){
+            var provider = new firebase.auth.TwitterAuthProvider();
+            firebase.auth().useDeviceLanguage();
+            firebase.auth().signInWithPopup(provider).then(function(result) {
+                // This gives you a the Twitter OAuth 1.0 Access Token and Secret.
+                // You can use these server side with your app's credentials to access the Twitter API.
+                var token = result.credential.accessToken;
+                var secret = result.credential.secret;
+                // The signed-in user info.
+                var user = result.user;
+                // ...
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
+                }).catch(function(error) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
+        }
+    </script>
+</body>
 </html>
