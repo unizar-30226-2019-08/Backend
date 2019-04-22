@@ -1,11 +1,15 @@
 # Created by https://www.gitignore.io/api/django
 # Edit at https://www.gitignore.io/?templates=django
 
+### Firebase API Key ###
+pyrebase_config.py
+
 ### Django ###
 *.log
 *.pot
 *.pyc
 __pycache__/
+migrations/
 local_settings.py
 db.sqlite3
 media
