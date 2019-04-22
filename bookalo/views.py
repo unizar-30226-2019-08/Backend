@@ -82,8 +82,8 @@ def GenericProductView(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
-			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/productodetallado.html', {'productos': serializer.data})
+			return render(request, 'bookalo/productodetallado.html', {'productos': []})
+
 
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
@@ -115,7 +115,7 @@ def GetUserProfile(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_404_NOT_FOUND)
 				else:
-					return render(request, 'bookalo/perfilusuario.html', {'info_perfil' : UserProfileSerializer(Usuario.objects.none(), read_only=True).data})
+					return render(request, 'bookalo/perfilusuario.html', {'info_perfil' : []})
 		else:
 			if movil == 'true':
 				return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -129,8 +129,7 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/index.html', {'productos': serializer.data})
+			return render(request, 'bookalo/index.html', {'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -139,8 +138,7 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/index.html', {'productos': serializer.data})
+			return render(request, 'bookalo/index.html', {'productos': []})
 	else:
 		try:
 			check_user_logged_in(token)
@@ -159,8 +157,7 @@ def FilterProduct(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_400_BAD_REQUEST)
 				else:
-					serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-					return render(request, 'bookalo/index.html', {'productos': serializer.data})
+					return render(request, 'bookalo/index.html', {'productos': []})
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
@@ -169,8 +166,7 @@ def FilterProduct(request, format=None):
 			if movil == 'true':
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 			else:
-				serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-				return render(request, 'bookalo/index.html', {'productos': serializer.data})
+				return render(request, 'bookalo/index.html', {'productos': []})
 
 @permission_classes((permissions.AllowAny,))
 def GetUserProducts(request, format=None):
@@ -183,8 +179,7 @@ def GetUserProducts(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/enventa.html', {'productos' : serializer.data})
+			return render(request, 'bookalo/enventa.html', {'productos' : []})
 	else:
 		check_user_logged_in(token)
 		try:
@@ -197,8 +192,7 @@ def GetUserProducts(request, format=None):
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
-				serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-				return render(request, 'bookalo/index.html', {'productos': serializer.data})
+				return render(request, 'bookalo/index.html', {'productos': []})
 
 @permission_classes((permissions.AllowAny,))
 def CreateProduct(request, format=None):
