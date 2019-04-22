@@ -18,23 +18,11 @@ from decimal import Decimal
 from .funciones_producto import *
 from .funciones_chat import *
 from .funciones_report import *
+from .funciones_usuario import *
 
-#Comprueba que el usuario este logeado en el sistema
-def check_user_logged_in(token):
-	try:
-		user_info = auth.get_account_info(token)
-		user_uid = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
-		return True
-	except:
-		return False
 
-def update_last_connection(user):
-	try:
-		Usuario.objects.get(uid=user.uid).update(ultima_conexion=datetime.now())
-		return True
-	except:
-		return False
+
+
 
 def get_user(token):
 	try:
@@ -50,30 +38,16 @@ def get_user(token):
 def index(request):
 	return render(request, 'bookalo/index.html')
 
+
 @permission_classes((permissions.AllowAny,))
 def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
-	latitud_registro = 0.0
-	longitud_registro = 0.0
-	g = GeoIP2()
-	#ip = request.META.get('REMOTE_ADDR', None)
-	#if ip:
-	#	latitud_registro = g.city(ip)['latitude']
-	#	longitud_registro = g.city(ip)['longitude']
-	latitud_registro = 41.683490
-	longitud_registro = -0.888479
 	if request.method != 'POST':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
-	if token == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
 	else:
-		try:
-			user_info = auth.get_account_info(token)
-			user_uid = user_info['users'][0]['localId']
-			name = user_info['users'][0]['email'].split("@")[0]
-		except:
+		retorno = usuario_login(token)
+		if retorno == 'Error':
 			return Response(status=status.HTTP_404_NOT_FOUND)
-		
 		try:
 			user = Usuario.objects.get(uid=user_uid)
 			user.ultima_conexion = datetime.now()
@@ -110,7 +84,6 @@ def GenericProductView(request, format=None):
 @permission_classes((permissions.AllowAny,))
 def GetUserProfile(request, format=None):
 	token = request.POST.get('token', 'nothing')
-	#auth.refresh(token)
 	user_uid = request.POST.get('uid', 'nothing')
 	if request.method != 'POST':
 		#return Response(status=status.HTTP_400_BAD_REQUEST)
