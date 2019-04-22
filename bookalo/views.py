@@ -19,6 +19,8 @@ from .funciones_producto import *
 from .funciones_chat import *
 from .funciones_report import *
 from .funciones_usuario import *
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseRedirect
 
 
 def index(request):
@@ -35,10 +37,11 @@ def index(request):
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/index.html', {'productos': serializer.data})
+			return render(request, 'bookalo/index.html', {'productos': []})
 
 
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
@@ -48,19 +51,21 @@ def Login(request, format=None):
 		retorno = usuario_login(token)
 		if retorno == 'Error':
 			if movil != 'true':
-				return redirect(request.META['HTTP_REFERER'], {'error' : 'El usuario no existe.'})
+				#return redirect(request.META['HTTP_REFERER'], {'error' : 'El usuario no existe.'})
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no existe.'})
 			else:
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		else:
 			if retorno == status.HTTP_401_UNAUTHORIZED:
 				if movil != 'true':
-					return redirect(request.META['HTTP_REFERER'], {'error' : 'El usuario está baneado.'})
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario esta baneado.'})
 				else:
 					return Response(retorno, status=status.HTTP_401_UNAUTHORIZED)
 			else:
 				if movil != 'true':
 					request.session['token'] = token
-					return redirect(request.META['HTTP_REFERER'], retorno)
+					#return redirect(request.META['HTTP_REFERER'], retorno)
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), retorno)
 				else:
 					return Response(retorno, status=status.HTTP_200_OK)
 
