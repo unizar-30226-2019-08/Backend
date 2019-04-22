@@ -46,7 +46,7 @@ def check_user_logged_in(token):
 		return False
 
 def usuario_login(token):
-	
+
 	latitud_registro = 0.0
 	longitud_registro = 0.0
 	g = GeoIP2()
