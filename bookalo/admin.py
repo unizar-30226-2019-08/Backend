@@ -3,6 +3,7 @@ from bookalo.models import *
 from django.forms.models import BaseInlineFormSet
 
 #Modelos que apareceran en el portal de administracion
+admin.site.register(Usuario)
 admin.site.register(Tag)
 admin.site.register(Producto)
 admin.site.register(ContenidoMultimedia)
