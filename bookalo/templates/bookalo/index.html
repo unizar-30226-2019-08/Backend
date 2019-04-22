@@ -621,9 +621,14 @@
                 // The signed-in user info.
                 var user = result.user;
                 // ...
-                var csrftoken = '{{ csrf_token }}';
-                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
+                firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                    var csrftoken = '{{ csrf_token }}';
+                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
                 }).catch(function(error) {
+                    alert("Error al iniciar sesión")
+                    // Handle error
+                });
+            	}).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
