@@ -1,6 +1,18 @@
+from django.shortcuts import render, redirect
+from bookalo.pyrebase_settings import db, auth
 from bookalo.models import *
 from bookalo.serializers import *
-from .views import *
+#from bookalo.functions import *
+from rest_framework import status, permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
+from operator import itemgetter
+from django.http import HttpResponse
+from datetime import datetime, timedelta, timezone
+from django.db.models import Q, Count
+from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 
@@ -24,18 +36,6 @@ def GenericProducts():
 	serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
-def BusquedaProducto(search):
-	preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
-	'hacia','hasta','para','por','segun','sin','so','sobre','tras']
-	products = Producto.objects.none()
-	for word in search.split():
-		if word not in preposiciones:
-			productos_palabra = Producto.objects.filter(nombre__contains=word)
-			products = products | productos_palabra
-	products.distinct()
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
-	return serializer
-
 def ProductosUsuario(token):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
@@ -52,6 +52,16 @@ def FiltradoProducto(biblio):
 	min_price = biblio['min_price']
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
+	search = biblio['busqueda']
+	preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
+	'hacia','hasta','para','por','segun','sin','so','sobre','tras']
+	products_search = Producto.objects.none()
+	for word in search.split():
+		if word not in preposiciones:
+			productos_palabra = Producto.objects.filter(nombre__contains=word)
+			products_search = products_search | productos_palabra
+	products_search.distinct()
+
 	if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 		return 'Bad request'
 
@@ -64,7 +74,9 @@ def FiltradoProducto(biblio):
 		print(product.nombre)
 		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 			filtered_products.append(product)
-	serializer = ProductoSerializerList(filtered_products, many=True, read_only=True)
+
+	final_product_list = list(set(products_search) & set(filtered_products))
+	serializer = ProductoSerializerList(final_product_list, many=True, read_only=True)
 	return serializer
 
 

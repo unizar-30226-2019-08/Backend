@@ -20,7 +20,6 @@ from enum import Enum
 #       es_predeterminado   : Booleano que indica si un tag es predeterminado o no
 # 	'''
 
-
 class Usuario(models.Model):
     uid = models.CharField(
         unique=True,
@@ -48,6 +47,9 @@ class Usuario(models.Model):
     media_valoraciones = models.IntegerField(
         default=-1,
         verbose_name='Media aritmetica de las valoraciones que ha recibido el usuario')
+    imagen_perfil = models.CharField(
+        max_length=200,
+        verbose_name='URL de la imagen de perfil del usuario')
 
 class Tag(models.Model):
     nombre = models.CharField(
