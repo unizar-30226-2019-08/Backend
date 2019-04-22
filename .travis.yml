@@ -9,12 +9,13 @@ before_install:
   -in .travis/bookalo_key.enc -out .travis/bookalo_key -d
 - sudo apt-get install binutils libproj-dev gdal-bin
 - sudo apt-get install python3-pip python3-dev
+ - chmod +x .travis/build.sh
 install:
 - pip install -r requirements.txt
 script:
 - python manage.py test
 after_success:
-- ".travis/deploy.sh"
+- .travis/deploy.sh
 branches:
   only:
   - master
