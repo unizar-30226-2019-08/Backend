@@ -60,7 +60,16 @@ def usuario_login(token):
 		try:
 			user_info = auth.get_account_info(token)
 			user_uid = user_info['users'][0]['localId']
-			name = user_info['users'][0]['email'].split("@")[0]
+			try:
+				name = user_info['users'][0]['displayName']
+				if name == '':
+					name = user_info['users'][0]['email'].split("@")[0]
+			except:
+				name = user_info['users'][0]['email'].split("@")[0]
+			try:
+				profile_image = user_info['users'][0]['providerUserInfo'][0]['photoUrl']
+			except:
+				profile_image = 'https://www.iconsdb.com/icons/preview/black/book-xxl.png'
 		except:	
 			print("Error con firebase en login social")
 			return 'Error'
@@ -78,7 +87,7 @@ def usuario_login(token):
 
 		except Usuario.DoesNotExist:
 
-			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
+			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
 			update_last_connection(new_user_data)
 			return UserSerializer(new_user_data).data
 
