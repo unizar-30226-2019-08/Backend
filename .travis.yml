@@ -9,7 +9,6 @@ before_install:
   - sudo apt-get install python3-pip python3-dev
 install:
   - pip install -r requirements.txt
-  - pip install sqlite3 --upgrade
 script:
   - python manage.py test
 branches:
