@@ -6,7 +6,7 @@ env:
 - DJANGO_VERSION=2.2
 before_install:
 - openssl aes-256-cbc -K $encrypted_1d9508acdaa1_key -iv $encrypted_1d9508acdaa1_iv
-  -in .travis/bookalo_key.enc -out .travis/bookalo_key -d
+  -in bookalo_key.enc -out .travis/bookalo_key -d
 - sudo apt-get install binutils libproj-dev gdal-bin
 - sudo apt-get install python3-pip python3-dev
 install:
