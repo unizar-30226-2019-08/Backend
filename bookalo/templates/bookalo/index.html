@@ -603,6 +603,8 @@
                 // The signed-in user info.
                 var user = result.user;
                 // ...
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
                 }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
@@ -627,6 +629,8 @@
                 // The signed-in user info.
                 var user = result.user;
                 // ...
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
                 }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
