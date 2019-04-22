@@ -20,6 +20,18 @@ from enum import Enum
 #       es_predeterminado   : Booleano que indica si un tag es predeterminado o no
 # 	'''
 
+def imagen_perfil_path(path):
+    def wrapper(instance, filename):
+        ext = filename.split('.')[-1]
+        # get filename
+        if instance.nombre_usuario:
+            filename = '{}.{}'.format(instance.nombre_usuario, ext)
+        else:
+            # set filename as random string
+            filename = '{}.{}'.format(uuid4().hex, ext)
+        # return the whole path to the file
+        return os.path.join(path, filename)
+    return wrapper
 
 class Usuario(models.Model):
     uid = models.CharField(
@@ -48,6 +60,10 @@ class Usuario(models.Model):
     media_valoraciones = models.IntegerField(
         default=-1,
         verbose_name='Media aritmetica de las valoraciones que ha recibido el usuario')
+    imagen_perfil = models.ImageField(
+        null=True,
+        upload_to=imagen_perfil_path('profile_images/'),
+        verbose_name='Imagen de perfil del usuario')
 
 class Tag(models.Model):
     nombre = models.CharField(

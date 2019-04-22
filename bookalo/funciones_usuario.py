@@ -1,8 +1,31 @@
+from django.shortcuts import render, redirect
+from bookalo.pyrebase_settings import db, auth
 from bookalo.models import *
 from bookalo.serializers import *
-from .views import *
+#from bookalo.functions import *
+from rest_framework import status, permissions
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.request import Request
+from rest_framework.test import APIRequestFactory
+from operator import itemgetter
+from django.http import HttpResponse
+from datetime import datetime, timedelta, timezone
+from django.db.models import Q, Count
+from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+
+def get_user(token):
+	try:
+		user_info = auth.get_account_info(token)
+		user_uid = user_info['users'][0]['localId']
+		#user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
+		user = Usuario.objects.get(uid=user_uid)
+		user.update(ultima_conexion=datetime.now())
+		return user
+	except:
+		return None
 
 def update_last_connection(user):
 	try:
@@ -17,6 +40,7 @@ def check_user_logged_in(token):
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
 		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
+		auth.refresh(token)
 		return True
 	except:
 		return False
@@ -38,7 +62,7 @@ def usuario_login(token):
 			user_uid = user_info['users'][0]['localId']
 			name = user_info['users'][0]['email'].split("@")[0]
 		except:	
-			print("Error aqui")
+			print("Error con firebase en login social")
 			return 'Error'
 		
 		try:
@@ -47,15 +71,16 @@ def usuario_login(token):
 			user.save(update_fields=['ultima_conexion'])
 
 			if user.esta_baneado:
-				return Response(UserSerializer(user).data, status=status.HTTP_401_UNAUTHORIZED)
+				return status.HTTP_401_UNAUTHORIZED
 			else:
 				update_last_connection(user)
-				return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
 
 			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro)
-			return Response(UserSerializer(new_user_data).data, status=status.HTTP_201_CREATED)
+			update_last_connection(new_user_data)
+			return UserSerializer(new_user_data).data
 
 def usuario_getProfile(token,user_uid):
 
