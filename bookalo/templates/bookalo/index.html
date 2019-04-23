@@ -285,202 +285,23 @@
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
                             <div class="card border-dark" style="border-radius:20px">
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{{p.contenido_multimedia.contenido_url}}">
+                                    <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
                                 <div class="card-body">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>{{p.precio}}€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m {{p.contenido_multimedia.contenido_url}}</h5>
+                                        <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
+                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
                                     </div>
                                     <p class="card-text">{{ p.descripcion }}<br></p>
                                 </div>
                                 <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;"><i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></div><a class="btn btn-outline-dark btn-sm ml-auto" role="button"
-                                        href="productodetallado.html"><i class="fa fa-eye"></i>&nbsp;Ver producto</a></div>
+                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
+                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                    </div>
+                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
+                                </div>
                             </div>
                         </div>
                         {% endfor %}
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
-                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
-                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;Nullam id dolor id nibh ultricies vehicula ut id elit.&nbsp;<br>Nullam id dolor id nibh ultricies
-                                        vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.<br><br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">Lorem Ipsum</h5><button class="btn btn-secondary d-flex flex-wrap" style="background-color: transparent;border-color: transparent;box-shadow: 0;" type="button"><i class="fa fa-heart"></i></button></div><img class="img-fluid card-img w-100 d-block rounded-0"
-                                    src="{% static 'bookalo/img/th-01.jpg' %}">
-                                <div class="card-body">
-                                    <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>50.000€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                                    </div>
-                                    <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Nullam id dolor id nibh ultricies vehicula ut id elit.Nullam id dolor id nibh ultricies vehicula ut id elit.<br></p>
-                                </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                                    <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                        <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                                    </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </section>
@@ -599,6 +420,13 @@
                 // The signed-in user info.
                 var user = result.user;
                 // ...
+                firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                    var csrftoken = '{{ csrf_token }}';
+                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                }).catch(function(error) {
+                    alert("Error al iniciar sesión")
+                    // Handle error
+                });
                 }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
@@ -652,8 +480,13 @@
                 // The signed-in user info.
                 var user = result.user;
                 // ...
-                var csrftoken = '{{ csrf_token }}';
-                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': token});
+                firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+                    var csrftoken = '{{ csrf_token }}';
+                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                }).catch(function(error) {
+                    alert("Error al iniciar sesión")
+                    // Handle error
+                });
                 }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
