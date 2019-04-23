@@ -175,11 +175,12 @@ def GetUserProducts(request, format=None):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
+		print(token)
 	if token == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			return render(request, 'bookalo/enventa.html', {'productos' : []})
+			return render(request, 'bookalo/index.html', {'productos' : []})
 	else:
 		check_user_logged_in(token)
 		try:
@@ -187,11 +188,13 @@ def GetUserProducts(request, format=None):
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
-				return render(request, 'bookalo/index.html', {'productos': serializer.data})
+				print("Try")
+				return render(request, 'bookalo/enventa.html', {'productos': serializer.data})
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
+				print("Excepcion")
 				return render(request, 'bookalo/index.html', {'productos': []})
 
 @permission_classes((permissions.AllowAny,))
@@ -214,7 +217,9 @@ def CreateProduct(request, format=None):
 		latitud = request.POST.get('latitud', '')
 		longitud = request.POST.get('longitud', '')
 		nombre = request.POST.get('nombre', '')
+		print(nombre)
 		precio = request.POST.get('precio', '')
+		print(precio)
 		estado_producto = request.POST.get('estado_producto', '')
 		tipo_envio = request.POST.get('tipo_envio', '')
 		descripcion = request.POST.get('descripcion', '')
