@@ -105,4 +105,10 @@ def usuario_getProfile(token,user_uid):
 		#else:
 		#	return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+def usuario_getvaloraciones(user_uid):
+	valoraciones = ValidacionEstrella.objects.get(usaurio_valorador__uid=uid)
+	serializer = ValidacionEstrellaSerializer(valoraciones, many=True, read_only=True)
+	return serializer
+
+
 
