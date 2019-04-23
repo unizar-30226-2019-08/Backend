@@ -106,7 +106,6 @@ def GetUserProfile(request, format=None):
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
 					if fetch_user.uid == user_uid:
 						# Devolver favoritos
-						print("Premio!")
 						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usaurio_getvaloraciones(user_uid) })
 
 					else:
