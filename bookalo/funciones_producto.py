@@ -69,7 +69,6 @@ def FiltradoProducto(biblio):
 	lista_tags = [x.strip() for x in tags.split(',')]
 	tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 	products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
-	print(products)
 
 	filtered_products = []
 	for product in products:
@@ -77,9 +76,7 @@ def FiltradoProducto(biblio):
 		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 			filtered_products.append(product)
 
-	print(products_search)
 	final_product_list = list(set(products_search) & set(filtered_products))
-	print(final_product_list)
 	serializer = ProductoSerializerList(final_product_list, many=True, read_only=True)
 	return serializer
 
