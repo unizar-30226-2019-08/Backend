@@ -15,6 +15,7 @@ from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+from .funciones_usuario import *
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -137,4 +138,22 @@ def BorradoProducto(token,productId):
 	else:
 		return 'Unauthorized'
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+def LikeProducto(token,productId):
+	check_user_logged_in(token)
+	user = get_user(token)
+	if user != None:
+		product = Producto.objects.get(id=int(productId))
+		exists = Producto.objects.filter(id=int(productId), le_gusta_a=user)
+		if exists.exists():
+			product.le_gusta_a.remove(user)
+			product.num_likes = product.num_likes - 1
+		else:
+			product.num_likes = product.num_likes + 1
+			product.le_gusta_a.add(user)
+		product.save()
+		return 'OK'
+	else:
+		return 'NOT FOUND'
 
