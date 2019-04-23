@@ -1,4 +1,6 @@
 # Backend
+[![Build Status](https://travis-ci.com/unizar-30226-2019-08/Backend.svg?branch=master)](https://travis-ci.com/unizar-30226-2019-08/Backend)
+
 Backend repository for PS
 
 1. Para funcionamiento correcto, crear un virtualenv con mkvirtualenv nombre_environment.
