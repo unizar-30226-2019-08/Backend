@@ -86,14 +86,14 @@ class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
         return MiniProductoSerializer(producto)
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
-    usuario_valorado_estrella = serializers.SerializerMethodField()
+    #usuario_valorado_estrella = serializers.SerializerMethodField()
     productos_favoritos = serializers.SerializerMethodField()
     producto_del_usuario = ProductoSerializerList(read_only=True, many=True)
     #usuario_valorado_estrella = ValidacionEstrellaSerializer(read_only=True, many=True)
     #productos_favoritos = ProductoSerializerList(read_only=True, many=True)
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'esta_baneado', 'usuario_valorado_estrella', 'producto_del_usuario', 'productos_favoritos')
+        fields = ('uid', 'nombre', 'esta_baneado', 'producto_del_usuario', 'productos_favoritos')
 
     def get_usuario_valorado_estrella(self, obj):
         validaciones = ValidacionEstrella.objects.filter(usuario_valorado=obj.pk).order_by('-timestamp')

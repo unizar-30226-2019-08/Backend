@@ -98,22 +98,22 @@ def GetUserProfile(request, format=None):
 
 		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no se ha encontrado.'})
 
+
 	else:
 		if check_user_logged_in(token):
 			try:
 					fetch_user = get_user(token)
-
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
 					if fetch_user.uid == user_uid:
 						# Devolver favoritos
-						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usaurio_getvaloraciones(user_uid) })
+						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(user_uid) })
 
 					else:
 						# Devolver productos del otro usuario
 						products = Producto.objects.filter(vendido_por=fetch_user2)
 						serializer = ProductoSerializerList(products, many=True, read_only=True)
-
-						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usaurio_getvaloraciones(user_uid)})
+						
+						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
 			except:
 					return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : [],'productos' : [], 'valoraciones': []})
 		else:
