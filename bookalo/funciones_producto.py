@@ -45,6 +45,14 @@ def ProductosUsuario(token):
 	serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
+def ProductosFavoritos(token):
+	user_info = auth.get_account_info(token)
+	user_uid = user_info['users'][0]['localId']
+	user = Usuario.objects.get(uid=user_uid)
+	products = Producto.objects.filter(le_gusta_a=user)
+	serializer = ProductoSerializerList(products, many=True, read_only=True)
+	return serializer
+
 def FiltradoProducto(biblio):
 	tags = biblio['tags']
 	user_latitude = biblio['user_latitude']

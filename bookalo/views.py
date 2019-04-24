@@ -89,39 +89,34 @@ def GenericProductView(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def GetUserProfile(request, format=None):
-	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	if movil == 'true':
-		token = request.POST.get('token', 'nothing')
-	else:
-		token = request.session.get('token', 'nothing')
-	user_uid = request.POST.get('uid', 'nothing')
+
+	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
+	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
-	if token == 'nothing':
-		if movil == 'true':
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-		else:
-			return render(request, 'bookalo/index.html', {'error' : 'No ha iniciado sesión'})
+	if token == 'nothing' or user_uid == 'nothing':
+		# Se retorna a usuario a la pagina anterior
+
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no se ha encontrado.'})
+
 	else:
 		if check_user_logged_in(token):
 			try:
-				if user_uid == 'nothing':
 					fetch_user = get_user(token)
-				else:
-					fetch_user = Usuario.objects.get(uid=user_uid)
-				if movil == 'true':
-					#TODO: Separar en tres las funciones para movil
-					return Response({'info_perfil' : UserProfileSerializer(fetch_user).data}, status=status.HTTP_200_OK)
-				else:
-					return render(request, 'bookalo/perfilusuario.html', {'info_perfil' : UserProfileSerializer(fetch_user).data})
+
+					fetch_user2 = Usuario.objects.get(uid=user_uid)
+					if fetch_user.uid == user_uid:
+						# Devolver favoritos
+						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usaurio_getvaloraciones(user_uid) })
+
+					else:
+						# Devolver productos del otro usuario
+						products = Producto.objects.filter(vendido_por=fetch_user2)
+						serializer = ProductoSerializerList(products, many=True, read_only=True)
+
+						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usaurio_getvaloraciones(user_uid)})
 			except:
-				if movil == 'true':
-					return Response(status=status.HTTP_404_NOT_FOUND)
-				else:
-					return render(request, 'bookalo/perfilusuario.html', {'info_perfil' : []})
+					return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : [],'productos' : [], 'valoraciones': []})
 		else:
-			if movil == 'true':
-				return Response(status=status.HTTP_401_UNAUTHORIZED)
-			else:
 				return render(request, 'bookalo/index.html', {'error' : 'No ha iniciado sesión'})
 
 @api_view(('POST','GET'))
