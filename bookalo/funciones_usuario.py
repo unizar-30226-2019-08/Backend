@@ -22,7 +22,8 @@ def get_user(token):
 		user_uid = user_info['users'][0]['localId']
 		#user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
 		user = Usuario.objects.get(uid=user_uid)
-		user.update(ultima_conexion=datetime.now())
+		user.ultima_conexion = datetime.now()
+		user.save()
 		return user
 	except:
 		return None
@@ -39,8 +40,10 @@ def check_user_logged_in(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now)
-		auth.refresh(token)
+		user = Usuario.objects.get(uid=user_uid)#.update(ultima_conexion=datetime.now)
+		user.ultima_conexion = datetime.now()
+		user.save()
+		#auth.refresh(token)
 		return True
 	except:
 		return False

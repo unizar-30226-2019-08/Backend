@@ -39,7 +39,7 @@ def index(request):
 			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
 			return render(request, 'bookalo/index.html', {'productos': []})
 
-
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def Login(request, format=None):
@@ -51,7 +51,6 @@ def Login(request, format=None):
 		retorno = usuario_login(token)
 		if retorno == 'Error':
 			if movil != 'true':
-				#return redirect(request.META['HTTP_REFERER'], {'error' : 'El usuario no existe.'})
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no existe.'})
 			else:
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -64,12 +63,13 @@ def Login(request, format=None):
 			else:
 				if movil != 'true':
 					request.session['token'] = token
-					#return redirect(request.META['HTTP_REFERER'], retorno)
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), retorno)
 				else:
 					return Response(retorno, status=status.HTTP_200_OK)
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def GenericProductView(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	try:
@@ -85,7 +85,9 @@ def GenericProductView(request, format=None):
 			return render(request, 'bookalo/productodetallado.html', {'productos': []})
 
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def GetUserProfile(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -122,7 +124,9 @@ def GetUserProfile(request, format=None):
 			else:
 				return render(request, 'bookalo/index.html', {'error' : 'No ha iniciado sesión'})
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def FilterProduct(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
@@ -168,7 +172,9 @@ def FilterProduct(request, format=None):
 			else:
 				return render(request, 'bookalo/index.html', {'productos': []})
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def GetUserProducts(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -197,7 +203,9 @@ def GetUserProducts(request, format=None):
 				print("Excepcion")
 				return render(request, 'bookalo/index.html', {'productos': []})
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def CreateProduct(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
@@ -239,7 +247,7 @@ def CreateProduct(request, format=None):
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			if result == 'Created':
-				return redirect('/api/get_user_products/')
+				return redirect('/api/get_user_products')
 			else:
 				return redirect('/api/generic_product_view')
 	except:
@@ -248,7 +256,9 @@ def CreateProduct(request, format=None):
 		else:
 			return redirect('/api/generic_product_view')
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def CreateReport(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -276,7 +286,9 @@ def CreateReport(request, format=None):
 			else:
 				return redirect('/api/generic_product_view')
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def CreateChat(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -304,7 +316,9 @@ def CreateChat(request, format=None):
 			else:
 				return redirect('/api/generic_product_view')
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def DeleteProduct(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -337,8 +351,11 @@ def DeleteProduct(request, format=None):
 			else:
 				return redirect('/api/generic_product_view')
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def LikeProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -356,23 +373,25 @@ def LikeProduct(request, format=None):
 			return redirect('/api/generic_product_view')
 	else:
 		try:
-			check_user_logged_in(token)
-			user = get_user(token)
-			if user != None:
-				product = Producto.objects.get(id=int(productId))
-				if product.le_gusta_a_set.filter(pk=user.pk).exists():
-					product.le_gusta_a.remove(user)
-					product.num_likes = product.num_likes - 1
+			result = LikeProducto(token,productId)
+			if result == 'OK':
+				if movil == 'true':
+					return Response(status=status.HTTP_200_OK)
 				else:
-					product.num_likes = product.num_likes + 1
-					product.le_gusta_a.add(user)
-				product.save()
-				return Response(status=status.HTTP_200_OK)
+					return redirect('/api/get_user_profile')
 			else:
-				return Response(status=status.HTTP_404_NOT_FOUND)
+				if movil == 'true':
+					return Response(status=status.HTTP_404_NOT_FOUND)
+				else:
+					return redirect('/api/generic_product_view')
 		except:
-			return Response(status=status.HTTP_404_NOT_FOUND)
+			if movil == 'true':
+					return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/api/generic_product_view')
 
+@api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def GetChats(request, format=None):
 	return render(request, 'bookalo/chat.html', {})

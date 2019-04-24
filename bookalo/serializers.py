@@ -101,7 +101,7 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     
     def get_productos_favoritos(self, obj):
         favoritos = Producto.objects.filter(le_gusta_a__in=[obj.pk])
-        return ProductoSerializer(favoritos, many=True, read_only=True).data
+        return ProductoSerializerList(favoritos, many=True, read_only=True).data
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
     usuario_reportado = UserSerializer(read_only=True)
