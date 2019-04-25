@@ -28,7 +28,7 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 SECRET_KEY = 'c$uv!75pneq&c01kc*-ao&s-0ka9oxofy547an6qvbn+tbi1!9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['bookalo.es', 'localhost']
 

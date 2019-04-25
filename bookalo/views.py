@@ -116,6 +116,7 @@ def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
+
 	if token == 'nothing':
 		# Se retorna a usuario a la pagina anterior
 		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado.'})
@@ -232,6 +233,7 @@ def GetUserProducts(request, format=None):
 						'informacion_basica' : UserProfileSerializer(user).data ,'productos': serializer.data})
 				else:
 					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 'productos': serializer.data})
+
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
