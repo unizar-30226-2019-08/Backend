@@ -19,3 +19,4 @@ from decimal import Decimal
 def CrearReport(reporteduserUid,comment):
 	reporteduser = Usuario.objects.get(uid=reporteduserUid)
 	reporte = Report.objects.create(usuario_reportado=reporteduser, causa=comment)
+	return reporte

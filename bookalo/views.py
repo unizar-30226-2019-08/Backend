@@ -25,19 +25,30 @@ from django.http import HttpResponseRedirect
 
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
 
 	try:
 		serializer = GenericProducts()
 		if movil == 'true':
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
-			return render(request, 'bookalo/index.html', {'productos': serializer.data})
+			if check_user_logged_in(token):
+				user = get_user(token)
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,'productos': serializer.data})
+			else:
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
-			serializer = ProductoSerializerList(Producto.objects.none(), read_only=True)
-			return render(request, 'bookalo/index.html', {'productos': []})
+			if check_user_logged_in(token):
+				user = get_user(token)
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,'productos': []})
+			else:
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -72,17 +83,29 @@ def Login(request, format=None):
 @csrf_exempt
 def GenericProductView(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
 	try:
 		serializer = GenericProducts()
 		if movil == 'true':
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
-			return render(request, 'bookalo/productodetallado.html', {'productos': serializer.data})
+			if check_user_logged_in(token):
+				user = get_user(token)
+				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos': serializer.data})
+			else:
+				return render(request, 'bookalo/productodetallado.html', {'loggedin': False, 'productos': serializer.data})
 	except:
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
-			return render(request, 'bookalo/productodetallado.html', {'productos': []})
+			if check_user_logged_in(token):
+				user = get_user(token)
+				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos': []})
+			else:
+				return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'productos': []})
 
 
 @api_view(('POST','GET'))
@@ -93,30 +116,32 @@ def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
-	if token == 'nothing' and user_uid == 'nothing':
-		# Se retorna a usuario a la pagina anterior
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no se ha encontrado.'})
 
+	if token == 'nothing':
+		# Se retorna a usuario a la pagina anterior
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado.'})
 
 	else:
 		if check_user_logged_in(token):
 			try:
-					fetch_user = get_user(token)
+				fetch_user = get_user(token)
+				
+				#Si no hay user_uid, es el usuario del token
+				if user_uid == 'nothing':
+					# Devolver favoritos (cuenta del usuario token)
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid) })
+				else:
+					# Devolver productos del otro usuario
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
-					if fetch_user.uid == user_uid:
-						# Devolver favoritos
-						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(user_uid) })
+					products = Producto.objects.filter(vendido_por=fetch_user2)	
+					serializer = ProductoSerializerList(products, many=True, read_only=True)
 
-					else:
-						# Devolver productos del otro usuario
-						products = Producto.objects.filter(vendido_por=fetch_user2)
-						serializer = ProductoSerializerList(products, many=True, read_only=True)
-						
-						return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
 			except:
-					return render(request, 'bookalo/perfilusuario.html', {'informacion_basica' : [],'productos' : [], 'valoraciones': []})
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
 		else:
-				return render(request, 'bookalo/index.html', {'error' : 'No ha iniciado sesión'})
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'error' : 'No ha iniciado sesión'})
+
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -127,7 +152,7 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			return render(request, 'bookalo/index.html', {'productos': []})
+			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -136,10 +161,10 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			return render(request, 'bookalo/index.html', {'productos': []})
+			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	else:
+		logged = check_user_logged_in(token)
 		try:
-			check_user_logged_in(token)
 			tags = request.POST.get('tags', '')
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
@@ -151,20 +176,35 @@ def FilterProduct(request, format=None):
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			serializer = FiltradoProducto(biblioteca)
-			if serializer == 'Bad request':
+			if logged:
+				user = get_user(token)
+				if serializer == 'Bad request':
+					if movil == 'true':
+						return Response(status=status.HTTP_400_BAD_REQUEST)
+					else:
+						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos': []})
 				if movil == 'true':
-					return Response(status=status.HTTP_400_BAD_REQUEST)
+					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 				else:
-					return render(request, 'bookalo/index.html', {'productos': []})
-			if movil == 'true':
-				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,'productos': serializer.data})
 			else:
-				return render(request, 'bookalo/index.html', {'productos': serializer.data})
+				if serializer == 'Bad request':
+					if movil == 'true':
+						return Response(status=status.HTTP_400_BAD_REQUEST)
+					else:
+						return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
+				if movil == 'true':
+					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+				else:
+					return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data})
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 			else:
-				return render(request, 'bookalo/index.html', {'productos': []})
+				if logged:
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,'productos': []})
+				else:
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -179,20 +219,29 @@ def GetUserProducts(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			return render(request, 'bookalo/index.html', {'productos' : []})
+			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos' : []})
 	else:
-		check_user_logged_in(token)
+		logged = check_user_logged_in(token)
+		user = get_user(token)
 		try:
 			serializer = ProductosUsuario(token)
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
-				return render(request, 'bookalo/enventa.html', {'productos': serializer.data})
+				if logged:
+					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 
+						'informacion_basica' : UserProfileSerializer(user).data ,'productos': serializer.data})
+				else:
+					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 'productos': serializer.data})
+
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
-				return render(request, 'bookalo/index.html', {'productos': []})
+				if logged:
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,'productos': []})
+				else:
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -203,22 +252,23 @@ def CreateProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			return render(request, 'bookalo/nuevoproducto.html', {'error' : 'La peticion es incorrecta'})
+			return render(request, 'bookalo/nuevoproducto.html', {'loggedin': False, 'error' : 'La peticion es incorrecta'})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
 	if token == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return render(request, 'bookalo/index.html', {'loggedin': False})
 	try:
-		check_user_logged_in(token)
+		logged = check_user_logged_in(token)
 		files = request.FILES.items()
 		latitud = request.POST.get('latitud', '')
 		longitud = request.POST.get('longitud', '')
 		nombre = request.POST.get('nombre', '')
-		print(nombre)
 		precio = request.POST.get('precio', '')
-		print(precio)
 		estado_producto = request.POST.get('estado_producto', '')
 		tipo_envio = request.POST.get('tipo_envio', '')
 		descripcion = request.POST.get('descripcion', '')
@@ -286,6 +336,7 @@ def CreateChat(request, format=None):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
+
 	otroUserUid = request.POST.get('uidUsuario', 'nothing')
 	productId = request.POST.get('idProducto', 'nothing')
 	if request.method != 'POST' or token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
@@ -385,7 +436,12 @@ def LikeProduct(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def GetChats(request, format=None):
-	return render(request, 'bookalo/chat.html', {})
+	logged = check_user_logged_in(token)
+	if logged:
+		user = get_user(token)
+		return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
+	else:
+		return render(request, 'bookalo/chat.html', {'loggedin': logged})
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))
