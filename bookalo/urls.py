@@ -17,4 +17,5 @@ urlpatterns = [
     path(r'api/delete_product', views.DeleteProduct),
     path(r'api/like_product', views.LikeProduct),
     path(r'api/get_chats', views.GetChats),
+    path(r'api/privacypolicy', views.PrivacyPolicy),
 ]
