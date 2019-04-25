@@ -93,9 +93,8 @@ def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
-	if token == 'nothing' or user_uid == 'nothing':
+	if token == 'nothing' and user_uid == 'nothing':
 		# Se retorna a usuario a la pagina anterior
-
 		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no se ha encontrado.'})
 
 
@@ -176,7 +175,6 @@ def GetUserProducts(request, format=None):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
-		print(token)
 	if token == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -189,13 +187,11 @@ def GetUserProducts(request, format=None):
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
-				print("Try")
 				return render(request, 'bookalo/enventa.html', {'productos': serializer.data})
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
-				print("Excepcion")
 				return render(request, 'bookalo/index.html', {'productos': []})
 
 @api_view(('POST','GET'))
