@@ -73,7 +73,7 @@
                     <ul class="nav navbar-nav">
                         <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
                         <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
-                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #000000;padding: 8px 15px;" href="/">Cerrar sesión</a></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" style="color: #000000;padding: 8px 15px;" onclick="cerrarSesion()">Cerrar sesión</button></li>
                     </ul><a class="btn btn-light action-button" role="button" style="background-color: rgb(194,194,194);padding: 8px 15px;" data-toggle="modal" data-target="#modalLogin" href="#">Iniciar Sesion</a><a class="btn btn-link" role="button" id="menu-toggle"
                         style="color: #e91e63;" href="#menu-toggle"><i class="fa fa-bars" style="color: rgb(0,0,0);"></i></a></div>
         </div>
@@ -285,7 +285,10 @@
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
                             <div class="card border-dark" style="border-radius:20px">
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                    <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5>
+                                    <span id="foe" onclick="anadirFavorito('foe')" style="cursor:pointer"><i id="foeIcon" class="fas fa-thumbs-up"></i></span>
+                                </div>
+                                <img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url.url }}">
                                 <div class="card-body">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
                                         <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
@@ -378,7 +381,6 @@
     <script src="{% static 'bookalo/js/Bootstrap-Tags-Input-1.js' %}"></script>
     <script src="{% static 'bookalo/js/Bootstrap-Tags-Input.js' %}"></script>
     <script src="{% static 'bookalo/js/Contact-FormModal-Contact-Form-with-Google-Map.js' %}"></script>
-    <script src="{% static 'bookalo/js/favoritos.js' %}"></script>
     <script src="{% static 'bookalo/js/fileinput.min.js' %}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/bootstrap-slider.min.js"></script>
     <script src="{% static 'bookalo/js/MUSA_carousel-extended.js' %}"></script>
@@ -426,6 +428,7 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    document.location.reload(true);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -455,6 +458,7 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    document.location.reload(true);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -486,6 +490,7 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    document.location.reload(true);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -500,6 +505,24 @@
                 var credential = error.credential;
                 // ...
             });
+        }
+    </script>
+    <script>
+        function cerrarSesion(){
+            firebase.auth().signOut();
+            document.location.reload(true);
+        }
+    </script>
+    <script>
+        function anadirFavorito(id){
+            if(document.getElementById(id + "Icon").className == "fas fa-thumbs-up"){
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-down";
+            } else{
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
+            }
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/like_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
+            document.location.reload(true);
         }
     </script>
 </body>
