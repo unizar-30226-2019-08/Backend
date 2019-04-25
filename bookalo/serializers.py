@@ -93,7 +93,8 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     #productos_favoritos = ProductoSerializerList(read_only=True, many=True)
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'esta_baneado', 'producto_del_usuario', 'productos_favoritos')
+        fields = ('uid', 'nombre', 'imagen_perfil','media_valoraciones','esta_baneado', 
+            'producto_del_usuario', 'productos_favoritos','usuario_valorado_estrella')
 
     def get_usuario_valorado_estrella(self, obj):
         validaciones = ValidacionEstrella.objects.filter(usuario_valorado=obj.pk).order_by('-timestamp')
