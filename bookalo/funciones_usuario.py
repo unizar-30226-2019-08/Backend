@@ -20,7 +20,6 @@ def get_user(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
-		#user = Usuario.objects.get(uid=user_uid).update(ultima_conexion=datetime.now())
 		user = Usuario.objects.get(uid=user_uid)
 		user.ultima_conexion = datetime.now()
 		user.save()
@@ -40,7 +39,7 @@ def check_user_logged_in(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid)#.update(ultima_conexion=datetime.now)
+		user = Usuario.objects.get(uid=user_uid)
 		user.ultima_conexion = datetime.now()
 		user.save()
 		#auth.refresh(token)
@@ -96,13 +95,19 @@ def usuario_login(token):
 
 def usuario_getProfile(token,user_uid):
 
-		#if check_user_logged_in(token):
-			#try:
+		if check_user_logged_in(token):
+			try:
 				fetch_user = Usuario.objects.get(uid=user_uid)
 				return Response(UserProfileSerializer(fetch_user).data, status=status.HTTP_200_OK)
-			#except:
-			#	return Response(status=status.HTTP_404_NOT_FOUND)
-		#else:
-		#	return Response(status=status.HTTP_401_UNAUTHORIZED)
+			except:
+				return Response(status=status.HTTP_404_NOT_FOUND)
+		else:
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+def usuario_getvaloraciones(user_uid):
+	valoraciones = ValidacionEstrella.objects.filter(usuario_valorado__uid=user_uid)
+	serializer = ValidacionEstrellaSerializer(valoraciones, many=True, read_only=True)
+	return serializer.data
+
 
 

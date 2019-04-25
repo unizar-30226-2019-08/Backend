@@ -23,6 +23,11 @@ def fetch_productos_usuario(usuario):
     lista_productos = Producto.objects.filter(vendido_por = usuario)
     return lista_productos
 
+
+def fetch_productos_favoritos(usuario):
+    lista_favoritos = Producto.objects.filter(le_gusta_a= usuario)
+    return lista_favoritos
+
 '''
     Pre: 	id_usuario corresponde al identificador de un usuario
             registrado en el sistema.
