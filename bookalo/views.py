@@ -116,28 +116,26 @@ def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
-	if token == 'nothing' or user_uid == 'nothing':
+	if token == 'nothing':
 		# Se retorna a usuario a la pagina anterior
-
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no se ha encontrado.'})
-
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado.'})
 
 	else:
 		if check_user_logged_in(token):
 			try:
-					fetch_user = get_user(token)
+				fetch_user = get_user(token)
+				
+				#Si no hay user_uid, es el usuario del token
+				if user_uid == 'nothing':
+					# Devolver favoritos (cuenta del usuario token)
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid) })
+				else:
+					# Devolver productos del otro usuario
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
-					if fetch_user.uid == user_uid:
-						# Devolver favoritos
-						return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(user_uid) })
+					products = Producto.objects.filter(vendido_por=fetch_user2)	
+					serializer = ProductoSerializerList(products, many=True, read_only=True)
 
-					else:
-						# Devolver productos del otro usuario
-						products = Producto.objects.filter(vendido_por=fetch_user2)
-						serializer = ProductoSerializerList(products, many=True, read_only=True)
-						
-						return render(request, 'bookalo/perfilusuario.html', {'loggedin': True,
-						 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
 			except:
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
 		else:
