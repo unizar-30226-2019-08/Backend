@@ -395,3 +395,9 @@ def LikeProduct(request, format=None):
 @csrf_exempt
 def GetChats(request, format=None):
 	return render(request, 'bookalo/chat.html', {})
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def PrivacyPolicy(request, format=None):
+	return render(request, 'bookalo/privacypolicy.html')

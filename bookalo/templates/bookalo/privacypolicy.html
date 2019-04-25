@@ -73,128 +73,11 @@
                     <ul class="nav navbar-nav">
                         <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
                         <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
-                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #000000;padding: 8px 15px;" href="#">Cerrar sesión</a></li>
+                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #000000;padding: 8px 15px;" href="/">Cerrar sesión</a></li>
                     </ul><a class="btn btn-light action-button" role="button" style="background-color: rgb(194,194,194);padding: 8px 15px;" data-toggle="modal" data-target="#modalLogin" href="#">Iniciar Sesion</a><a class="btn btn-link" role="button" id="menu-toggle"
                         style="color: #e91e63;" href="#menu-toggle"><i class="fa fa-bars" style="color: rgb(0,0,0);"></i></a></div>
         </div>
     </nav>
-    <div class="modal fade" role="dialog" tabindex="-1" id="modalNotif">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Notificaciones</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
-                <div class="modal-body">
-                    <p>Joseph, tienes notificaciones pendientes de revisión</p>
-                </div>
-                <div class="modal-footer"><a class="btn btn-secondary" role="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" href="/api/get_user_profile">Ver notificaciones</a></div>
-            </div>
-        </div>
-    </div>
-    <div id="wrapper" class="toggled" style="margin: 72px 0px 0px 0px;color: rgb(40, 45, 50);">
-        <div class="text-left d-lg-flex" id="sidebar-wrapper" style="background-color: rgb(40,45,50);margin: 0px 0px 50px -250px;">
-            <div class="col" style="padding: 0px;margin: 0px;color: rgb(40, 45, 50);">
-                <div class="row" style="padding: 0px;margin: 0px;">
-                    <div class="col text-center" style="padding: 0px;"><a href="/api/get_user_profile"><img style="width: 100%;height: 160px;bottom: 20px;" src="{% static 'bookalo/img/Depilacion-Hombre.jpg' %}"></a></div>
-                </div>
-                <div class="row" style="width: 100%;margin: 25px 0px 0px 10px;">
-                    <div class="col" style="padding: 0px;">
-                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">Juan López</h2>
-                    </div>
-                </div>
-                <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
-                    <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
-                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">5<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
-                    </div>
-                </div>
-                <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
-                    <div class="col" style="padding: 0px;"><a class="btn btn-outline-primary text-center d-xl-flex justify-content-xl-center align-items-xl-center" role="button" style="width: 100%;height: 40px;background-color: #e91e63;font-size: 22px;border-color: transparent;margin: 0px 0px 0px 0px;color: rgb(255,255,255);"
-                            href="/api/get_chats">Mis chats</a></div>
-                </div>
-                <div class="row" style="margin: 0px 0px 0px 0px;padding: 0px;">
-                    <div class="col" style="padding: 0px;font-size: 22px;"><button class="btn btn-secondary text-center d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 100%;padding: -81px;height: 40px;background-color: #e91e63;font-size: 22px;border-color: transparent;margin: 3px 0px 0px 0px;"
-                            type="button">Productos favoritos</button></div>
-                </div>
-                <div class="row" style="margin: 0px;width: 100%;">
-                    <div class="col" style="width: 100%;padding: 0px;margin: 0px 0px 55px 0px;">
-                        <div role="tablist" id="accordion-1" style="width: 100%;height: 100%;">
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-1" href="div#accordion-1 .item-1" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Lengua castellana y literatura</a></h5>
-                                </div>
-                                <div class="collapse item-1 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="div#accordion-1 .item-2" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Matemáticas 1ESO</a></h5>
-                                </div>
-                                <div class="collapse item-2 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-3" href="div#accordion-1 .item-3" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Acuarelas</a></h5>
-                                </div>
-                                <div class="collapse item-3 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-4" href="div#accordion-1 .item-4" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Workbook Inglés 2ESO</a></h5>
-                                </div>
-                                <div class="collapse item-4 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade" role="dialog" tabindex="-1" id="modalLogin">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -220,35 +103,84 @@
             </div>
         </div>
     </div>
-    <h1 class="text-center" style="font-family: Antic, sans-serif;padding: 30px 0px;"><strong>Tus productos a la venta</strong></h1>
-    <h5 class="text-center" style="font-family: Antic, sans-serif;margin: -20px 0px 0px 0px;">Estos son los productos que has puesto a la venta</h5>
-    <section class="py-5" style="padding: 0;margin: -25px 0px 0px 0px;">
-        <div class="container">
-            <div class="row filtr-container">
-                {% for p in productos %}
-                <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                    <div class="card border-dark" style="border-radius:20px">
-                        <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                            <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
-                        <div class="card-body">
-                            <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
-                                <h5 class="text-right" style="width: 40%;">1.500m</h5>
-                            </div>
-                            <p class="card-text">{{ p.descripcion }}<br></p>
-                        </div>
-                        <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
-                            <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
-                                <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
-                            </div>
-                            <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
-                        </div>
-                    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="modalNotif">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Notificaciones</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                <div class="modal-body">
+                    <p>Joseph, tienes notificaciones pendientes de revisión</p>
                 </div>
-                {% endfor %}
+                <div class="modal-footer"><a class="btn btn-secondary" role="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" href="/api/get_user_profile">Ver notificaciones</a></div>
             </div>
         </div>
-    </section>
+    </div>
+    <div style="padding: 0px 25px;margin: 80px 0px 0px 0px;"><h2>Privacy Policy</h2>
+        <p> Bookalo built the Bookalo app as an Ad Supported app. This SERVICE is provided by Bookalo at no cost and is intended for use as is. </p>
+        <p> This page is used to inform visitors regarding our policies with the collection, use, and disclosure of Personal Information if anyone decided to use our Service. </p>
+        <p> If you choose to use our Service, then you agree to the collection and use of information in relation to this policy. The Personal Information that we collect is used for providing and improving the Service. We will not use or share your information with anyone except as described in this Privacy Policy. </p>
+        <p> The terms used in this Privacy Policy have the same meanings as in our Terms and Conditions, which is accessible at Bookalo unless otherwise defined in this Privacy Policy. </p>
+        <p>
+            <strong>Information Collection and Use</strong>
+        </p>
+        <p> For a better experience, while using our Service, we may require you to provide us with certain personally identifiable information, including but not limited to Android Advertising ID. The information that we request will be retained by us and used as described in this privacy policy.
+        </p>
+        <p> The app does use third party services that may collect information used to identify you. </p>
+        <div>
+            <p>Link to privacy policy of third party service providers used by the app</p>
+            <ul>
+                <li>
+                    <a href="https://www.google.com/policies/privacy/" target="_blank">Google Play Services</a>
+                </li>
+                <li>
+                    <a href="https://firebase.google.com/policies/analytics" target="_blank">Firebase Analytics</a>
+                </li>
+                <li>
+                    <a href="https://www.facebook.com/about/privacy" target="_blank">Facebook</a>
+                </li>
+            </ul>
+        </div>
+        <p>
+            <strong>Log Data</strong>
+        </p>
+        <p> We want to inform you that whenever you use our Service, in a case of an error in the app we collect data and information (through third party products) on your phone called Log Data. This Log Data may include information such as your device Internet Protocol (“IP”) address, device name, operating system version, the configuration of the app when utilizing our Service, the time and date of your use of the Service, and other statistics. </p>
+        <p>
+            <strong>Cookies</strong>
+        </p>
+        <p> Cookies are files with a small amount of data that are commonly used as anonymous unique identifiers. These are sent to your browser from the websites that you visit and are stored on your device's internal memory. </p>
+        <p> This Service does not use these “cookies” explicitly. However, the app may use third party code and libraries that use “cookies” to collect information and improve their services. You have the option to either accept or refuse these cookies and know when a cookie is being sent to your device. If you choose to refuse our cookies, you may not be able to use some portions of this Service. </p>
+        <p>
+            <strong>Service Providers</strong>
+        </p>
+        <p> We may employ third-party companies and individuals due to the following reasons: </p> 
+        <ul>
+            <li>To facilitate our Service;</li>
+            <li>To provide the Service on our behalf;</li>
+            <li>To perform Service-related services; or</li>
+            <li>To assist us in analyzing how our Service is used.</li>
+        </ul>
+        <p> We want to inform users of this Service that these third parties have access to your Personal Information. The reason is to perform the tasks assigned to them on our behalf. However, they are obligated not to disclose or use the information for any other purpose. </p>
+        <p>
+            <strong>Security</strong>
+        </p>
+        <p> We value your trust in providing us your Personal Information, thus we are striving to use commercially acceptable means of protecting it. But remember that no method of transmission over the internet, or method of electronic storage is 100% secure and reliable, and we cannot guarantee its absolute security. </p>
+        <p>
+            <strong>Links to Other Sites</strong>
+        </p>
+        <p>This Service may contain links to other sites. If you click on a third-party link, you will be directed to that site. Note that these external sites are not operated by us. Therefore, we strongly advise you to review the Privacy Policy of these websites. We have no control over and assume no responsibility for the content, privacy policies, or practices of any third-party sites or services. </p>
+        <p>
+            <strong>Children’s Privacy</strong>
+        </p>
+        <p>These Services do not address anyone under the age of 13. We do not knowingly collect personally identifiable information from children under 13. In the case we discover that a child under 13 has provided us with personal information, we immediately delete this from our servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us so that we will be able to do necessary actions.</p>
+        <p>
+            <strong>Changes to This Privacy Policy</strong>
+        </p>
+        <p> We may update our Privacy Policy from time to time. Thus, you are advised to review this page periodically for any changes. We will notify you of any changes by posting the new Privacy Policy on this page. These changes are effective immediately after they are posted on this page. </p>
+        <p>
+            <strong>Contact Us</strong>
+        </p>
+        <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at hola@bookalo.es.</p>
+    </div>
     <div class="footer-dark">
         <footer>
             <div class="container">
@@ -275,7 +207,7 @@
                 <p class="copyright">Bookalo</p>
             </div>
         </footer>
-    </div><a class="cd-top js-cd-top cd-top--fade-out cd-top--show" style="background-image: url(&quot;{% static 'bookalo/img/cd-top-arrow.svg' %}&quot;);background-color: #e91e63;" href="#0">Top</a>
+    </div>
     <script src="{% static 'bookalo/js/jquery.min.js' %}"></script>
     <script src="{% static 'bookalo/bootstrap/js/bootstrap.min.js' %}"></script>
     <script src="{% static 'bookalo/js/-Filterable-Cards-.js' %}"></script>
@@ -408,4 +340,5 @@
         }
     </script>
 </body>
+
 </html>
