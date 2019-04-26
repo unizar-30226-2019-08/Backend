@@ -57,7 +57,10 @@ def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'Token no recibido.'})
 	else:
 		retorno = usuario_login(token)
 		if retorno == 'Error':
@@ -112,11 +115,9 @@ def GenericProductView(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def GetUserProfile(request, format=None):
-
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
-	user_uid = request.POST.get('uid', 'nothing')		# Se coge de las cookies el uid
+	user_uid = request.GET.get('uid', 'nothing')		# Se coge de las cookies el uid
 	
-
 	if token == 'nothing':
 		# Se retorna a usuario a la pagina anterior
 		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado.'})
@@ -135,7 +136,8 @@ def GetUserProfile(request, format=None):
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
 					products = Producto.objects.filter(vendido_por=fetch_user2)	
 					serializer = ProductoSerializerList(products, many=True, read_only=True)
-
+					return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)}, status=status.HTTP_200_OK)
+					
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
 			except:
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
