@@ -4,7 +4,7 @@ from geopy import Nominatim
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-
+from django.utils.timezone import now as timezone_now
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.SerializerMethodField()
@@ -21,7 +21,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             return location.raw['address']['county']
     
     def get_conectado(self, obj):
-        ahora = datetime.now()
+        ahora = timezone_now()
         ahora = ahora.replace(tzinfo=None)
         ultimaConexion = obj.ultima_conexion.replace(tzinfo=None)
         result = relativedelta(ahora, ultimaConexion)

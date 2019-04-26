@@ -10,9 +10,10 @@
 #######################################################
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from datetime import datetime
+from django.utils.timezone import now as timezone_now
 from enum import Enum
 # 	'''
 # 	Tag :
@@ -20,7 +21,7 @@ from enum import Enum
 #       es_predeterminado   : Booleano que indica si un tag es predeterminado o no
 # 	'''
 
-class Usuario(models.Model):
+class Usuario(AbstractUser):
     uid = models.CharField(
         unique=True,
         max_length=100,
@@ -32,7 +33,7 @@ class Usuario(models.Model):
         default=False,
         verbose_name='Indica si un usuario ha llegado al limite de reportes y se le prohibe el acceso a la aplicacion')
     ultima_conexion = models.DateTimeField(
-        default=datetime.now(),
+        default=timezone_now,
         verbose_name='Ultima conexion del usuario')
     latitud_registro = models.DecimalField(
         null=True,
@@ -51,6 +52,9 @@ class Usuario(models.Model):
         max_length=200,
         verbose_name='URL de la imagen de perfil del usuario')
 
+    def __str__(self):
+        return self.uid + "/" + self.nombre
+
 class Tag(models.Model):
     nombre = models.CharField(
         max_length=50,
@@ -58,6 +62,9 @@ class Tag(models.Model):
     es_predeterminado = models.BooleanField(
         default=False,
         verbose_name='Marca si un tag ha sido creado por los administradores de la aplicacion')
+    
+    def __str__(self):
+        return self.nombre
 
 # 	'''
 # 	EleccionEstadoProducto :
@@ -148,6 +155,9 @@ class Producto(models.Model):
         default=0,
         verbose_name='Likes acumulados por el producto')
 
+    def __str__(self):
+        return self.nombre
+
 # 	'''
 # 	Chat :
 # 		vendedor:	String 	(PK de usuario)
@@ -175,6 +185,9 @@ class Chat(models.Model):
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Producto al que esta asociado el chat')
+    
+    def __str__(self):
+        return str(self.vendedor) + "/" + str(self.comprador)
 
 # 	'''
 # 	Mensaje :
@@ -199,6 +212,9 @@ class Mensaje(models.Model):
         verbose_name='Chat en el que se encuentra el mensaje',
         related_name='chat_del_mensaje')
 
+    def __str__(self):
+        return self.texto
+
 # 	'''
 # 	Report :
 # 		identificador:		Integer
@@ -218,6 +234,9 @@ class Report(models.Model):
     causa = models.CharField(
         max_length=1000,
         verbose_name='Causa del reporte')
+
+    def __str__(self):
+        return str(self.usuario_reportado) + "/" + self.causa
 
 # 	'''
 # 	Validación estrella :
@@ -251,6 +270,9 @@ class ValidacionEstrella(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Producto valorado')
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.usuario_valorado) + "/" + str(self.usuario_que_valora)
 # 	'''
 # 	Contenido Multimedia :
 # 		Contenido:	String (Indica el path del archivo)
@@ -270,4 +292,7 @@ class ContenidoMultimedia(models.Model):
         related_name='contenido_multimedia')
     orden_en_producto = models.IntegerField(
         default=0,
-        verbose_name='Orden del contenido dentro del producto')   
+        verbose_name='Orden del contenido dentro del producto')
+
+    def __str__(self):
+        return self.contenido.url
