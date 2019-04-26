@@ -126,7 +126,6 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				
 				#Si no hay user_uid, es el usuario del token
 				if user_uid == 'nothing':
 					# Devolver favoritos (cuenta del usuario token)
@@ -136,8 +135,7 @@ def GetUserProfile(request, format=None):
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
 					products = Producto.objects.filter(vendido_por=fetch_user2)	
 					serializer = ProductoSerializerList(products, many=True, read_only=True)
-					return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)}, status=status.HTTP_200_OK)
-					
+
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
 			except:
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
