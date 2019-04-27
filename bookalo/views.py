@@ -498,3 +498,20 @@ def CreateProductRender(request, format=None):
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': []})
 	else:
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'productos': []})
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetPendingNotifications(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	if request.method != 'POST' or token == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			result = GetNotifications(token)
+			if result != 'NOT FOUND':
+				return Response({'notifiaciones': result}, status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_404_NOT_FOUND)
+		except:
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

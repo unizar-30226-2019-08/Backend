@@ -109,4 +109,13 @@ def usuario_getvaloraciones(user_uid):
 	return serializer.data
 
 
-
+def GetNotifications(token):
+	try:
+		user = get_user(token)
+		if user != None:
+			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid)
+			return NotificationSerializer(notifications, many=True).data
+		else:
+			return 'NOT FOUND'
+	except:
+		return 'NOT FOUND'
