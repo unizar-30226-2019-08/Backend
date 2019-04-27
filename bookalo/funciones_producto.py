@@ -165,3 +165,11 @@ def LikeProducto(token,productId):
 	else:
 		return 'NOT FOUND'
 
+def GetProduct(product_pk):
+	if product_pk == 'nothing':
+		return 'NOT FOUND'
+	try:
+		product = Producto.objects.get(pk=int(product_pk))
+		return ProductoSerializer(product).data
+	except:
+		return 'NOT FOUND'

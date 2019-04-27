@@ -15,13 +15,14 @@ from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+from django.utils.timezone import now as timezone_now
 
 def get_user(token):
 	try:
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
 		user = Usuario.objects.get(uid=user_uid)
-		user.ultima_conexion = datetime.now()
+		user.ultima_conexion = timezone_now()
 		user.save()
 		return user
 	except:
@@ -29,7 +30,7 @@ def get_user(token):
 
 def update_last_connection(user):
 	try:
-		Usuario.objects.get(uid=user.uid).update(ultima_conexion=datetime.now())
+		Usuario.objects.get(uid=user.uid).update(ultima_conexion=timezone_now())
 		return True
 	except:
 		return False
@@ -40,7 +41,7 @@ def check_user_logged_in(token):
 		user_info = auth.get_account_info(token)
 		user_uid = user_info['users'][0]['localId']
 		user = Usuario.objects.get(uid=user_uid)
-		user.ultima_conexion = datetime.now()
+		user.ultima_conexion = timezone_now()
 		user.save()
 		#auth.refresh(token)
 		return True
@@ -78,8 +79,6 @@ def usuario_login(token):
 		
 		try:
 			user = Usuario.objects.get(uid=user_uid)
-			user.ultima_conexion = datetime.now()
-			user.save(update_fields=['ultima_conexion'])
 
 			if user.esta_baneado:
 				return status.HTTP_401_UNAUTHORIZED
@@ -89,7 +88,7 @@ def usuario_login(token):
 
 		except Usuario.DoesNotExist:
 
-			new_user_data = Usuario.objects.create(uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
+			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
 			update_last_connection(new_user_data)
 			return UserSerializer(new_user_data).data
 

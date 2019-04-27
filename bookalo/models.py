@@ -296,3 +296,18 @@ class ContenidoMultimedia(models.Model):
 
     def __str__(self):
         return self.contenido.url
+
+class NotificacionesPendientes(models.Model):
+    usuario_pendiente = models.ForeignKey(
+        to=Usuario,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name='usuario_pendiente_notificacion',
+        verbose_name='Usuario que tiene la notificación pendiente')
+
+    descripcion_notificacion = models.CharField(
+        max_length=1000,
+        verbose_name='Texto de la notificacion')
+
+    def __str__(self):
+        return str(self.usuario_pendiente)
