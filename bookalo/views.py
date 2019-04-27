@@ -36,9 +36,11 @@ def index(request):
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
 			if check_user_logged_in(token):
+				print(True)
 				user = get_user(token)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,'productos': serializer.data})
 			else:
+				print(False)
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
 		if movil == 'true':
@@ -97,6 +99,7 @@ def GenericProductView(request, format=None):
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
+				print(user)
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos': serializer.data})
 			else:
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': False, 'productos': serializer.data})
@@ -117,6 +120,7 @@ def GenericProductView(request, format=None):
 def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.GET.get('uid', 'nothing')		# Se coge de las cookies el uid
+	print(user_uid)
 	
 	if token == 'nothing':
 		# Se retorna a usuario a la pagina anterior
@@ -129,14 +133,14 @@ def GetUserProfile(request, format=None):
 				#Si no hay user_uid, es el usuario del token
 				if user_uid == 'nothing':
 					# Devolver favoritos (cuenta del usuario token)
-					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid) })
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 				else:
 					# Devolver productos del otro usuario
 					fetch_user2 = Usuario.objects.get(uid=user_uid)
 					products = Producto.objects.filter(vendido_por=fetch_user2)	
 					serializer = ProductoSerializerList(products, many=True, read_only=True)
 
-					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid)})
+					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data ,'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
 			except:
 					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
 		else:
@@ -265,14 +269,23 @@ def CreateProduct(request, format=None):
 	try:
 		logged = check_user_logged_in(token)
 		files = request.FILES.items()
+		print(files)
 		latitud = request.POST.get('latitud', '')
+		print(latitud)
 		longitud = request.POST.get('longitud', '')
+		print(longitud)
 		nombre = request.POST.get('nombre', '')
+		print(nombre)
 		precio = request.POST.get('precio', '')
+		print(precio)
 		estado_producto = request.POST.get('estado_producto', '')
+		print(estado_producto)
 		tipo_envio = request.POST.get('tipo_envio', '')
+		print(tipo_envio)
 		descripcion = request.POST.get('descripcion', '')
+		print(descripcion)
 		tags = request.POST.get('tags', '')
+		print(tags)
 		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 									'descripcion':descripcion,'tags':tags,'token':token}

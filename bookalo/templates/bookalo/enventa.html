@@ -60,22 +60,35 @@
 
 <body>
     <nav class="navbar navbar-light navbar-expand-xl d-xl-flex justify-content-xl-start navigation-clean-search fixed-top" style="background-color: #e91e63;padding: 16px;filter: blur(0px);">
-        <div class="container-fluid"><a class="navbar-brand" style="margin: -7px 0px 0px 0px;padding: 0px;" href="/"><img class="img-fluid" style="width: 97px;height: 25px;" src="{% static 'bookalo/img/bookalo_logo.png' %}"></a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-            <div
-                class="collapse navbar-collapse" id="navcol-1">
+        <div class="container-fluid">
+            <a class="navbar-brand" style="margin: -7px 0px 0px 0px;padding: 0px;" href="/">
+                <img class="img-fluid" style="width: 97px;height: 25px;" src="{% static 'bookalo/img/bookalo_logo.png' %}">
+            </a>
+            <button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1">
+                <span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navcol-1">
                 <ul class="nav navbar-nav">
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;font-size: 16px;font-weight: bold;" href="/">Comprar</a></li>
-                </ul><button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Ver modal</button>
+                </ul>
+                <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Ver modal</button>
                 <form
                     class="form-inline mr-auto" target="_self">
                     <p></p>
-                    </form>
-                    <ul class="nav navbar-nav">
-                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
-                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
-                        <li class="nav-item" role="presentation"><a class="nav-link" style="color: #000000;padding: 8px 15px;" href="#">Cerrar sesión</a></li>
-                    </ul><a class="btn btn-light action-button" role="button" style="background-color: rgb(194,194,194);padding: 8px 15px;" data-toggle="modal" data-target="#modalLogin" href="#">Iniciar Sesion</a><a class="btn btn-link" role="button" id="menu-toggle"
-                        style="color: #e91e63;" href="#menu-toggle"><i class="fa fa-bars" style="color: rgb(0,0,0);"></i></a></div>
+                </form>
+                <ul class="nav navbar-nav">
+                    {% if loggedin %}
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="" onclick="cerrarSesion()">Cerrar sesión</a></li>
+                    {% endif %}
+                </ul>
+                {% if loggedin %}
+                <a class="btn btn-light action-button" role="button" id="menu-toggle" style="background-color: rgb(194,194,194);padding: 8px 15px;" href="#menu-toggle">Tu perfil</a>
+                {% else %}
+                <a class="btn btn-light action-button" role="button" style="background-color: rgb(194,194,194);padding: 8px 15px;" data-toggle="modal" data-target="#modalLogin" href="#">Iniciar Sesion</a>
+                {% endif %}
+            </div>
         </div>
     </nav>
     <div class="modal fade" role="dialog" tabindex="-1" id="modalNotif">
@@ -229,10 +242,17 @@
                 <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
                     <div class="card border-dark" style="border-radius:20px">
                         <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                            <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5><span id="foe" style="cursor:pointer"><i class="fa fa-heart"></i></span></div><img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                            <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5>
+                            <span onclick="deleteProduct('{{ p.pk }}')" id="{{ p.pk }}Icon" style="cursor:pointer">
+                                <i class="fa fa-trash fa-lg"></i>
+                            </span>
+                        </div>
+                        <img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
                         <div class="card-body">
                             <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
+                                <h4 style="width: 60%;">
+                                    <strong>{{ p.precio }}€</strong>
+                                </h4>
                                 <h5 class="text-right" style="width: 40%;">1.500m</h5>
                             </div>
                             <p class="card-text">{{ p.descripcion }}<br></p>
@@ -241,7 +261,7 @@
                             <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
                                 <i class="fa fa-star" style="width: 20;"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
                             </div>
-                            <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
+                            <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view/?id={{ p.pk }}"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
                         </div>
                     </div>
                 </div>
@@ -405,6 +425,13 @@
                 var credential = error.credential;
                 // ...
             });
+        }
+    </script>
+    <script>
+        function deleteProduct(id){
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/delete_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
+            document.location.reload(true);
         }
     </script>
 </body>
