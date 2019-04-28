@@ -7,7 +7,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 urlpatterns = [
     re_path(r'^$', views.index),
     path(r'api/login', views.Login),
-    re_path(r'/generic_product_view', views.GenericProductView),
+    re_path(r'generic_product_view', views.GenericProductView),
     path(r'api/get_user_profile', views.GetUserProfile),
     path(r'api/filter_product', views.FilterProduct),
     path(r'api/get_user_products', views.GetUserProducts),
@@ -17,7 +17,8 @@ urlpatterns = [
     path(r'api/delete_product', views.DeleteProduct),
     path(r'api/like_product', views.LikeProduct),
     path(r'api/get_chats', views.GetChats),
-    path(r'/privacypolicy', views.PrivacyPolicy),
-    re_path(r'/create_product', views.CreateProductRender),
+    path(r'privacypolicy', views.PrivacyPolicy),
+    re_path(r'create_product', views.CreateProductRender),
     path(r'api/get_pending_notifications', views.GetPendingNotifications),
+    re_path(r'logout', views.Logout),
 ]

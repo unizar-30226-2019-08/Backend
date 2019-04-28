@@ -515,3 +515,11 @@ def GetPendingNotifications(request, format=None):
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		except:
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+#Funcion especifica para web para gestionar el logout
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def Logout(request, format=None):
+	for key in request.session.keys():
+		del request.session[key]

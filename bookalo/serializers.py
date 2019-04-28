@@ -11,7 +11,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     conectado = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil')
+        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones')
     def get_ciudad(self, obj):
         geolocator = Nominatim(user_agent="bookalo")
         location = geolocator.reverse(str(obj.latitud_registro) + ',' + str(obj.longitud_registro))
