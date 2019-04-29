@@ -1,8 +1,8 @@
 #!/bin/bash
 
-eval "$(ssh-agent -s)" # Start ssh-agent cache
-chmod 600 .travis/bookalo_key # Allow read access to the private key
-ssh-add .travis/bookalo_key # Add the private key to SSH
+eval "$(ssh-agent -s)" 
+chmod 600 .travis/bookalo_key 
+ssh-add .travis/bookalo_key 
 
 ssh roberta@bookalo.es "sudo systemctl stop uwsgi"
 
