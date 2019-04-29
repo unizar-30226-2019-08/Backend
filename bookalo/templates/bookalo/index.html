@@ -426,6 +426,7 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
+                    alert(idToken)
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
                     document.location.reload(true);
                 }).catch(function(error) {
