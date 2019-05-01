@@ -427,7 +427,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                    document.location.reload(true);
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1000);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
