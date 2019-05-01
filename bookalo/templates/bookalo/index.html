@@ -257,7 +257,7 @@
                                     <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-up"></i></span>
                                     {% endif %}
                                 </div>
-                                <img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url.url }}">
+                                <img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
                                 <div class="card-body">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
                                         <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>

@@ -128,7 +128,7 @@ def CreacionProducto(biblio):
 	producto.tiene_tags.set(tag_pk)
 	i = 0
 	for file,created in files:
-		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
+		multi = ContenidoMultimedia(contenido=created, producto=producto, orden_en_producto=i)
 		multi.save()
 		i = i + 1
 	return 'Created'
