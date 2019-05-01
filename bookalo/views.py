@@ -38,7 +38,7 @@ def index(request):
 			if check_user_logged_in(token):
 				user = get_user(token)
 				serializer_favs = ProductosFavoritos(token)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos_cargados': serializer.data})
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
 			else:
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
@@ -47,9 +47,9 @@ def index(request):
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos_cargados': []})
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': []})
 			else:
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos_cargados': []})
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
