@@ -36,12 +36,10 @@ def index(request):
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
 			if check_user_logged_in(token):
-				print(True)
 				user = get_user(token)
 				serializer_favs = ProductosFavoritos(token)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos_cargados': serializer.data})
 			else:
-				print(False)
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
 		if movil == 'true':
