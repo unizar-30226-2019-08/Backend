@@ -79,7 +79,7 @@
                 <ul class="nav navbar-nav">
                     {% if loggedin %}
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/create_product">Subir producto</a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="" onclick="cerrarSesion()">Cerrar sesión</a></li>
                     {% endif %}
                 </ul>
@@ -144,15 +144,15 @@
             </div>
         </div>
     </div>
-    <div id="wrapper" class="toggled" style="margin: -3px 0px 0px 0px;color: rgb(40, 45, 50);">
+    <div id="wrapper" class="toggled" style="color: rgb(40, 45, 50);margin: -3px 0px 0px 0px;">
         <div class="text-left d-lg-flex" id="sidebar-wrapper" style="background-color: rgb(40,45,50);margin: 0px 0px 50px -250px;">
-            <div class="col" style="padding: 0px;margin: 0px;color: rgb(40, 45, 50);">
-                <div class="row" style="padding: 0px;margin: 0px;">
-                    <div class="col text-center" style="padding: 0px;"><a href="/api/get_user_profile"><img style="width: 100%;height: 160px;bottom: 20px;" src="{% static 'bookalo/img/Depilacion-Hombre.jpg' %}"></a></div>
+            <div class="col" style="padding: 0px;color: rgb(40, 45, 50);">
+                <div class="row" style="padding: 0px;">
+                    <div class="col text-center" style="padding: 0px;"><a href="/api/get_user_profile"><img style="width: 100%;height: 160px;bottom: 20px;" src="{{ informacion_basica.imagen_perfil }}"></a></div>
                 </div>
                 <div class="row" style="width: 100%;margin: 25px 0px 0px 10px;">
                     <div class="col" style="padding: 0px;">
-                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">Juan López</h2>
+                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">{{ informacion_basica.nombre }}</h2>
                     </div>
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
@@ -171,78 +171,32 @@
                 <div class="row" style="margin: 0px;width: 100%;">
                     <div class="col" style="width: 100%;padding: 0px;margin: 0px 0px 55px 0px;">
                         <div role="tablist" id="accordion-1" style="width: 100%;height: 100%;">
+                            {% for p in informacion_basica.productos_favoritos %}
                             <div class="card" style="margin: 2px 0px 0px 0px;">
                                 <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-1" href="div#accordion-1 .item-1" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Lengua castellana y literatura</a></h5>
+                                    <h5 class="mb-0">
+                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.nombre }}</a>
+                                    </h5>
                                 </div>
-                                <div class="collapse item-1 text-center" role="tabpanel" data-parent="#accordion-1">
+                                <div class="collapse item-{{ forloop.counter }} text-center" role="tabpanel" data-parent="#accordion-1">
                                     <div class="card-body">
                                         <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
+                                            <div class="col" style="padding: 0px;">
+                                                <img style="width: 100%;height: 102%;" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                            </div>
                                             <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <p style="margin: 0px 0px 0px;">{{ p.num_likes }} likes</p>
+                                                <p>
+                                                    <strong>{{ p.precio }} €</strong>
+                                                </p>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.pk }}">Ver más</a>
+                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="div#accordion-1 .item-2" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Matemáticas 1ESO</a></h5>
-                                </div>
-                                <div class="collapse item-2 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-3" href="div#accordion-1 .item-3" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Acuarelas</a></h5>
-                                </div>
-                                <div class="collapse item-3 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-4" href="div#accordion-1 .item-4" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Workbook Inglés 2ESO</a></h5>
-                                </div>
-                                <div class="collapse item-4 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -253,6 +207,9 @@
         <div class="col d-lg-flex d-xl-flex align-self-center justify-content-lg-center justify-content-xl-center">
             <div class="carousel slide d-lg-flex d-xl-flex" data-ride="carousel" id="carousel-1" style="height: 450px;width: 75%;">
                 <div class="carousel-inner" role="listbox">
+                    {% for elemento in producto.contenido_multimedia %}
+                        <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{{ elemento.contenido_url }}" alt="Slide Image" style="height: 450px;"></div>
+                    {% endfor %}
                     <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}" alt="Slide Image" style="height: 450px;"></div>
                     <div class="carousel-item active" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/beautiful_winter_scene-wallpaper-1440x900.jpg' %}" alt="Slide Image"></div>
                     <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/road_to_death_valley-wallpaper-1440x900.jpg' %}" alt="Slide Image" style="height: 450px;"></div>
@@ -271,12 +228,12 @@
         <div class="col">
             <div class="row" style="margin: 20px 0px 0px 0px;font-family: Antic, sans-serif;">
                 <div class="col" style="padding: 0px 25px;">
-                    <h1>Lengua castellana y literatura</h1>
+                    <h1>{{ producto.nombre }}</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
-                    <p style="padding: 0px 15px;font-size: 24px;"><strong>500€</strong></p>
+                    <p style="padding: 0px 15px;font-size: 24px;"><strong>{{ producto.precio }}€</strong></p>
                 </div>
             </div>
             <div class="row">
@@ -285,17 +242,16 @@
                 </div>
             </div>
             <div class="row" style="margin: 0px;">
-                <div class="col-xl-2 d-xl-flex justify-content-xl-end" style="padding: 0px 0px;width: 120px;"><img style="width: 100px;height: 100px;margin: 0px 0px 0px 40px;" src="{% static 'bookalo/img/th-02.jpg' %}"></div>
+                <div class="col-xl-2 d-xl-flex justify-content-xl-end" style="padding: 0px 0px;width: 120px;"><img style="width: 100px;height: 100px;margin: 0px 0px 0px 40px;" src="{{ producto.vendido_por.imagen_perfil }}"></div>
                 <div class="col" style="padding: 0px;">
-                    <h4 style="padding: 0px 13px;font-family: Antic, sans-serif;margin: 15px 0px 0px 15px;">Lorena López</h4>
+                    <h4 style="padding: 0px 13px;font-family: Antic, sans-serif;margin: 15px 0px 0px 15px;">{{ producto.vendido_por.nombre }}</h4>
                     <div class="d-xl-flex" style="margin: 13px 0px 0px 28px;"><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star fa-star-o"
                             style="font-size:25px"></i></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
-                    <p style="padding: 0px 15px;margin: 15px 0px 16px 0px;font-family: Antic, sans-serif;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tortor <br>tortor, vehicula ut leo ut, elementum efficitur massa. Suspendisse non <br>iaculis risus. Cras eget sapien non risus convallis vehicula. Sed id <br>gravida quam,
-                        quis dignissim sapien. Praesent vestibulum turpis pretium <br>lacinia viverra. Aliquam venenatis ex mi, id tincidunt lacus condimentum<br> dictum.<br></p>
+                    <p style="padding: 0px 15px;margin: 15px 0px 16px 0px;font-family: Antic, sans-serif;">{{ producto.descripcion }}</p>
                 </div>
             </div>
             <div class="row">
@@ -326,9 +282,9 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col" style="padding: 0px 45px;">
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Nuevo<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Sin envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: 50<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
+                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">{{ producto.estado_producto }}<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
+                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">{{ producto.tipo_envio }}<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
+                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
                 </div>
             </div>
             <div class="row" style="padding: 0px;margin: 20px 0px 0px 0px;">

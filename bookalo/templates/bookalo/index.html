@@ -79,7 +79,7 @@
                 <ul class="nav navbar-nav">
                     {% if loggedin %}
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/create_product">Subir producto</a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="" onclick="cerrarSesion()">Cerrar sesión</a></li>
                     {% endif %}
                 </ul>
@@ -129,7 +129,7 @@
                                     <div class="card-body">
                                         <div class="row" style="margin: -19px -20px;">
                                             <div class="col" style="padding: 0px;">
-                                                <img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}">
+                                                <img style="width: 100%;height: 102%;" src="{{ p.contenido_multimedia.0.contenido_url }}">
                                             </div>
                                             <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
                                                 <p style="margin: 0px 0px 0px;">{{ p.num_likes }} likes</p>
@@ -137,7 +137,7 @@
                                                     <strong>{{ p.precio }} €</strong>
                                                 </p>
                                                 <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.pk }}">Ver más</a>
-                                                <button class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -257,7 +257,7 @@
                                     <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-up"></i></span>
                                     {% endif %}
                                 </div>
-                                <img class="img-fluid card-img w-100 d-block rounded-0" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.contenido_multimedia.0.contenido_url }}">
                                 <div class="card-body">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
                                         <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
@@ -326,7 +326,7 @@
                             <li><a href="#">Chat integrado</a></li>
                             <li><a href="#">Productos favoritos</a></li>
                             <li><a href="#">Valoración de usuarios</a></li>
-                            <li><a href="/api/privacypolicy">Política de privacidad</a></li>
+                            <li><a href="/privacypolicy">Política de privacidad</a></li>
                         </ul>
                     </div>
                     <div class="col-sm-6 col-md-3 col-xl-4 item">
