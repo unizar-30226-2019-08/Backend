@@ -16,7 +16,7 @@ from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 
-def CrearReport(reporteduserUid,comment):
+def CrearReport(reporteduserUid, cause, comment):
 	reporteduser = Usuario.objects.get(uid=reporteduserUid)
-	reporte = Report.objects.create(usuario_reportado=reporteduser, causa=comment)
+	reporte = Report.objects.create(usuario_reportado=reporteduser, causa=cause, comentario=comment)
 	return reporte

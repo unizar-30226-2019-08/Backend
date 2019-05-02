@@ -103,7 +103,7 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
     usuario_reportado = UserSerializer(read_only=True)
     class Meta:
         model = Report
-        fields = ('pk','usuario_reportado', 'causa')
+        fields = ('pk','usuario_reportado', 'causa', 'comentario')
 
 
 class ChatSerializer(serializers.HyperlinkedModelSerializer):

@@ -330,8 +330,9 @@ def CreateReport(request, format=None):
 	else:
 		token = request.session.get('token', 'nothing')
 	reporteduserUid = request.POST.get('uid', 'nothing')
+	cause = request.POST.get('causa', 'nothing')
 	comment = request.POST.get('comentario', 'nothing')
-	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing':
+	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing' or cause == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
@@ -339,7 +340,7 @@ def CreateReport(request, format=None):
 	else:
 		try:
 			check_user_logged_in(token)
-			CrearReport(reporteduserUid, comment)
+			CrearReport(reporteduserUid, cause, comment)
 			if movil == 'true':
 				return Response(status=status.HTTP_201_CREATED)
 			else:
