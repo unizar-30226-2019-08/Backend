@@ -163,7 +163,7 @@
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
                     <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
-                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">5<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
                     </div>
                 </div>
                 <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
@@ -281,33 +281,17 @@
     <div style="height: 200px;overflow-y: auto;margin: 20px 0px 0px 0px;">
         <div class="row" style="margin: 0px;">
             <div class="col">
+                {% for valoracion in valoraciones %}
                 <div class="card" style="margin: 0px 0px 15px 0px;">
                     <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró<button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;Ceras Manley de múltiples colores&quot;</button></h6>
-                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">5<img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}"></h1>
-                        <h6 class="text-muted card-subtitle mb-2">19 de septiembre de 2019</h6>
-                        <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
+                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ valoracion.usuario_que_valora.nombre }}<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ valoracion.usuario_que_valora.imagen_perfil }}"></h4>
+                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró<button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;{{ valoracion.producto_asociado.nombre }}&quot;</button></h6>
+                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}<img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}"></h1>
+                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|date:"D d M Y" }}</h6>
+                        <p class="card-text">{{ valoracion.comentario }}</p>
                     </div>
                 </div>
-                <div class="card" style="margin: 0px 0px 15px 0px;">
-                    <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró<button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;Ceras Manley de múltiples colores&quot;</button></h6>
-                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">5<img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}"></h1>
-                        <h6 class="text-muted card-subtitle mb-2">19 de septiembre de 2019</h6>
-                        <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-                    </div>
-                </div>
-                <div class="card" style="margin: 0px 0px 15px 0px;">
-                    <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró<button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;Ceras Manley de múltiples colores&quot;</button></h6>
-                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">5<img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}"></h1>
-                        <h6 class="text-muted card-subtitle mb-2">19 de septiembre de 2019</h6>
-                        <p class="card-text">Nullam id dolor id nibh ultricies vehicula ut id elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus.</p>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
