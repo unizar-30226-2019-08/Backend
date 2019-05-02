@@ -107,7 +107,7 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a Joseph Mancuso</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                        <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ producto.vendido_por.nombre }}</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
                     <div class="modal-body">
                         <p style="font-family: Antic, sans-serif;">¡Vaya! Lamentamos tu mala experiencia en Bookalo. Para evitar que vuelva a ocurrir, por favor, indica el motivo del reporte.</p>
                         <h4 style="font-family: Antic, sans-serif;">Selecciona un motivo:</h4>
@@ -157,7 +157,7 @@
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
                     <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
-                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">5<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
                     </div>
                 </div>
                 <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
@@ -242,8 +242,18 @@
                 <div class="col-xl-2 d-xl-flex justify-content-xl-end" style="padding: 0px 0px;width: 120px;"><img style="width: 100px;height: 100px;margin: 0px 0px 0px 40px;" src="{{ producto.vendido_por.imagen_perfil }}"></div>
                 <div class="col" style="padding: 0px;">
                     <h4 style="padding: 0px 13px;font-family: Antic, sans-serif;margin: 15px 0px 0px 15px;">{{ producto.vendido_por.nombre }}</h4>
-                    <div class="d-xl-flex" style="margin: 13px 0px 0px 28px;"><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star fa-star-o"
-                            style="font-size:25px"></i></div>
+                    <div class="d-xl-flex" style="margin: 13px 0px 0px 28px;">
+                        {% if producto.vendido_por.media_valoraciones == 1 %}<i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 2 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 3 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 4 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 5 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 6 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 7 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 8 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 9 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i>
+                        {% elif producto.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i>{% endif %}
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -270,9 +280,9 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col" style="padding: 0px 45px;">
-                    {% if producto.estado_producto == "nuevo" %}
+                    {% if producto.estado_producto == "Nuevo" %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Nuevo<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
-                    {% elif producto.estado_producto == "usado" %}
+                    {% elif producto.estado_producto == "Usado" %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Usado</p>
                     {% else %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Semi-nuevo</p>
