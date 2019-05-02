@@ -218,8 +218,12 @@ class Report(models.Model):
         verbose_name='Usuario que ha sido reportado',
         related_name='usuario_reportado')
     causa = models.CharField(
-        max_length=1000,
+        max_length=200,
         verbose_name='Causa del reporte')
+
+    comentario = models.CharField(
+        max_length=1000,
+        verbose_name='Comentario acerca del reporte')
 
     def __str__(self):
         return str(self.usuario_reportado) + "/" + self.causa
