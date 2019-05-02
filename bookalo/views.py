@@ -87,7 +87,7 @@ def Login(request, format=None):
 @csrf_exempt
 def GenericProductView(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	product_pk = request.GET.get('producto', 'nothing')
+	product_pk = request.GET.get('id', 'nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -101,9 +101,9 @@ def GenericProductView(request, format=None):
 				if check_user_logged_in(token):
 					serializer_favs = ProductosFavoritos(token)
 					user = get_user(token)
-					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer})
+					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
 				else:
-					return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': serializer})
+					return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': serializer.data})
 		else:
 			if movil == 'true':
 				return Response({'producto': serializer.data}, status=status.HTTP_200_OK)
@@ -111,7 +111,6 @@ def GenericProductView(request, format=None):
 				if check_user_logged_in(token):
 					serializer_favs = ProductosFavoritos(token)
 					user = get_user(token)
-					print(user)
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
 				else:
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': False, 'producto': serializer.data})
@@ -493,6 +492,7 @@ def CreateProductRender(request, format=None):
 	if logged:
 		serializer_favs = ProductosFavoritos(token)
 		user = get_user(token)
+		print(logged)
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': []})
 	else:
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'productos': []})
@@ -519,5 +519,5 @@ def GetPendingNotifications(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def Logout(request, format=None):
-	for key in request.session.keys():
-		del request.session[key]
+	del request.session['token']
+	request.session.modified = True
