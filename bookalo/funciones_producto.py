@@ -62,22 +62,31 @@ def FiltradoProducto(biblio):
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
 	search = biblio['busqueda']
-	preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
-	'hacia','hasta','para','por','segun','sin','so','sobre','tras']
-	products_search = Producto.objects.none()
-	for word in search.split():
-		if word not in preposiciones:
-			productos_palabra = Producto.objects.filter(nombre__contains=word)
-			products_search = products_search | productos_palabra
-	products_search.distinct()
+	if search != 'nothing' or search != '':
+		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
+		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
+		products_search = []
+		for word in search.split():
+			print(word)
+			if word not in preposiciones:
+				productos_palabra = Producto.objects.filter(nombre__contains=word)
+				for producto in productos_palabra:
+					products_search = products_search + [producto]
+				print(productos_palabra)
+				print(products_search)
+	print('Me ha llegado la peticion, la biblioteca es:')
+	print(biblio)
 
-	if tags == '' or user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
+	if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 		return 'Bad request'
-
-	lista_tags = [x.strip() for x in tags.split(',')]
-	tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
-	products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
-
+	if tags != '':
+		lista_tags = [x.strip() for x in tags.split(',')]
+		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
+		print(tag_queryset)
+		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+	else:
+		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+	print(products)
 	filtered_products = []
 	for product in products:
 		print(product.nombre)
@@ -93,7 +102,10 @@ def CreacionProducto(biblio):
 	token = biblio['token']
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']	
-	user = Usuario.objects.get(uid=user_uid)
+	try:
+		user = Usuario.objects.get(uid=user_uid)
+	except:
+		return 'Not found'
 	if user == None:
 		return 'Not found'
 	#Get all the required parameters for the product
@@ -108,34 +120,31 @@ def CreacionProducto(biblio):
 	tags = biblio['tags']
 	#Check that the request is correct
 	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
-		print('Bad request')
 		return 'Bad request'
-	tag_pk = []
-	estado_producto = EleccionEstadoProducto(estado_producto)
 	lista_tags = [x.strip() for x in tags.split(',')]
-	for tag in lista_tags:
-		tag_obj,created = Tag.objects.get_or_create(nombre=tag)
-		tag_pk.append(tag_obj.pk)
-	print(user)
-	print(Decimal(latitud))
-	print(Decimal(longitud))
-	print(nombre)
-	print(Decimal(precio))
-	print(estado_producto)
-	print(EleccionEstadoVenta.en_venta)
-	print(tipo_envio)
-	print(descripcion)
+	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
+	if tipo_envio == 'True':
+		tipo_envio = True
+	else:
+		tipo_envio = False
+	#Selecciona el estado en el que se encuentra el producto, entre Nuevo, Seminuevo o Usado
+	try:
+		estado_producto = EleccionEstadoProducto[estado_producto]
+	except:
+		return 'Bad request'
 	producto = Producto(vendido_por=user, 
 						latitud=Decimal(latitud), 
 						longitud=Decimal(longitud), 
 						nombre=nombre, 
 						precio=Decimal(precio), 
 						estado_producto=estado_producto, 
-						estado_venta=EleccionEstadoVenta.en_venta,
+						estado_venta=True,
 						tipo_envio=tipo_envio,
 						descripcion=descripcion)
 	producto.save()
-	producto.tiene_tags.set(tag_pk)
+	producto = Producto.objects.get(pk=producto.pk)
+	for tag in lista_tags:
+		producto.tiene_tags.get_or_create(nombre=tag)
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)

@@ -73,17 +73,8 @@ class Tag(models.Model):
 # 	'''
 class EleccionEstadoProducto(Enum):
 	Nuevo = "Nuevo"
-	Semi_nuevo = "Semi-nuevo"
+	Semi_nuevo = "Seminuevo"
 	Usado = "Usado"
-
-# 	'''
-# 	EleccionEstadoVenta :
-# 		tag = valor : 	Enumeración de los distintos posibles estados de una
-#						venta.
-# 	'''
-class EleccionEstadoVenta(Enum):
-	En_venta = "En venta"
-	Vendido = "Vendido"
 
 # 	'''
 # 	Producto :
@@ -124,16 +115,15 @@ class Producto(models.Model):
         max_length=50,
 		choices=[(tag.name, tag.value) for tag in EleccionEstadoProducto],
         verbose_name='Estado en el que se encuentra el producto: Nuevo, Semi-nuevo, etc')
-    estado_venta = models.CharField(
-        max_length=50,
-		choices=[(tag.name, tag.value) for tag in EleccionEstadoVenta],
-        verbose_name='Estado en el que se encuentra la venta')
+    estado_venta = models.BooleanField(
+        default=True,
+        verbose_name='Marca si el producto está en venta o no. Por defecto se considera que está en venta')
     num_acciones = models.IntegerField(
         default=0,
         verbose_name='Marca si uno o los dos usuarios han confirmado el estado de venta')
-    tipo_envio = models.CharField(
-        max_length=50,
-        verbose_name='Si el usuario que ha colgado el producto esta dispuestos a enviar a domicilio o no')
+    tipo_envio = models.BooleanField(
+        default=False,
+        verbose_name='Marca si el producto puede ser enviado a domicilio o no')
     descripcion = models.CharField(
         max_length=1000,
         verbose_name='Descripcion asociada al producto')
@@ -264,6 +254,7 @@ class ValidacionEstrella(models.Model):
         to=Producto,
         null=False,
         on_delete=models.CASCADE,
+        related_name='producto_asociado',
         verbose_name='Producto valorado')
     timestamp = models.DateTimeField(auto_now_add=True)
 
