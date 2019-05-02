@@ -182,6 +182,7 @@ def FilterProduct(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 		try:
+			print('Logged in, attempting')
 			tags = request.POST.get('tags', '')
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
@@ -192,14 +193,15 @@ def FilterProduct(request, format=None):
 			search = request.POST.get('busqueda', 'nothing')
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
+			print(biblioteca)
 			serializer = FiltradoProducto(biblioteca)
 			if logged:
-				serializer_favs = ProductosFavoritos(token)
 				user = get_user(token)
 				if serializer == 'Bad request':
 					if movil == 'true':
 						return Response(status=status.HTTP_400_BAD_REQUEST)
 					else:
+						serializer_favs = ProductosFavoritos(token)
 						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,  'productos': []})
 				if movil == 'true':
 					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
