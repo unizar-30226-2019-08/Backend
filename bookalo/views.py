@@ -285,24 +285,15 @@ def CreateProduct(request, format=None):
 			return render(request, 'bookalo/index.html', {'loggedin': False})
 	try:
 		logged = check_user_logged_in(token)
-		files = request.FILES.items()
-		print(files)
-		latitud = request.POST.get('latitud', '')
-		print(latitud)
-		longitud = request.POST.get('longitud', '')
-		print(longitud)
+		files = request.FILES.getlist('files')
+		latitud = request.POST.get('latitud', '15')
+		longitud = request.POST.get('longitud', '15')
 		nombre = request.POST.get('nombre', '')
-		print(nombre)
 		precio = request.POST.get('precio', '')
-		print(precio)
 		estado_producto = request.POST.get('estado_producto', '')
-		print(estado_producto)
 		tipo_envio = request.POST.get('tipo_envio', '')
-		print(tipo_envio)
 		descripcion = request.POST.get('descripcion', '')
-		print(descripcion)
 		tags = request.POST.get('tags', '')
-		print(tags)
 		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 									'descripcion':descripcion,'tags':tags,'token':token}

@@ -72,12 +72,9 @@ class Tag(models.Model):
 #						producto.
 # 	'''
 class EleccionEstadoProducto(Enum):
-	nuevo = "Nuevo"
-	semi_nuevo = "Semi-nuevo"
-	usado = "Usado"
-	antiguo = "Antigüedad"
-	roto = "Roto"
-	desgastado = "Desgastado"
+	Nuevo = "Nuevo"
+	Semi_nuevo = "Semi-nuevo"
+	Usado = "Usado"
 
 # 	'''
 # 	EleccionEstadoVenta :
@@ -85,9 +82,8 @@ class EleccionEstadoProducto(Enum):
 #						venta.
 # 	'''
 class EleccionEstadoVenta(Enum):
-	en_venta = "En venta"
-	reservado = "Reservado"
-	vendido = "Vendido"
+	En_venta = "En venta"
+	Vendido = "Vendido"
 
 # 	'''
 # 	Producto :
