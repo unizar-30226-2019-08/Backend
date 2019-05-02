@@ -187,10 +187,10 @@
             </div>
         </div>
     </div>
-    <form action="/api/create_product" method = "post">
+    <form enctype="multipart/form-data" action="/api/create_product" method = "post">
     {% csrf_token %}
     <div class="row" style="padding: 20px 30px;">
-        <div class="col"><input type="file" id="input-b3" class="file" data-preview-file-type="text" name="input-b3[]" multiple="" data-show-caption="true" data-msg-placeholder="Seleccione las imágenes" data-show-upload="false" required="" accept="image/*"></div>
+        <div class="col"><input type="file" id="files" class="file" multiple="" data-preview-file-type="text" name="files" multiple data-show-caption="true" data-msg-placeholder="Seleccione las imágenes" data-show-upload="false" required="" accept="image/*"></div>
     </div>
     <div class="row" style="padding: 0px 15px;margin: 0px 0px 0px 0px;">
         <div class="col">

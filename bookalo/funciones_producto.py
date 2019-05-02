@@ -108,6 +108,7 @@ def CreacionProducto(biblio):
 	tags = biblio['tags']
 	#Check that the request is correct
 	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
+		print('Bad request')
 		return 'Bad request'
 	tag_pk = []
 	estado_producto = EleccionEstadoProducto(estado_producto)
@@ -115,6 +116,15 @@ def CreacionProducto(biblio):
 	for tag in lista_tags:
 		tag_obj,created = Tag.objects.get_or_create(nombre=tag)
 		tag_pk.append(tag_obj.pk)
+	print(user)
+	print(Decimal(latitud))
+	print(Decimal(longitud))
+	print(nombre)
+	print(Decimal(precio))
+	print(estado_producto)
+	print(EleccionEstadoVenta.en_venta)
+	print(tipo_envio)
+	print(descripcion)
 	producto = Producto(vendido_por=user, 
 						latitud=Decimal(latitud), 
 						longitud=Decimal(longitud), 
@@ -127,8 +137,8 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto.tiene_tags.set(tag_pk)
 	i = 0
-	for file,created in files:
-		multi = ContenidoMultimedia(contenido=created, producto=producto, orden_en_producto=i)
+	for file in files:
+		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
 		multi.save()
 		i = i + 1
 	return 'Created'
@@ -170,6 +180,6 @@ def GetProduct(product_pk):
 		return 'NOT FOUND'
 	try:
 		product = Producto.objects.get(pk=int(product_pk))
-		return ProductoSerializer(product).data
+		return ProductoSerializerList(product)
 	except:
 		return 'NOT FOUND'

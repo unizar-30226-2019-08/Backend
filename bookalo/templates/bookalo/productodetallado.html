@@ -208,18 +208,15 @@
             <div class="carousel slide d-lg-flex d-xl-flex" data-ride="carousel" id="carousel-1" style="height: 450px;width: 75%;">
                 <div class="carousel-inner" role="listbox">
                     {% for elemento in producto.contenido_multimedia %}
-                        <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{{ elemento.contenido_url }}" alt="Slide Image" style="height: 450px;"></div>
+                        <div class="carousel-item {% if forloop.first %} active {% endif %}" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{{ elemento.contenido_url }}" alt="Slide Image" style="height: 450px;"></div>
                     {% endfor %}
-                    <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}" alt="Slide Image" style="height: 450px;"></div>
-                    <div class="carousel-item active" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/beautiful_winter_scene-wallpaper-1440x900.jpg' %}" alt="Slide Image"></div>
-                    <div class="carousel-item" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{% static 'bookalo/img/road_to_death_valley-wallpaper-1440x900.jpg' %}" alt="Slide Image" style="height: 450px;"></div>
                 </div>
                 <div><a class="carousel-control-prev" href="#carousel-1" role="button" data-slide="prev"><span class="carousel-control-prev-icon" style="color: rgb(0,0,0);"></span><span class="sr-only" style="color: rgb(0,0,0);">Previous</span></a><a class="carousel-control-next"
                         href="#carousel-1" role="button" data-slide="next"><span class="carousel-control-next-icon"></span><span class="sr-only">Next</span></a></div>
                 <ol class="carousel-indicators">
-                    <li data-target="#carousel-1" data-slide-to="0"></li>
-                    <li data-target="#carousel-1" data-slide-to="1" class="active"></li>
-                    <li data-target="#carousel-1" data-slide-to="2"></li>
+                    {% for elemento in producto.contenido_multimedia %}
+                        <li data-target="#carousel-1" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %} class="active" {% endif %}></li>
+                    {% endfor %}
                 </ol>
             </div>
         </div>
@@ -258,18 +255,9 @@
                 <div class="col" style="padding: 0px 25px;">
                     <h3 style="padding: 0px 15px;margin: 15px 0px 25px 0px;font-family: Antic, sans-serif;">Etiquetas del producto</h3>
                     <div style="margin: 15px 0px 16px 0px;padding: 0px 15px;">
-                        <div class="row">
-                            <div class="col"><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;"
-                                    type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary"
-                                    style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;"
-                                    type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button></div>
-                        </div>
-                        <div class="row">
-                            <div class="col"><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;"
-                                    type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary"
-                                    style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;"
-                                    type="button">Button</button><button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">Button</button></div>
-                        </div>
+                        {% for tag in producto.tiene_tags %}
+                            <button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">{{ tag.nombre }}</button>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -282,7 +270,13 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col" style="padding: 0px 45px;">
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">{{ producto.estado_producto }}<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
+                    {% if producto.estado_producto == "nuevo" %}
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Nuevo<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
+                    {% elif producto.estado_producto == "usado" %}
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Usado</p>
+                    {% else %}
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Semi-nuevo</p>
+                    {% endif %}
                     <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">{{ producto.tipo_envio }}<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
                     <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
                 </div>
@@ -294,7 +288,7 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col text-center" style="padding: 0px;margin: 10px 0px 0px 0px;">
-                    <button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button"><i class="fa fa-heart" style="color:#ffffff;font-size:30px;"></i></button>
+                    <button onclick="anadirFavorito('{{ producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button"><i id="{{ producto.pk }}Icon" class="fa fa-thumbs-up" style="color:#ffffff;font-size:30px;"></i></button>
                     <a class="btn btn-link btn-circle" role="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 14px 0px 0px;border-color: transparent;" href="/api/get_chats"> <i class="fa fa-wechat d-xl-flex justify-content-xl-center align-items-xl-center" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i></a>
                     <button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 10px 0px 0px;"
                             type="button"><i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i></button>
@@ -462,6 +456,18 @@
                 var credential = error.credential;
                 // ...
             });
+        }
+    </script>
+    <script>
+        function anadirFavorito(id){
+            if(document.getElementById(id + "Icon").className == "fas fa-thumbs-up"){
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-down";
+            } else{
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
+            }
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/like_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
+            document.location.reload(true);
         }
     </script>
 </body>
