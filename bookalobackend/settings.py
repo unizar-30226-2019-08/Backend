@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'bookalo')
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 # Quick-start development settings - unsuitable for production
@@ -28,7 +28,7 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 SECRET_KEY = 'c$uv!75pneq&c01kc*-ao&s-0ka9oxofy547an6qvbn+tbi1!9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['bookalo.es', 'localhost']
 
