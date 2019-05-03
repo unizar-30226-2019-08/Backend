@@ -273,7 +273,8 @@ class ValidacionEstrella(models.Model):
 
 
 class ContenidoMultimedia(models.Model):
-    contenido = models.FileField(upload_to='media')
+    contenido = models.FileField()
+    #contenido = models.FileField(upload_to='media')
     timestamp = models.DateTimeField(auto_now_add=True)
     producto = models.ForeignKey(
         to=Producto,
