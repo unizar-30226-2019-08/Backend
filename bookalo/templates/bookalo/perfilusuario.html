@@ -119,16 +119,33 @@
     <div class="modal fade" role="dialog" tabindex="-1" id="modalReport">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <form action="/api/create_report" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ informacion_basica.nombre }}</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ producto.vendido_por.nombre }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <p style="font-family: Antic, sans-serif;">¡Vaya! Lamentamos tu mala experiencia en Bookalo. Para evitar que vuelva a ocurrir, por favor, indica el motivo del reporte.</p>
                     <h4 style="font-family: Antic, sans-serif;">Selecciona un motivo:</h4>
                     <div class="row d-xl-flex" style="margin: 20px 0px 0px 0px;">
-                        <div class="col d-sm-flex d-lg-flex d-xl-flex justify-content-sm-center justify-content-lg-center justify-content-xl-center"><select class="d-sm-flex d-lg-flex d-xl-flex" style="width: 80%;"><option value="Verbal" selected="">Violencia verbal</option><option value="Sexual">Violencia sexual</option><option value="Otros">Otros</option></select></div>
+                        <div class="col d-sm-flex d-lg-flex d-xl-flex justify-content-sm-center justify-content-lg-center justify-content-xl-center">
+                            <select class="d-sm-flex d-lg-flex d-xl-flex" style="width: 80%;" id="causa" name="causa">
+                                <option value="Verbal" selected="">Violencia verbal</option>
+                                <option value="Sexual">Violencia sexual</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
                     </div>
-                    <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4><textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;"></textarea></div>
-                <div class="modal-footer"><button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button></div>
+                    <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4>
+                    <textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;" id="comentario" name="comentario"></textarea>
+                </div>
+                <input type="hidden" id="uid" name="uid" value="{{ producto.vendido_por.uid }}">
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button>
+                </div>
+                </form>
             </div>
         </div>
     </div>
@@ -284,10 +301,23 @@
                 {% for valoracion in valoraciones %}
                 <div class="card" style="margin: 0px 0px 15px 0px;">
                     <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ valoracion.usuario_que_valora.nombre }}<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ valoracion.usuario_que_valora.imagen_perfil }}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró<button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;{{ valoracion.producto_asociado.nombre }}&quot;</button></h6>
-                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}<img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}"></h1>
-                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|date:"D d M Y" }}</h6>
+                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ valoracion.usuario_que_valora.nombre }}
+                            {% if informacion_basica.uid == valoracion.usuario_que_valora.uid %}
+                            <a href="/api/get_user_profile">
+                            {% else %}
+                            <a href="/api/get_user_profile/?uid={{ valoracion.usuario_que_valora.uid }}">
+                            {% endif %}
+                                <img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ valoracion.usuario_que_valora.imagen_perfil }}">
+                            </a>
+                        </h4>
+                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró
+                            <button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;{{ valoracion.producto_asociado.nombre }}&quot;
+                            </button>
+                        </h6>
+                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}
+                            <img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}">
+                        </h1>
+                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp }}</h6>
                         <p class="card-text">{{ valoracion.comentario }}</p>
                     </div>
                 </div>
@@ -465,6 +495,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -496,6 +529,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -510,6 +546,16 @@
                 var credential = error.credential;
                 // ...
             });
+        }
+    </script>
+    <script>
+        function cerrarSesion(){
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
+            firebase.auth().signOut();
+            setTimeout(function(){
+                document.location.reload(true);
+            }, 1500);
         }
     </script>
     <script>

@@ -8,7 +8,7 @@ urlpatterns = [
     re_path(r'^$', views.index),
     path(r'api/login', views.Login),
     re_path(r'generic_product_view', views.GenericProductView),
-    path(r'api/get_user_profile', views.GetUserProfile),
+    re_path(r'api/get_user_profile', views.GetUserProfile),
     path(r'api/filter_product', views.FilterProduct),
     path(r'api/get_user_products', views.GetUserProducts),
     path(r'api/create_product', views.CreateProduct),

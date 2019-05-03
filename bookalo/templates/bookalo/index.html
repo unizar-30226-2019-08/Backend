@@ -153,6 +153,8 @@
     <div id="wrapperFilter" class="toggled" style="background-color: rgb(40,45,50);">
         <div class="text-left d-lg-flex" id="sidebar-wrapper-filtro" style="background-color: rgb(40,45,50);overflow: auto;height: 90.5%;">
             <div class="col" style="padding: 0px;">
+                <form action="/api/filter_product" method="post">
+                {% csrf_token %}
                 <div class="row" style="margin: 20px 0px 0px 0px;">
                     <div class="col">
                         <h1 style="color: rgb(255,255,255);font-family: Antic, sans-serif;font-size: 25px;">Búsqueda de productos</h1>
@@ -160,10 +162,14 @@
                 </div>
                 <div class="row" style="margin: 15px 0px 25px 0px;">
                     <div class="col d-xl-flex">
-                        <form class="form-inline mr-auto" target="_self">
-                            <div class="form-group"><label for="search-field"><i class="fa fa-search" style="color: rgb(255,255,255);"></i></label><input class="form-control search-field" type="search" id="search-field" style="background-color: #ffffff;filter: hue-rotate(0deg);border-radius: 1.25rem;margin-left: 5px;height: 27px;width: 180px;"
-                                    name="search"></div>
-                        </form>
+                        <div class="form-inline mr-auto">
+                            <div class="form-group">
+                                <label for="search-field">
+                                    <i class="fa fa-search" style="color: rgb(255,255,255);"></i>
+                                </label>
+                                <input class="form-control search-field" type="text" id="busqueda" style="background-color: #ffffff;filter: hue-rotate(0deg);border-radius: 1.25rem;margin-left: 5px;height: 27px;width: 180px;" name="busqueda">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="row" style="margin: 0px;">
@@ -178,8 +184,14 @@
                 </div>
                 <div class="row" style="margin: 0px;">
                     <div class="col" style="padding: 0px;">
-                        <div class="text-center star-rating" style="margin: 7px 0px 0px 0px;"><span class="fa fa-star-o" data-rating="1"></span><span class="fa fa-star-o" data-rating="2"></span><span class="fa fa-star-o" data-rating="3"></span><span class="fa fa-star-o" data-rating="4"></span><span class="fa fa-star-o"
-                                data-rating="5"></span><input type="hidden" class="rating-value" name="whatever1" value="2.56"></div>
+                        <div class="text-center star-rating" style="margin: 7px 0px 0px 0px;">
+                            <span class="fa fa-star-o" data-rating="1"></span>
+                            <span class="fa fa-star-o" data-rating="2"></span>
+                            <span class="fa fa-star-o" data-rating="3"></span>
+                            <span class="fa fa-star-o" data-rating="4"></span>
+                            <span class="fa fa-star-o" data-rating="5"></span>
+                            <input type="hidden" type="text" id="calificacion_minima" class="rating-value" name="calificacion_minima" value="2.56">
+                        </div>
                     </div>
                 </div>
                 <div class="row" style="margin: 0px;">
@@ -188,17 +200,19 @@
                     </div>
                 </div>
                 <div class="row text-center d-xl-flex justify-content-center justify-content-xl-center" style="margin: 10px 0px 0px 0px;">
-                    <div class="col"><div class="input-group mb-3 edtFormMarg">
-    <select class="custom-select" id="inputGroupSelect01">
-        <option selected>Escoja uno...</option>
-        <option value="+100">Más de 100€</option>
-        <option value="50100">50 a 100€</option>
-        <option value="2550">25 a 50€</option>
-        <option value="1025">10 a 25€</option>
-        <option value="510">5 a 10€</option>
-        <option value="05">Hasta 5€</option>
-    </select>
-</div></div>
+                    <div class="col">
+                        <div class="input-group mb-3 edtFormMarg">
+                            <select class="custom-select" id="precio_minimo" name="precio_minimo">
+                                <option selected>Escoja uno...</option>
+                                <option value="100">Más de 100€</option>
+                                <option value="50,100">50 a 100€</option>
+                                <option value="25,50">25 a 50€</option>
+                                <option value="10,25">10 a 25€</option>
+                                <option value="5,10">5 a 10€</option>
+                                <option value="0,5">Hasta 5€</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" style="margin: 0px;">
                     <div class="col">
@@ -206,17 +220,19 @@
                     </div>
                 </div>
                 <div class="row text-center d-xl-flex justify-content-center justify-content-xl-center" style="margin: 10px 0px 0px 0px;">
-                    <div class="col"><div class="input-group mb-3 edtFormMarg">
-    <select class="custom-select" id="inputGroupSelect01">
-        <option selected>Escoja uno...</option>
-        <option value="+100">Más de 100 km</option>
-        <option value="100">Hasta 100 km</option>
-        <option value="50">Hasta 50 km</option>
-        <option value="25">Hasta 25 km</option>
-        <option value="10">Hasta 10 km</option>
-        <option value="5">Hasta 5 km</option>
-    </select>
-</div></div>
+                    <div class="col">
+                        <div class="input-group mb-3 edtFormMarg">
+                            <select class="custom-select" id="distancia_maxima" name="distancia_maxima">
+                                <option selected>Escoja uno...</option>
+                                <option value="+100">Más de 100 km</option>
+                                <option value="100">Hasta 100 km</option>
+                                <option value="50">Hasta 50 km</option>
+                                <option value="25">Hasta 25 km</option>
+                                <option value="10">Hasta 10 km</option>
+                                <option value="5">Hasta 5 km</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="row" style="margin: 0px;">
                     <div class="col">
@@ -224,11 +240,16 @@
                     </div>
                 </div>
                 <div class="row d-xl-flex" style="margin: 20px 0px 0px 0px;">
-                    <div class="col text-center"><input type="text" data-role="tagsinput" data-class="label-info" placeholder="Add a new tag here"></div>
+                    <div class="col text-center">
+                        <input type="text" data-role="tagsinput" id="tags" name="tags" data-class="label-info" placeholder="Añade las etiquetas">
+                    </div>
                 </div>
                 <div class="row d-xl-flex" style="margin: 20px 0px 20px 0px;">
-                    <div class="col text-center"><button class="btn btn-secondary" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Filtrar</button></div>
+                    <div class="col text-center">
+                        <button class="btn btn-secondary" type="submit" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Filtrar</button>
+                    </div>
                 </div>
+                </form>
             </div>
         </div>
         <main id="page-content-wrapper" style="background-color: #ffffff;">
@@ -243,7 +264,9 @@
                 </div>
             </div>
             <div class="row" style="margin: 0px;height: 19px;">
-                <div class="col text-center d-md-flex d-xl-flex align-self-center justify-content-md-center justify-content-xl-center" style="margin: 20px 0px 0px 0px;"><a class="btn btn-link text-center d-inline-block float-left d-xl-flex" role="button" id="menu-toggle-Filtro" style="color: #e91e63;border-color: #e91e63;border-radius:20px" data-toggle="&quot;wrapperFilter&quot;" href="#menu-toggle">Buscar productos</a></div>
+                <div class="col text-center d-md-flex d-xl-flex align-self-center justify-content-md-center justify-content-xl-center" style="margin: 20px 0px 0px 0px;">
+                    <a class="btn btn-link text-center d-inline-block float-left d-xl-flex" role="button" id="menu-toggle-Filtro" style="color: #e91e63;border-color: #e91e63;border-radius:20px" data-toggle="&quot;wrapperFilter&quot;" href="#menu-toggle">Buscar productos</a>
+                </div>
             </div>
             <section class="py-5" style="padding: 0;margin: 0;">
                 <div class="container">
@@ -438,7 +461,7 @@
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
                     setTimeout(function(){
                         document.location.reload(true);
-                    }, 1000);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -470,7 +493,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                    document.location.reload(true);
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -489,8 +514,12 @@
     </script>
     <script>
         function cerrarSesion(){
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
             firebase.auth().signOut();
-            document.location.reload(true);
+            setTimeout(function(){
+                document.location.reload(true);
+            }, 1500);
         }
     </script>
     <script>

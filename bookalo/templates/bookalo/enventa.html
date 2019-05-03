@@ -343,6 +343,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -374,6 +377,9 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    setTimeout(function(){
+                        document.location.reload(true);
+                    }, 1500);
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -388,6 +394,16 @@
                 var credential = error.credential;
                 // ...
             });
+        }
+    </script>
+    <script>
+        function cerrarSesion(){
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
+            firebase.auth().signOut();
+            setTimeout(function(){
+                document.location.reload(true);
+            }, 1500);
         }
     </script>
     <script>

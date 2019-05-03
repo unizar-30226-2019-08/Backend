@@ -169,6 +169,7 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
+			print("No es post")
 			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
@@ -178,19 +179,26 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
+			print("Sin token")
 			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	else:
 		logged = check_user_logged_in(token)
 		try:
 			print('Logged in, attempting')
 			tags = request.POST.get('tags', '')
+			print(tags)
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
 			max_distance = request.POST.get('distancia_maxima', '')
+			print(max_distance)
 			min_price = request.POST.get('precio_minimo', '')
+			print(min_price)
 			max_price = request.POST.get('precio_maximo', '')
+			print(max_price)
 			min_score = request.POST.get('calificacion_minima', '')
+			print(min_score)
 			search = request.POST.get('busqueda', 'nothing')
+			print(search)
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			print(biblioteca)
@@ -330,8 +338,11 @@ def CreateReport(request, format=None):
 	else:
 		token = request.session.get('token', 'nothing')
 	reporteduserUid = request.POST.get('uid', 'nothing')
+	print(reporteduserUid)
 	cause = request.POST.get('causa', 'nothing')
+	print(cause)
 	comment = request.POST.get('comentario', 'nothing')
+	print(comment)
 	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing' or cause == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -472,7 +483,14 @@ def GetChats(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def PrivacyPolicy(request, format=None):
-	return render(request, 'bookalo/privacypolicy.html')
+	token = request.session.get('token', 'nothing')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		user = get_user(token)
+	return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -513,5 +531,5 @@ def GetPendingNotifications(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def Logout(request, format=None):
-	del request.session['token']
-	request.session.modified = True
+	request.session.pop('token')
+	return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
