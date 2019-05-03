@@ -71,10 +71,17 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
     tiene_tags = TagSerializer(many=True, read_only=True)
     contenido_multimedia = MultimediaSerializer(many=True, read_only=True)
+    le_gusta = serializers.SerializerMethodField()
     class Meta:
         model = Producto
-        fields = ('pk','nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia')
+        fields = ('pk','le_gusta','nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia')
 
+    def get_le_gusta(self, obj):
+    	usuario = self.context.get('user', 'nothing')
+    	if usuario in obj.le_gusta_a.all():
+    		return True
+    	else:
+    		return False
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)

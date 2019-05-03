@@ -31,7 +31,7 @@ def index(request):
 		token = request.session.get('token', 'nothing')
 
 	try:
-		serializer = GenericProducts()
+		serializer = GenericProducts(token)
 		if movil == 'true':
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
@@ -93,7 +93,7 @@ def GenericProductView(request, format=None):
 	else:
 		token = request.session.get('token', 'nothing')
 	try:
-		serializer = GetProduct(product_pk)
+		serializer = GetProduct(product_pk,token)
 		if serializer == 'NOT FOUND':
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -192,7 +192,7 @@ def FilterProduct(request, format=None):
 			search = request.POST.get('busqueda', 'nothing')
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
-			serializer = FiltradoProducto(biblioteca)
+			serializer = FiltradoProducto(biblioteca,token)
 			if logged:
 				user = get_user(token)
 				if serializer == 'Bad request':

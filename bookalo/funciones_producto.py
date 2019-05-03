@@ -32,9 +32,13 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 	return R * c
 
 
-def GenericProducts():
+def GenericProducts(token):
 	products = Producto.objects.order_by('-num_likes')
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
+	user = get_user(token)
+	if user!=None:
+		serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
+	else:
+		serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
 def ProductosUsuario(token):
@@ -42,7 +46,7 @@ def ProductosUsuario(token):
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(vendido_por=user)
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
+	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
 def ProductosFavoritos(token):
@@ -50,10 +54,10 @@ def ProductosFavoritos(token):
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(le_gusta_a=user)
-	serializer = ProductoSerializerList(products, many=True, read_only=True)
+	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
-def FiltradoProducto(biblio):
+def FiltradoProducto(biblio,token):
 	tags = biblio['tags']
 	user_latitude = biblio['user_latitude']
 	user_longitude = biblio['user_longitude']
@@ -88,7 +92,11 @@ def FiltradoProducto(biblio):
 
 	#final_product_list = list(set(products_search) & set(filtered_products))
 	final_product_list =set(products_search).union(set(filtered_products))
-	serializer = ProductoSerializerList(final_product_list, many=True, read_only=True)
+	user = get_user(token)
+	if user!=None:
+		serializer = ProductoSerializerList(final_product_list, many=True, read_only=True, context = {"user": user})
+	else:
+		serializer = ProductoSerializerList(final_product_list, many=True, read_only=True)
 	return serializer
 
 
@@ -178,12 +186,17 @@ def LikeProducto(token,productId):
 	else:
 		return 'NOT FOUND'
 
-def GetProduct(product_pk):
+def GetProduct(product_pk,token):
 	if product_pk == 'nothing':
 		return 'NOT FOUND'
 	try:
 		product = Producto.objects.get(pk=int(product_pk))
-		return ProductoSerializerList(product)
+		user = get_user(token)
+		if user!=None:
+			serializer = ProductoSerializerList(product, context = {"user": user})
+		else:
+			serializer = ProductoSerializerList(product)
+		return serializer
 	except:
 		return 'NOT FOUND'
 
