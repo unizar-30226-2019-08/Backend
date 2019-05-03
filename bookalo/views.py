@@ -509,13 +509,16 @@ def GetChats(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 	if logged:
+		user = get_user(token)
+		serializer_chats_vendedor = GetChatVendedor(user)
+		serializer_chats_comprador = GetChatComprador(user)
 		if movil == 'true':
-			user = get_user(token)
-			return Response(status=status.HTTP_200_OK)
+			return Response({'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data}, 
+				status=status.HTTP_200_OK)
 		else:
-			user = get_user(token)
 			serializer_favs = ProductosFavoritos(token)
-			return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+			return render(request, 'bookalo/chat.html', {'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data, 
+				'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
 	else:
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)

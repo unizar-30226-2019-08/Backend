@@ -62,10 +62,11 @@ def FiltradoProducto(biblio):
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
 	search = biblio['busqueda']
+	products_search = []
 	if search != 'nothing' and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
-		products_search = []
+		
 		for word in search.split():
 			if word not in preposiciones:
 				productos_palabra = Producto.objects.filter(nombre__contains=word)
@@ -85,7 +86,8 @@ def FiltradoProducto(biblio):
 		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 			filtered_products.append(product)
 
-	final_product_list = list(set(products_search) & set(filtered_products))
+	#final_product_list = list(set(products_search) & set(filtered_products))
+	final_product_list =set(products_search).union(set(filtered_products))
 	serializer = ProductoSerializerList(final_product_list, many=True, read_only=True)
 	return serializer
 
@@ -187,10 +189,13 @@ def GetProduct(product_pk):
 
 def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 	try:
-		rated_user = Usuario.objects.get(pk=int(rated_user_id))
+		rated_user = Usuario.objects.get(uid=rated_user_id)
 		user = get_user(token)
 		product = Producto.objects.get(pk=int(product_id))
 		ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+		nValidaciones = ValidacionEstrella.objects.filter(usuario_valorado=rated_user).count()
+		rated_user.media_valoraciones = (rated_user.media_valoraciones + stars) / nValidaciones
+		rated_user.save()
 		return True
 	except:
 		return False
