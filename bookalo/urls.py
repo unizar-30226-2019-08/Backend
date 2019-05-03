@@ -18,6 +18,7 @@ urlpatterns = [
     path(r'api/like_product', views.LikeProduct),
     path(r'api/get_chats', views.GetChats),
     path(r'api/send_message', views.SendMessage),
+    path(r'api/rate_user', views.SendRating),
     re_path(r'privacypolicy', views.PrivacyPolicy),
     re_path(r'create_product', views.CreateProductRender),
     path(r'api/get_pending_notifications', views.GetPendingNotifications),
