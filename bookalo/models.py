@@ -26,6 +26,9 @@ class Usuario(AbstractUser):
         unique=True,
         max_length=100,
         verbose_name='UID del usuario en Firebase')
+    token_fcm = models.CharField(
+        max_length=1000,
+        verbose_name='Token del usuario para mensajería asíncrona de Firebase')
     nombre = models.CharField(
         max_length=100,
         verbose_name='Nombre del usuario asociado al login social')
@@ -189,7 +192,7 @@ class Mensaje(models.Model):
         max_length=1000,
         verbose_name='Contenido del mensaje')
     hora = models.DateTimeField(
-        auto_now_add=True,
+        default=timezone_now,
         verbose_name='Hora en la que se envio el mensaje')
     chat_asociado = models.ForeignKey(
         to=Chat,
@@ -197,6 +200,12 @@ class Mensaje(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Chat en el que se encuentra el mensaje',
         related_name='chat_del_mensaje')
+    emisor = models.ForeignKey(
+        to=Usuario,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Usuario que ha enviado el mensaje',
+        related_name='emisor')
 
     def __str__(self):
         return self.texto
@@ -260,7 +269,7 @@ class ValidacionEstrella(models.Model):
         on_delete=models.CASCADE,
         related_name='producto_asociado',
         verbose_name='Producto valorado')
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone_now)
 
     def __str__(self):
         return str(self.usuario_valorado) + "/" + str(self.usuario_que_valora)
@@ -275,7 +284,7 @@ class ValidacionEstrella(models.Model):
 class ContenidoMultimedia(models.Model):
     contenido = models.FileField()
     #contenido = models.FileField(upload_to='media')
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone_now)
     producto = models.ForeignKey(
         to=Producto,
         null=False,
@@ -301,5 +310,7 @@ class NotificacionesPendientes(models.Model):
         max_length=1000,
         verbose_name='Texto de la notificacion')
 
+    timestamp = models.DateTimeField(default=timezone_now)
+    
     def __str__(self):
         return str(self.usuario_pendiente)

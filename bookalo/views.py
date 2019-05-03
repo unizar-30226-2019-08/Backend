@@ -169,7 +169,6 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			print("No es post")
 			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
@@ -179,29 +178,20 @@ def FilterProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			print("Sin token")
 			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	else:
 		logged = check_user_logged_in(token)
 		try:
-			print('Logged in, attempting')
 			tags = request.POST.get('tags', '')
-			print(tags)
 			user_latitude = request.POST.get('latitud', '')
 			user_longitude = request.POST.get('longitud', '')
 			max_distance = request.POST.get('distancia_maxima', '')
-			print(max_distance)
 			min_price = request.POST.get('precio_minimo', '')
-			print(min_price)
 			max_price = request.POST.get('precio_maximo', '')
-			print(max_price)
 			min_score = request.POST.get('calificacion_minima', '')
-			print(min_score)
 			search = request.POST.get('busqueda', 'nothing')
-			print(search)
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
-			print(biblioteca)
 			serializer = FiltradoProducto(biblioteca)
 			if logged:
 				user = get_user(token)
@@ -337,12 +327,10 @@ def CreateReport(request, format=None):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
+
 	reporteduserUid = request.POST.get('uid', 'nothing')
-	print(reporteduserUid)
 	cause = request.POST.get('causa', 'nothing')
-	print(cause)
 	comment = request.POST.get('comentario', 'nothing')
-	print(comment)
 	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing' or cause == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -350,43 +338,20 @@ def CreateReport(request, format=None):
 			return redirect('/')
 	else:
 		try:
-			check_user_logged_in(token)
-			CrearReport(reporteduserUid, cause, comment)
-			if movil == 'true':
-				return Response(status=status.HTTP_201_CREATED)
+			logged = check_user_logged_in(token)
+			if logged:
+				CrearReport(reporteduserUid, cause, comment)
+				if movil == 'true':
+					return Response(status=status.HTTP_201_CREATED)
+				else:
+					user = get_user(token)
+					serializer_favs = ProductosFavoritos(token)
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'info':'OK'})
 			else:
-				return redirect('/api/get_user_profile')
-		except:
-			if movil == 'true':
-				return Response(status=status.HTTP_404_NOT_FOUND)
-			else:
-				return redirect('/')
-
-@api_view(('POST','GET'))
-@permission_classes((permissions.AllowAny,))
-@csrf_exempt
-def CreateChat(request, format=None):
-	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	if movil == 'true':
-		token = request.POST.get('token', 'nothing')
-	else:
-		token = request.session.get('token', 'nothing')
-
-	otroUserUid = request.POST.get('uidUsuario', 'nothing')
-	productId = request.POST.get('idProducto', 'nothing')
-	if request.method != 'POST' or token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
-		if movil == 'true':
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-		else:
-			return redirect('/')
-	else:
-		try:
-			check_user_logged_in(token)
-			CrearChat(token,otroUserUid,productId)
-			if movil == 'true':
-				return Response(status=status.HTTP_201_CREATED)
-			else:
-				return redirect('/api/get_user_profile')
+				if movil == 'true':
+					return Response(status=status.HTTP_401_UNAUTHORIZED)
+				else:
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no tiene sesión iniciada'})
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -421,7 +386,7 @@ def DeleteProduct(request, format=None):
 				if result == 'Unauthorized':
 					return redirect('/')
 				else:
-					return redirect('/api/get_user_products')		
+					return redirect('/api/get_user_products')
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
@@ -470,14 +435,124 @@ def LikeProduct(request, format=None):
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
-def GetChats(request, format=None):
-	token = request.session.get('token', 'nothing')
-	logged = check_user_logged_in(token)
-	if logged:
-		user = get_user(token)
-		return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
+def CreateChat(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
 	else:
-		return render(request, 'bookalo/chat.html', {'loggedin': logged})
+		token = request.session.get('token', 'nothing')
+
+	otroUserUid = request.POST.get('uidUsuario', 'nothing')
+	productId = request.POST.get('idProducto', 'nothing')
+	if request.method != 'POST' or token == 'nothing' or otroUserUid == 'nothing' or productId == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/')
+	else:
+		try:
+			logged = check_user_logged_in(token)
+			if logged:
+				chat = CrearChat(token, otroUserUid, productId)
+				if movil == 'true':
+					return Response({'chat_creado':ChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
+				else:
+					user = get_user(token)
+					serializer_favs = ProductosFavoritos(token)
+					return HttpResponseRedirect('bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk)})
+			else:
+				if movil == 'true':
+					return Response(status=status.HTTP_401_UNAUTHORIZED)
+				else:
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no tiene sesión iniciada'})
+		except:
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/')
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def SendMessage(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		message = request.POST.get('mensaje', '')
+		chat_id = request.POST.get('id_chat', '')
+		message_created = CrearMensaje(token, chat_id, message)
+		if message_created:
+			return Response(status=status.HTTP_200_OK)	
+		else:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
+	else:
+		return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetChats(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		if movil == 'true':
+			user = get_user(token)
+			return Response(status=status.HTTP_200_OK)
+		else:
+			user = get_user(token)
+			serializer_favs = ProductosFavoritos(token)
+			return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+	else:
+		if movil == 'true':
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		else:
+			return render(request, 'bookalo/chat.html', {'loggedin': logged})
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def SendRating(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		stars = request.POST.get('estrellas', 'nothing')
+		stars = int(stars)
+		if movil != 'true':
+			stars = stars * 2
+		rated_user_id = request.POST.get('uid_usuario_valorado', 'nothing')
+		comment = request.POST.get('comentario', '')
+		product_id = request.POST.get('id_producto_valorado', 'nothing')
+		has_been_rated = ValorarVenta(token, rated_user_id, comment, product_id, stars)
+		if has_been_rated:
+			return Response(status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
+	else:
+		if movil == 'true':
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		else:
+			return render(request, 'bookalo/chat.html', {'loggedin': logged})
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))

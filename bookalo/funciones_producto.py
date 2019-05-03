@@ -62,34 +62,26 @@ def FiltradoProducto(biblio):
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
 	search = biblio['busqueda']
-	if search != 'nothing' or search != '':
+	if search != 'nothing' and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
 		products_search = []
 		for word in search.split():
-			print(word)
 			if word not in preposiciones:
 				productos_palabra = Producto.objects.filter(nombre__contains=word)
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
-				print(productos_palabra)
-				print(products_search)
-	print('Me ha llegado la peticion, la biblioteca es:')
-	print(biblio)
 
 	if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
 		return 'Bad request'
 	if tags != '':
 		lista_tags = [x.strip() for x in tags.split(',')]
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
-		print(tag_queryset)
 		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 	else:
 		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
-	print(products)
 	filtered_products = []
 	for product in products:
-		print(product.nombre)
 		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 			filtered_products.append(product)
 
@@ -192,3 +184,13 @@ def GetProduct(product_pk):
 		return ProductoSerializerList(product)
 	except:
 		return 'NOT FOUND'
+
+def ValorarVenta(token, rated_user_id, comment, product_id, stars):
+	try:
+		rated_user = Usuario.objects.get(pk=int(rated_user_id))
+		user = get_user(token)
+		product = Producto.objects.get(pk=int(product_id))
+		ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+		return True
+	except:
+		return False
