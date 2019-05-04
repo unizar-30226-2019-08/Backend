@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'bookalo')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 # Quick-start development settings - unsuitable for production
