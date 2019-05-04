@@ -132,32 +132,36 @@ def GenericProductView(request, format=None):
 def GetUserProfile(request, format=None):
 	token = request.session.get('token', 'nothing')		# Se extrae de la sesión el token
 	user_uid = request.GET.get('uid', 'nothing')		# Se coge de las cookies el uid
-	print(user_uid)
-	
-	if token == 'nothing':
-		# Se retorna a usuario a la pagina anterior
-		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado.'})
 
-	else:
+	if token == 'nothing' and user_uid == 'nothing':
+		# Se retorna a usuario a la pagina anterior
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no se ha encontrado y no hay sesión iniciada.'})
+	elif token != 'nothing' and user_uid == 'nothing':
 		if check_user_logged_in(token):
-			serializer_favs = ProductosFavoritos(token)
 			try:
 				fetch_user = get_user(token)
-				#Si no hay user_uid, es el usuario del token
-				if user_uid == 'nothing':
-					# Devolver favoritos (cuenta del usuario token)
-					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos_favoritos':serializer_favs.data, 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
-				else:
-					# Devolver productos del otro usuario
-					fetch_user2 = Usuario.objects.get(uid=user_uid)
-					products = Producto.objects.filter(vendido_por=fetch_user2)	
-					serializer = ProductoSerializerList(products, many=True, read_only=True)
-
-					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos_favoritos':serializer_favs.data, 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
-					return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : [],'productos' : [], 'valoraciones': []})
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'error' : 'No ha iniciado sesión'})
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
+	elif token == 'nothing' and user_uid != 'nothing':
+		fetch_user2 = GetOtherUserProfile(user_uid)
+		if fetch_user2 == None:
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
+		else:
+			products = Producto.objects.filter(vendido_por=fetch_user2)	
+			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
+	else:
+		fetch_user2 = GetOtherUserProfile(user_uid)
+		if fetch_user2 == None:
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
+		else:
+			products = Producto.objects.filter(vendido_por=fetch_user2)	
+			serializer = ProductoSerializerList(products, many=True, read_only=True)
+			serializer_favs = ProductosFavoritos(token)
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
 
 
 @api_view(('POST','GET'))
