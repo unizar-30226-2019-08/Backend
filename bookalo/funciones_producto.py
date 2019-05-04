@@ -65,6 +65,8 @@ def FiltradoProducto(biblio,token):
 	min_price = biblio['min_price']
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
+	if int(min_score) == 0:
+		min_score = -1
 	search = biblio['busqueda']
 	products_search = []
 	if search != 'nothing' and search != '':
@@ -206,9 +208,6 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		user = get_user(token)
 		product = Producto.objects.get(pk=int(product_id))
 		ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
-		nValidaciones = ValidacionEstrella.objects.filter(usuario_valorado=rated_user).count()
-		rated_user.media_valoraciones = (rated_user.media_valoraciones + stars) / nValidaciones
-		rated_user.save()
 		return True
 	except:
 		return False

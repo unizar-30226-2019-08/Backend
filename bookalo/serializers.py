@@ -30,7 +30,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ('pk','nombre','es_predeterminado')
+        fields = ('nombre')
 
 class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
     contenido_url = serializers.SerializerMethodField()
@@ -69,12 +69,11 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
 
 class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
-    tiene_tags = TagSerializer(many=True, read_only=True)
-    contenido_multimedia = MultimediaSerializer(many=True, read_only=True)
     le_gusta = serializers.SerializerMethodField()
+    info_producto = serializers.SerializerMethodField()
     class Meta:
         model = Producto
-        fields = ('pk','le_gusta','nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia')
+        fields = ('pk','le_gusta', 'vendido_por', 'info_producto')
 
     def get_le_gusta(self, obj):
     	usuario = self.context.get('user', 'nothing')
@@ -82,6 +81,9 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     		return True
     	else:
     		return False
+    
+    def get_info_producto(self, obj):
+        return ProductoSerializer(obj, read_only=True)
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
