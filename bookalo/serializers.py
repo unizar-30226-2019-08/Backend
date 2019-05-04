@@ -52,7 +52,6 @@ class MiniProductoSerializer(serializers.HyperlinkedModelSerializer):
         return MultimediaSerializer(contenido)
 
 class ProductoSerializer(serializers.HyperlinkedModelSerializer):
-    vendido_por = UserSerializer(read_only=True)
     tiene_tags = TagSerializer(many=True, read_only=True)
     contenido_multimedia = serializers.SerializerMethodField()
     valoracion_media_usuario = serializers.SerializerMethodField()
