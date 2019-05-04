@@ -30,13 +30,13 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Tag
-        fields = ('nombre')
+        fields = ('nombre',)
 
 class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
     contenido_url = serializers.SerializerMethodField()
     class Meta:
         model = ContenidoMultimedia
-        fields = ('pk','contenido_url', 'orden_en_producto')
+        fields = ('contenido_url', 'orden_en_producto')
 
     def get_contenido_url(self, obj):
         return obj.contenido.url
@@ -57,32 +57,36 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     valoracion_media_usuario = serializers.SerializerMethodField()
     class Meta:
         model = Producto
-        fields = ('pk','nombre', 'precio', 'estado_producto', 'estado_venta', 'latitud', 'longitud', 'tipo_envio', 'descripcion', 'vendido_por', 'tiene_tags', 'num_likes', 'contenido_multimedia')
+        fields = ('pk','nombre', 'precio', 'estado_producto', 'estado_venta','valoracion_media_usuario',
+         'latitud', 'longitud', 'tipo_envio', 'descripcion', 'tiene_tags',
+          'num_likes', 'contenido_multimedia')
 
     def get_contenido_multimedia(self, obj):
         contenido = ContenidoMultimedia.objects.filter(producto=obj.pk).order_by('orden_en_producto')
-        return MultimediaSerializer(contenido, many=True)
+        return MultimediaSerializer(contenido, many=True).data
     
     def get_valoracion_media_usuario(self, obj):
-        return Usuario.objects.get(pk=obj.vendido_por).media_valoraciones
+        return Usuario.objects.get(pk=obj.vendido_por.pk).media_valoraciones
 
 class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
     le_gusta = serializers.SerializerMethodField()
     info_producto = serializers.SerializerMethodField()
+    
     class Meta:
         model = Producto
         fields = ('pk','le_gusta', 'vendido_por', 'info_producto')
 
     def get_le_gusta(self, obj):
-    	usuario = self.context.get('user', 'nothing')
-    	if usuario in obj.le_gusta_a.all():
-    		return True
-    	else:
-    		return False
+        usuario = self.context.get('user', 'nothing')
+        if usuario in obj.le_gusta_a.all():
+            return True
+        else:
+            return False
     
     def get_info_producto(self, obj):
-        return ProductoSerializer(obj, read_only=True)
+        prod = Producto.objects.get(pk = obj.pk)
+        return ProductoSerializer(prod, read_only=True).data
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
