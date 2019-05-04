@@ -277,7 +277,11 @@
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
                                     <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5>
                                     {% if loggedin %}
-                                    <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-up"></i></span>
+                                    {% if p.le_gusta %}
+                                        <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-down"></i></span>
+                                    {% else %}
+                                        <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-up"></i></span>
+                                    {% endif %}
                                     {% endif %}
                                 </div>
                                 <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.contenido_multimedia.0.contenido_url }}">
