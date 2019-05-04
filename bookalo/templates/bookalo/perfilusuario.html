@@ -241,9 +241,11 @@
             <button onClick="document.getElementById('productos').scrollIntoView();" class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;">
                 <i class="fa fa-shopping-bag" style="color:#ffffff;font-size:30px;"></i>
             </button>
+            {% if loggedin %}
             <button class="btn btn-link btn-circle action-button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;" data-toggle="modal" data-target="#modalReport" type="button">
                 <i class="fa fa-ban" style="color:#ffffff;font-size:30px;"></i>
             </button>
+            {% endif %}
         </div>
     </div>
     <div class="row d-xl-flex justify-content-xl-center align-items-xl-center" style="margin: 20px 0px 0px 0px;">

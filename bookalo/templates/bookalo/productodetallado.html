@@ -277,7 +277,8 @@
                         {% elif producto.vendido_por.media_valoraciones == 7 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
                         {% elif producto.vendido_por.media_valoraciones == 8 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
                         {% elif producto.vendido_por.media_valoraciones == 9 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i>
-                        {% elif producto.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i>{% endif %}
+                        {% elif producto.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i>
+                        {% else %}<i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>{% endif %}
                     </div>
                 </div>
             </div>
@@ -312,7 +313,11 @@
                     {% else %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Semi-nuevo</p>
                     {% endif %}
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">{{ producto.tipo_envio }}<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
+                    {% if producto.tipo_envio %}
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Con envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
+                    {% else %}
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Sin envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
+                    {% endif %}
                     <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
                 </div>
             </div>
