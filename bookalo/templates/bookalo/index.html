@@ -299,7 +299,8 @@
                                         {% elif p.vendido_por.media_valoraciones == 7 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i>
                                         {% elif p.vendido_por.media_valoraciones == 8 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
                                         {% elif p.vendido_por.media_valoraciones == 9 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
-                                        {% elif p.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>{% endif %}
+                                        {% elif p.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                        {% else %}<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>{% endif %}
                                     </div>
                                     <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view/?id={{ p.pk }}"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
                                 </div>
