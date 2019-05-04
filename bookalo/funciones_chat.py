@@ -15,6 +15,7 @@ from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+from .funciones_usuario import *
 
 
 def CrearChat(token,otroUserUid,productId):
@@ -22,5 +23,23 @@ def CrearChat(token,otroUserUid,productId):
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	otroUser = Usuario.objects.get(uid=otroUserUid)
-	product = Producto.objects.get(id=productId)
+	product = Producto.objects.get(pk=int(productId))
 	chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
+	return chat
+
+def GetChatVendedor(user):
+	chats = Chat.objects.filter(vendedor=user)
+	return ChatSerializer(chats, many=True, read_only=True)
+
+def GetChatComprador(user):
+	chats = Chat.objects.filter(comprador=user)
+	return ChatSerializer(chats, many=True, read_only=True)
+
+def CrearMensaje(token, chat_id, message):
+	user = get_user(token)
+	try:
+		chat = Chat.objects.get(pk=int(chat_id))
+		Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
+		return True
+	except:
+		return False	
