@@ -16,6 +16,7 @@ from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from .funciones_usuario import *
+import itertools
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -32,8 +33,12 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 	return R * c
 
 
-def GenericProducts(token):
+def GenericProducts(token,ultimo_indice,elementos_pagina):
 	products = Producto.objects.order_by('-num_likes')
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	user = get_user(token)
 	if user!=None:
 		serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
@@ -41,23 +46,31 @@ def GenericProducts(token):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
-def ProductosUsuario(token):
+def ProductosUsuario(token,ultimo_indice,elementos_pagina):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(vendido_por=user)
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
-def ProductosFavoritos(token):
+def ProductosFavoritos(token,ultimo_indice,elementos_pagina):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(le_gusta_a=user)
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
-def FiltradoProducto(biblio,token):
+def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	tags = biblio['tags']
 	user_latitude = biblio['user_latitude']
 	user_longitude = biblio['user_longitude']
@@ -79,8 +92,9 @@ def FiltradoProducto(biblio,token):
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
-	if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
-		return 'Bad request'
+	if search == '':
+		if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
+			return 'Bad request'
 	if tags != '':
 		lista_tags = [x.strip() for x in tags.split(',')]
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
@@ -93,7 +107,13 @@ def FiltradoProducto(biblio,token):
 			filtered_products.append(product)
 
 	#final_product_list = list(set(products_search) & set(filtered_products))
-	final_product_list =set(products_search).union(set(filtered_products))
+	final_product_list = set(products_search).union(set(filtered_products))
+
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		final_product_list = itertools.islice(final_product_list, ultimo_indice, ultimo_indice + elementos_pagina)
+
 	user = get_user(token)
 	if user!=None:
 		serializer = ProductoSerializerList(final_product_list, many=True, read_only=True, context = {"user": user})

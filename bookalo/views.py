@@ -21,23 +21,27 @@ from .funciones_report import *
 from .funciones_usuario import *
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseRedirect
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import itertools
 
 
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
 
 	try:
-		serializer = GenericProducts(token)
+		serializer = GenericProducts(token,last_index,nelements)
 		if movil == 'true':
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
-				serializer_favs = ProductosFavoritos(token)
+				serializer_favs = ProductosFavoritos(token,last_index,nelements)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
 			else:
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
@@ -99,7 +103,7 @@ def GenericProductView(request, format=None):
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
 				if check_user_logged_in(token):
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,0,-1)
 					user = get_user(token)
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
 				else:
@@ -109,7 +113,7 @@ def GenericProductView(request, format=None):
 				return Response({'producto': serializer.data}, status=status.HTTP_200_OK)
 			else:
 				if check_user_logged_in(token):
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,0,-1)
 					user = get_user(token)
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
 				else:
@@ -119,7 +123,7 @@ def GenericProductView(request, format=None):
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			if check_user_logged_in(token):
-				serializer_favs = ProductosFavoritos(token)
+				serializer_favs = ProductosFavoritos(token,0,-1)
 				user = get_user(token)
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': 'exception_in_server'})
 			else:
@@ -140,7 +144,12 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos_favoritos':serializer_favs.data, 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
+				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
+					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
+					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
+					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
+					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
@@ -152,7 +161,8 @@ def GetUserProfile(request, format=None):
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 
+				'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
 	else:
 		fetch_user2 = GetOtherUserProfile(user_uid)
 		if fetch_user2 == None:
@@ -160,8 +170,10 @@ def GetUserProfile(request, format=None):
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			serializer_favs = ProductosFavoritos(token)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
+			serializer_favs = ProductosFavoritos(token,0,-1)
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
+				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 
+				'coincidentUser': False})
 
 
 @api_view(('POST','GET'))
@@ -169,6 +181,8 @@ def GetUserProfile(request, format=None):
 @csrf_exempt
 def FilterProduct(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if request.method != 'POST':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -196,14 +210,16 @@ def FilterProduct(request, format=None):
 			search = request.POST.get('busqueda', 'nothing')
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
-			serializer = FiltradoProducto(biblioteca,token)
+			
+			serializer = FiltradoProducto(biblioteca,token,last_index,nelements)
+
 			if logged:
 				user = get_user(token)
 				if serializer == 'Bad request':
 					if movil == 'true':
 						return Response(status=status.HTTP_400_BAD_REQUEST)
 					else:
-						serializer_favs = ProductosFavoritos(token)
+						serializer_favs = ProductosFavoritos(token,last_index,nelements)
 						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,  'productos': []})
 				if movil == 'true':
 					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
@@ -224,8 +240,9 @@ def FilterProduct(request, format=None):
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 			else:
 				if logged:
-					serializer_favs = ProductosFavoritos(token)
-					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': []})
+					serializer_favs = ProductosFavoritos(token,last_index,nelements)
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+						'productos_favoritos':serializer_favs.data, 'productos': []})
 				else:
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
@@ -234,6 +251,8 @@ def FilterProduct(request, format=None):
 @csrf_exempt
 def GetUserProducts(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -247,12 +266,12 @@ def GetUserProducts(request, format=None):
 		logged = check_user_logged_in(token)
 		user = get_user(token)
 		try:
-			serializer = ProductosUsuario(token)
+			serializer = ProductosUsuario(token,last_index,nelements)
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
 				if logged:
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,last_index,nelements)
 					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 
 						'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
 				else:
@@ -263,7 +282,7 @@ def GetUserProducts(request, format=None):
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
 				if logged:
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,last_index,nelements)
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': []})
 				else:
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
@@ -349,7 +368,7 @@ def CreateReport(request, format=None):
 					return Response(status=status.HTTP_201_CREATED)
 				else:
 					user = get_user(token)
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,0,-1)
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'info':'OK'})
 			else:
 				if movil == 'true':
@@ -462,7 +481,7 @@ def CreateChat(request, format=None):
 					return Response({'chat_creado':ChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
 				else:
 					user = get_user(token)
-					serializer_favs = ProductosFavoritos(token)
+					serializer_favs = ProductosFavoritos(token,0,-1)
 					return HttpResponseRedirect('bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk)})
 			else:
 				if movil == 'true':
@@ -504,6 +523,8 @@ def SendMessage(request, format=None):
 @csrf_exempt
 def GetChats(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -514,13 +535,13 @@ def GetChats(request, format=None):
 		logged = check_user_logged_in(token)
 	if logged:
 		user = get_user(token)
-		serializer_chats_vendedor = GetChatVendedor(user)
-		serializer_chats_comprador = GetChatComprador(user)
+		serializer_chats_vendedor = GetChatVendedor(user,last_index,nelements)
+		serializer_chats_comprador = GetChatComprador(user,last_index,nelements)
 		if movil == 'true':
 			return Response({'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data}, 
 				status=status.HTTP_200_OK)
 		else:
-			serializer_favs = ProductosFavoritos(token)
+			serializer_favs = ProductosFavoritos(token,last_index,nelements)
 			return render(request, 'bookalo/chat.html', {'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data, 
 				'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
 	else:
@@ -584,7 +605,7 @@ def CreateProductRender(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 	if logged:
-		serializer_favs = ProductosFavoritos(token)
+		serializer_favs = ProductosFavoritos(token ,0 ,-1)
 		user = get_user(token)
 		print(logged)
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': []})
