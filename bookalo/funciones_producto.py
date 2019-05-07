@@ -17,6 +17,7 @@ from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from .funciones_usuario import *
 import itertools
+from django.db.models import Count
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -171,7 +172,9 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	for tag in lista_tags:
-		producto.tiene_tags.get_or_create(nombre=tag)
+		fetched_tag = producto.tiene_tags.get_or_create(nombre=tag)
+		fetched_tag.number_of_uses = fetched_tag.number_of_uses + 1
+		fetched_tag.save()
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
@@ -234,3 +237,14 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		return True
 	except:
 		return False
+
+def GetTags(amount):
+	try:
+		if amount == 'all':
+			sorted_tags = Tag.objects.all().order_by('-number_of_uses')
+			return TagSerializer(sorted_tags, many=True).data
+		else:
+			sorted_tags = Tag.objects.all().order_by('-number_of_uses')[:amount]
+			return TagSerializer(sorted_tags, many=True).data
+	except:
+		return None

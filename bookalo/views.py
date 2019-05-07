@@ -647,6 +647,16 @@ def GetUserInfo(request, format=None):
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
+def GetTagList(request, format=None):
+	serialized_tags = GetTags('all')
+	if serialized_tags != None:
+		return Response({'tags':serialized_tags}, status=status.HTTP_200_OK)
+	else:
+		return Response({'tags':[]}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def PrivacyPolicy(request, format=None):
 	token = request.session.get('token', 'nothing')
 	if token == 'nothing':
@@ -668,9 +678,12 @@ def CreateProductRender(request, format=None):
 		logged = check_user_logged_in(token)
 	if logged:
 		serializer_favs = ProductosFavoritos(token ,0 ,-1)
+		serialized_tags = GetTags(5)
+		if serialized_tags == None:
+			serialized_tags = []
 		user = get_user(token)
 		print(logged)
-		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': []})
+		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': [], 'tags':serialized_tags})
 	else:
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'productos': []})
 

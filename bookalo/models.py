@@ -65,7 +65,9 @@ class Tag(models.Model):
     es_predeterminado = models.BooleanField(
         default=False,
         verbose_name='Marca si un tag ha sido creado por los administradores de la aplicacion')
-    
+    number_of_uses = models.IntegerField(
+        default=0,
+        verbose_name='Número de veces que el tag ha sido utilizado')
     def __str__(self):
         return self.nombre
 
