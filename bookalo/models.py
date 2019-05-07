@@ -280,6 +280,17 @@ class ValidacionEstrella(models.Model):
     def __str__(self):
         return str(self.usuario_valorado) + "/" + str(self.usuario_que_valora)
 
+    def actualizar(self, *args, **kwargs):
+        num_valoraciones = 0
+        suma_valoraciones = 0
+        valoraciones = ValidacionEstrella.objects.filter(usuario_valorado=self.usuario_valorado)
+        for v in valoraciones:
+            num_valoraciones = num_valoraciones + 1
+            suma_valoraciones = suma_valoraciones + v.estrellas
+        if num_valoraciones == 0:
+            num_valoraciones = 1
+        self.usuario_valorado.media_valoraciones = suma_valoraciones / num_valoraciones
+        self.usuario_valorado.save()
 
 # 	'''
 # 	Contenido Multimedia :
