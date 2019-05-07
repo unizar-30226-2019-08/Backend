@@ -200,14 +200,14 @@ def FilterProduct(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 		try:
-			tags = request.POST.get('tags', '')
-			user_latitude = request.POST.get('latitud', '')
-			user_longitude = request.POST.get('longitud', '')
-			max_distance = request.POST.get('distancia_maxima', '')
-			min_price = request.POST.get('precio_minimo', '')
-			max_price = request.POST.get('precio_maximo', '')
-			min_score = request.POST.get('calificacion_minima', '')
-			search = request.POST.get('busqueda', 'nothing')
+			tags = request.POST.get('tags', -1)
+			user_latitude = request.POST.get('latitud', -1)
+			user_longitude = request.POST.get('longitud', -1)
+			max_distance = request.POST.get('distancia_maxima', -1)
+			min_price = request.POST.get('precio_minimo', -1)
+			max_price = request.POST.get('precio_maximo', -1)
+			min_score = request.POST.get('calificacion_minima', -1)
+			search = request.POST.get('busqueda', -1)
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			

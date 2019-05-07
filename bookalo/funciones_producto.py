@@ -86,7 +86,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		min_score = -1
 	search = biblio['busqueda']
 	products_search = []
-	if search != 'nothing' and search != '':
+	if search != -1 and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
 		
@@ -96,19 +96,58 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
-	if search == '':
-		if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
-			return 'Bad request'
-	if tags != '':
+	if search == -1 and user_latitude == -1 and user_longitude == -1 and max_distance == -1 and min_price == -1 and max_price == -1 and min_score == -1:
+		return 'Bad request'
+	if tags != -1:
 		lista_tags = [x.strip() for x in tags.split(',')]
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
-		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+		if min_price == -1:
+			if max_price == -1:
+				if min_score == -1:
+					products = Producto.objects.filter(tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+			else:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+		else:
+			if max_price == -1:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+			else:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 	else:
-		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+		if min_price == -1:
+			if max_price == -1:
+				if min_score != -1:
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score)
+			else:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+				else:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price))
+		else:
+			if max_price == -1:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+			else:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price))
+
 	filtered_products = []
-	for product in products:
-		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
-			filtered_products.append(product)
+	if user_latitude == -1 or user_longitude == -1 or max_distance == -1:
+		for product in products:
+			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
+				filtered_products.append(product)
 
 	#final_product_list = list(set(products_search) & set(filtered_products))
 	final_product_list = set(products_search).union(set(filtered_products))
