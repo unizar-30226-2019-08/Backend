@@ -18,6 +18,7 @@ from decimal import Decimal
 from .funciones_usuario import *
 import itertools
 from django.db.models import Count
+import re
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -103,8 +104,20 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		return 'Bad request'
 
 	if tags != '-1':
-		lista_tags = [x.strip() for x in tags.split(',')]
-		lista_tags = [x.lower() for x in lista_tags]
+		a,b = 'áéíóúü','aeiouu'
+		trans = str.maketrans(a,b)
+		#lista_tags = [x.strip() for x in tags.split(',')]
+		#lista_tags = [re.sub('[^A-Za-z0-9áéíóúüñ]+', '', x) for x in lista_tags]
+		#lista_tags = [x.translate(trans) for x in lista_tags]
+		#lista_tags = [x.lower() for x in lista_tags]
+		lista_tags = []
+		for x in tags.split(','):
+			tag = x.strip()
+			tag = re.sub('[^A-Za-z0-9áéíóúüñ]+', '', tag)
+			tag = tag.translate(trans)
+			tag = tag.lower()
+			lista_tags.append(tag)
+
 		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 		if min_price == '-1':
@@ -231,9 +244,13 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	print(producto)
+	a,b = 'áéíóúü','aeiouu'
+	trans = str.maketrans(a,b)
 	for tag in lista_tags:
 		print(tag)
-		tag_estandar = tag.lower()
+		tag_estandar = re.sub('[^A-Za-z0-9áéíóúüñ]+', '', tag)
+		tag_estandar = tag_estandar.translate(trans)
+		tag_estandar = tag_estandar.lower()
 		producto.tiene_tags.get_or_create(nombre=tag_estandar)
 	tags_in_producto = producto.tiene_tags.all()
 	for tag in tags_in_producto:
