@@ -60,6 +60,7 @@ def index(request):
 @csrf_exempt
 def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
+	token_fcm = request.POST.get('token_fcm', 'nothing')
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if request.method != 'POST':
 		if movil == 'true':
@@ -67,7 +68,7 @@ def Login(request, format=None):
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'Token no recibido.'})
 	else:
-		retorno = usuario_login(token)
+		retorno = usuario_login(token, token_fcm)
 		if retorno == 'Error':
 			if movil != 'true':
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no existe.'})
@@ -181,8 +182,8 @@ def GetUserProfile(request, format=None):
 @csrf_exempt
 def FilterProduct(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	last_index = request.POST.get('ultimo_indice', 0)
-	nelements = request.POST.get('elementos_pagina', -1)
+	last_index = request.POST.get('ultimo_indice', '0')
+	nelements = request.POST.get('elementos_pagina', '-1')
 	if request.method != 'POST':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -200,20 +201,36 @@ def FilterProduct(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 		try:
-			tags = request.POST.get('tags', -1)
-			user_latitude = request.POST.get('latitud', -1)
-			user_longitude = request.POST.get('longitud', -1)
-			max_distance = request.POST.get('distancia_maxima', -1)
-			min_price = request.POST.get('precio_minimo', -1)
-			max_price = request.POST.get('precio_maximo', -1)
-			min_score = request.POST.get('calificacion_minima', -1)
-			search = request.POST.get('busqueda', -1)
+			tags = request.POST.get('tags', '-1')
+			if tags == '':
+				tags = '-1'
+			user_latitude = request.POST.get('latitud', '-1')
+			if user_latitude == '':
+				user_latitude = '-1'
+			user_longitude = request.POST.get('longitud', '-1')
+			if user_longitude == '':
+				user_longitude == '-1'
+			max_distance = request.POST.get('distancia_maxima', '-1')
+			if max_distance == '':
+				max_distance = '-1'
+			min_price = request.POST.get('precio_minimo', '-1')
+			if min_price == '':
+				min_price = '-1'
+			max_price = request.POST.get('precio_maximo', '-1')
+			if max_price == '':
+				max_price = '-1'
+			min_score = request.POST.get('calificacion_minima', '-1')
+			if min_score == '':
+				min_score = '-1'
+			search = request.POST.get('busqueda', '-1')
+			if search == '':
+				search = '-1'
 			if movil != 'true':
-				if min_price != "":
+				if min_price != '':
 					min_price, max_price = min_price.split(',')
 				else:
-					min_price = -1
-					max_price = -1
+					min_price = '-1'
+					max_price = '-1'
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			
@@ -326,6 +343,7 @@ def CreateProduct(request, format=None):
 		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 									'descripcion':descripcion,'tags':tags,'token':token}
+		print(biblioteca)
 		result = CreacionProducto(biblioteca)
 		if movil == 'true':
 			if result == 'Created':

@@ -48,7 +48,7 @@ def check_user_logged_in(token):
 	except:
 		return False
 
-def usuario_login(token):
+def usuario_login(token, token_fcm):
 
 	latitud_registro = 0.0
 	longitud_registro = 0.0
@@ -83,12 +83,14 @@ def usuario_login(token):
 			if user.esta_baneado:
 				return status.HTTP_401_UNAUTHORIZED
 			else:
+				user.token_fcm = token_fcm
+				user.save()
 				update_last_connection(user)
 				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
 
-			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
+			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, token_fcm=token_fcm, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
 			update_last_connection(new_user_data)
 			return UserSerializer(new_user_data).data
 
