@@ -19,7 +19,6 @@ from .funciones_usuario import *
 import itertools
 from django.db.models import Count
 import re
-#from unidecode import unidecode
 import unicodedata
 
 def calculate_distance(lat1, lon1, lat2, lon2):
@@ -35,6 +34,16 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 	c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
 	return R * c
+
+def strip_accents(text):
+    try:
+        text = unicode(text, 'utf-8')
+    except (TypeError, NameError): # unicode is a default on python 3 
+        pass
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode("utf-8")
+    return str(text)
 
 
 def GenericProducts(token,ultimo_indice,elementos_pagina):
@@ -76,25 +85,6 @@ def ProductosFavoritos(token,ultimo_indice,elementos_pagina):
 	return serializer
 
 
-
-def strip_accents(text):
-    """
-    Strip accents from input String.
-
-    :param text: The input string.
-    :type text: String.
-
-    :returns: The processed String.
-    :rtype: String.
-    """
-    try:
-        text = unicode(text, 'utf-8')
-    except (TypeError, NameError): # unicode is a default on python 3 
-        pass
-    text = unicodedata.normalize('NFD', text)
-    text = text.encode('ascii', 'ignore')
-    text = text.decode("utf-8")
-    return str(text)
 
 def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	tags = biblio['tags']
