@@ -235,21 +235,24 @@ def CreacionProducto(biblio):
 	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
 		return 'Bad request'
 	lista_tags = [x.strip() for x in tags.split(',')]
+	#Prueba si el precio es un numero o no
+	try:
+		precio = Decimal(precio)
+	except:
+		return 'Bad request'
 	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
 	if tipo_envio == 'True':
 		tipo_envio = True
 	else:
 		tipo_envio = False
 	#Selecciona el estado en el que se encuentra el producto, entre Nuevo, Seminuevo o Usado
-	try:
-		estado_producto = EleccionEstadoProducto[estado_producto]
-	except:
+	if estado_producto != 'Nuevo' and estado_producto != 'Seminuevo' and estado_producto != 'Usado':
 		return 'Bad request'
 	producto = Producto(vendido_por=user, 
 						latitud=Decimal(latitud), 
 						longitud=Decimal(longitud), 
 						nombre=nombre, 
-						precio=Decimal(precio), 
+						precio=precio, 
 						estado_producto=estado_producto, 
 						estado_venta=True,
 						tipo_envio=tipo_envio,
@@ -259,7 +262,7 @@ def CreacionProducto(biblio):
 	print(producto)
 	for tag in lista_tags:
 		print(tag)
-		tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+		tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
 		tag_estandar = strip_accents(tag_estandar)
 		tag_estandar = tag_estandar.lower()
 		producto.tiene_tags.get_or_create(nombre=tag_estandar)

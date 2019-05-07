@@ -78,7 +78,7 @@ class Tag(models.Model):
 # 	'''
 class EleccionEstadoProducto(Enum):
 	Nuevo = "Nuevo"
-	Semi_nuevo = "Seminuevo"
+	Seminuevo = "Seminuevo"
 	Usado = "Usado"
 
 # 	'''
