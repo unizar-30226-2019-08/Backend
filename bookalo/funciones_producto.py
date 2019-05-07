@@ -82,11 +82,12 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	min_price = biblio['min_price']
 	max_price = biblio['max_price']
 	min_score = biblio['min_score']
+	#print(biblio)
 	if int(min_score) == 0:
-		min_score = -1
+		min_score = '-1'
 	search = biblio['busqueda']
 	products_search = []
-	if search != -1 and search != '':
+	if search != '-1' and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
 		
@@ -96,63 +97,74 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
-	if search == -1 and user_latitude == -1 and user_longitude == -1 and max_distance == -1 and min_price == -1 and max_price == -1 and min_score == -1:
+	if search == '-1' and user_latitude == '-1' and user_longitude == '-1' and max_distance == '-1' and min_price == '-1' and max_price == '-1' and min_score == '-1':
 		return 'Bad request'
-	if tags != -1:
+	if tags != '-1':
 		lista_tags = [x.strip() for x in tags.split(',')]
+		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
-		if min_price == -1:
-			if max_price == -1:
-				if min_score == -1:
+		if min_price == '-1':
+			if max_price == '-1':
+				if min_score == '-1':
 					products = Producto.objects.filter(tiene_tags__in=tag_queryset)
 				else:
-					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset)
 			else:
-				if min_score == -1:
+				if min_score == '-1':
 					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
 				else:
 					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 		else:
-			if max_price == -1:
-				if min_score == -1:
+			if max_price == '-1':
+				if min_score == '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset)
 				else:
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 			else:
-				if min_score == -1:
+				if min_score == '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
 				else:
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 	else:
-		if min_price == -1:
-			if max_price == -1:
-				if min_score != -1:
+		if min_price == '-1':
+			if max_price == '-1':
+				if min_score != '-1':
 					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score)
 			else:
-				if min_score != -1:
+				if min_score != '-1':
 					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
 				else:
 					products = Producto.objects.filter(precio__lte=Decimal(max_price))
 		else:
-			if max_price == -1:
-				if min_score != -1:
+			if max_price == '-1':
+				if min_score != '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
 			else:
-				if min_score != -1:
+				if min_score != '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
 				else:
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price))
 
+	#print(products)
 	filtered_products = []
-	if user_latitude == -1 or user_longitude == -1 or max_distance == -1:
+	if user_latitude != '-1' or user_longitude != '-1' or max_distance != '-1':
+		print("Voy a calcular distancias")
 		for product in products:
+			#print("Distancia maxima: " + max_distance)
+			#print("Distancia calculada: " + str(calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude))))
 			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
+				print("Anyadido producto")
 				filtered_products.append(product)
 
-	#final_product_list = list(set(products_search) & set(filtered_products))
-	#final_product_list = set(products_search).union(set(filtered_products))
-	final_product_list = set(filtered_products).union(set(products_search))
+	if search != '-1':
+		print("Voy a hacer la interseccion")
+		final_product_list = set(filtered_products) & set(products_search)
+		final_product_list = list(final_product_list)
+		print("He hecho la interseccion")
+	else:
+		final_product_list = filtered_products
 
+	print(final_product_list)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
@@ -211,10 +223,14 @@ def CreacionProducto(biblio):
 						descripcion=descripcion)
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
+	print(producto)
 	for tag in lista_tags:
-		fetched_tag = producto.tiene_tags.get_or_create(nombre=tag)
-		fetched_tag.number_of_uses = fetched_tag.number_of_uses + 1
-		fetched_tag.save()
+		print(tag)
+		producto.tiene_tags.get_or_create(nombre=tag)
+	tags_in_producto = producto.tiene_tags.all()
+	for tag in tags_in_producto:
+		tag.number_of_uses = tag.number_of_uses + 1
+		tag.save()
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
