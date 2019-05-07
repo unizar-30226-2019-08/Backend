@@ -253,20 +253,20 @@ def GetUserProducts(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	last_index = request.POST.get('ultimo_indice', 0)
 	nelements = request.POST.get('elementos_pagina', -1)
+	user_uid = request.POST.get('uid', 'nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
-	if token == 'nothing':
-		if movil == 'true':
-			return Response(status=status.HTTP_400_BAD_REQUEST)
-		else:
-			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos' : []})
+	if token == 'nothing' and movil != 'true':
+		return render(request, 'bookalo/index.html', {'loggedin': False, 'productos' : []})
 	else:
 		logged = check_user_logged_in(token)
 		user = get_user(token)
 		try:
-			serializer = ProductosUsuario(token,last_index,nelements)
+			if movil == 'true' and token == 'nothing' and user_uid == 'nothing':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			serializer = ProductosUsuario(token, last_index, nelements, user_uid)
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
@@ -478,7 +478,7 @@ def CreateChat(request, format=None):
 			if logged:
 				chat = CrearChat(token, otroUserUid, productId)
 				if movil == 'true':
-					return Response({'chat_creado':ChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
+					return Response({'chat_cargado': ChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
 				else:
 					user = get_user(token)
 					serializer_favs = ProductosFavoritos(token,0,-1)
@@ -513,6 +513,33 @@ def SendMessage(request, format=None):
 		message_created = CrearMensaje(token, chat_id, message)
 		if message_created:
 			return Response(status=status.HTTP_200_OK)	
+		else:
+			return Response(status=status.HTTP_404_NOT_FOUND)	
+	else:
+		return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetMessages(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', '')
+	else:
+		#Comprobar que se puede coger el token de las cookies aunque se haga petición mediante JS
+		token = request.session.get('token', '')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		chat_id = request.POST.get('id_chat', '')
+		if chat_id == '' or token == '':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		user = get_user(token)
+		messages = GetUserMessages(chat_id, user)
+		if messages != None:
+			return Response({'mensajes':messages}, status=status.HTTP_200_OK)	
 		else:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
 	else:
@@ -581,6 +608,41 @@ def SendRating(request, format=None):
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		else:
 			return render(request, 'bookalo/chat.html', {'loggedin': logged})
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetRatings(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	user_uid = request.POST.get('uid', 'nothing')
+	if user_uid == 'nothing':
+		if token == 'nothing':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			user = get_user(token)
+			user_uid = user.uid
+	serializer = usuario_getvaloraciones(user_uid)
+	if serializer == None:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+	else:
+		return Response({'valoraciones':serializer}, status=status.HTTP_200_OK)
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetUserInfo(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	user_uid = request.POST.get('uid', 'nothing')
+	if user_uid == 'nothing':
+		if token == 'nothing':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			user = get_user(token)
+			user_uid = user.uid
+	serializer = GetBasicInfo(user_uid)
+	if serializer == None:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+	else:
+		return Response({'informacion_basica':serializer}, status=status.HTTP_200_OK)
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))

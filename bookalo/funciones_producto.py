@@ -46,10 +46,13 @@ def GenericProducts(token,ultimo_indice,elementos_pagina):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
-def ProductosUsuario(token,ultimo_indice,elementos_pagina):
-	user_info = auth.get_account_info(token)
-	user_uid = user_info['users'][0]['localId']
-	user = Usuario.objects.get(uid=user_uid)
+def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
+	if token != 'nothing':
+		user_info = auth.get_account_info(token)
+		user_uid_wt = user_info['users'][0]['localId']
+		user = Usuario.objects.get(uid=user_uid_wt)
+	else:
+		user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(vendido_por=user)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)

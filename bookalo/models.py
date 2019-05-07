@@ -130,6 +130,10 @@ class Producto(models.Model):
     descripcion = models.CharField(
         max_length=1000,
         verbose_name='Descripcion asociada al producto')
+    isbn = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='ISBN del libro')
     tiene_tags = models.ManyToManyField(
         Tag,
         blank=True,

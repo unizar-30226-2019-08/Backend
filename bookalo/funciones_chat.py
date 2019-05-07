@@ -25,7 +25,11 @@ def CrearChat(token,otroUserUid,productId):
 	user = Usuario.objects.get(uid=user_uid)
 	otroUser = Usuario.objects.get(uid=otroUserUid)
 	product = Producto.objects.get(pk=int(productId))
-	chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
+	#Comprobamos que no exista el chat previamente
+	try:
+		chat = Chat.objects.get(vendedor=otroUser, comprador=user, producto=product)
+	except:
+		chat = Chat.objects.create(vendedor=otroUser, comprador=user, producto=product)
 	return chat
 
 def GetChatVendedor(user,ultimo_indice,elementos_pagina):
@@ -52,3 +56,10 @@ def CrearMensaje(token, chat_id, message):
 		return True
 	except:
 		return False	
+
+def GetUserMessages(chat_pk, user):
+	try:
+		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk)
+		return MensajeSerializer(messages, many=True, context = {"user": user}).data
+	except:
+		return None
