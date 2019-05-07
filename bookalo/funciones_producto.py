@@ -328,7 +328,12 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		rated_user = Usuario.objects.get(uid=rated_user_id)
 		user = get_user(token)
 		product = Producto.objects.get(pk=int(product_id))
-		ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+		validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+		num_valoraciones = ValidacionEstrella.objects.filter(usuario_valorado=rated_user).count()
+		if num_valoraciones == 0:
+			num_valoraciones = 1
+		rated_user.media_valoraciones = (rated_user.media_valoraciones + stars) / num_valoraciones
+		rated_user.save()
 		return True
 	except:
 		return False
