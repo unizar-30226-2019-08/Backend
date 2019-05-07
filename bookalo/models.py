@@ -78,7 +78,7 @@ class Tag(models.Model):
 # 	'''
 class EleccionEstadoProducto(Enum):
 	Nuevo = "Nuevo"
-	Semi_nuevo = "Seminuevo"
+	Seminuevo = "Seminuevo"
 	Usado = "Usado"
 
 # 	'''
@@ -282,6 +282,8 @@ class ValidacionEstrella(models.Model):
 
     def save(self, *args, **kwargs):
         num_valoraciones = ValidacionEstrella.objects.filter(usuario_valorado=self.usuario_valorado).count()
+        if num_valoraciones == 0:
+            num_valoraciones = 1
         self.usuario_valorado.media_valoraciones = (self.usuario_valorado.media_valoraciones + self.estrellas) / num_valoraciones
 
 # 	'''
