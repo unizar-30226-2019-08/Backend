@@ -47,9 +47,9 @@ def index(request):
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': []})
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
 			else:
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -140,28 +140,31 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos_favoritos':serializer_favs.data, 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data , 'productos_favoritos':ProductosFavoritos(token).data, 'productos' : ProductosFavoritos(token).data , 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
+				print("Except")
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
 	elif token == 'nothing' and user_uid != 'nothing':
 		fetch_user2 = GetOtherUserProfile(user_uid)
+		logged_in = check_user_logged_in(token)
 		if fetch_user2 == None:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
 	else:
 		fetch_user2 = GetOtherUserProfile(user_uid)
+		logged_in = check_user_logged_in(token)
 		if fetch_user2 == None:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			serializer_favs = ProductosFavoritos(token)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 'coincidentUser': False})
 
 
 @api_view(('POST','GET'))
@@ -194,6 +197,22 @@ def FilterProduct(request, format=None):
 			max_price = request.POST.get('precio_maximo', '')
 			min_score = request.POST.get('calificacion_minima', '')
 			search = request.POST.get('busqueda', 'nothing')
+			if movil != 'true':
+				if min_price != "":
+					min_price, max_price = min_price.split(',')
+				else:
+					min_price = ""
+					max_price = ""
+
+			print(tags)
+			print(user_latitude)
+			print(user_longitude)
+			print(max_distance)
+			print(min_price)
+			print(max_price)
+			print(min_score)
+			print(search)
+
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			serializer = FiltradoProducto(biblioteca,token)

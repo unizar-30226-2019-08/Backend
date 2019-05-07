@@ -103,15 +103,15 @@
             </div>
         </div>
     </div>
-    <div id="wrapper" class="toggled" style="margin: -3px 0px 0px 0px;color: rgb(40, 45, 50);">
+    <div id="wrapper" class="toggled" style="color: rgb(40, 45, 50);margin: -3px 0px 0px 0px;">
         <div class="text-left d-lg-flex" id="sidebar-wrapper" style="background-color: rgb(40,45,50);margin: 0px 0px 50px -250px;">
-            <div class="col" style="padding: 0px;margin: 0px;color: rgb(40, 45, 50);">
-                <div class="row" style="padding: 0px;margin: 0px;">
-                    <div class="col text-center" style="padding: 0px;"><a href="/api/get_user_profile"><img style="width: 100%;height: 160px;bottom: 20px;" src="{% static 'bookalo/img/Depilacion-Hombre.jpg' %}"></a></div>
+            <div class="col" style="padding: 0px;color: rgb(40, 45, 50);">
+                <div class="row" style="padding: 0px;">
+                    <div class="col text-center" style="padding: 0px;"><a href="/api/get_user_profile"><img style="width: 100%;height: 160px;bottom: 20px;" src="{{ informacion_basica.imagen_perfil }}"></a></div>
                 </div>
                 <div class="row" style="width: 100%;margin: 25px 0px 0px 10px;">
                     <div class="col" style="padding: 0px;">
-                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">Juan López</h2>
+                        <h2 class="text-left" style="margin: 0px;color: rgb(255,255,255);font-family: Actor, sans-serif;">{{ informacion_basica.nombre }}</h2>
                     </div>
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
@@ -130,78 +130,32 @@
                 <div class="row" style="margin: 0px;width: 100%;">
                     <div class="col" style="width: 100%;padding: 0px;margin: 0px 0px 55px 0px;">
                         <div role="tablist" id="accordion-1" style="width: 100%;height: 100%;">
+                            {% for p in informacion_basica.productos_favoritos %}
                             <div class="card" style="margin: 2px 0px 0px 0px;">
                                 <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-1" href="div#accordion-1 .item-1" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Lengua castellana y literatura</a></h5>
+                                    <h5 class="mb-0">
+                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.info_producto.nombre }}</a>
+                                    </h5>
                                 </div>
-                                <div class="collapse item-1 text-center" role="tabpanel" data-parent="#accordion-1">
+                                <div class="collapse item-{{ forloop.counter }} text-center" role="tabpanel" data-parent="#accordion-1">
                                     <div class="card-body">
                                         <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
+                                            <div class="col" style="padding: 0px;">
+                                                <img style="width: 100%;height: 102%;" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
+                                            </div>
                                             <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <p style="margin: 0px 0px 0px;">{{ p.info_producto.num_likes }} likes</p>
+                                                <p>
+                                                    <strong>{{ p.info_producto.precio }} €</strong>
+                                                </p>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
+                                                <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-2" href="div#accordion-1 .item-2" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Matemáticas 1ESO</a></h5>
-                                </div>
-                                <div class="collapse item-2 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-3" href="div#accordion-1 .item-3" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Acuarelas</a></h5>
-                                </div>
-                                <div class="collapse item-3 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" style="margin: 2px 0px 0px 0px;">
-                                <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
-                                    <h5 class="mb-0"><a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-4" href="div#accordion-1 .item-4" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">Workbook Inglés 2ESO</a></h5>
-                                </div>
-                                <div class="collapse item-4 text-center" role="tabpanel" data-parent="#accordion-1">
-                                    <div class="card-body">
-                                        <div class="row" style="margin: -19px -20px;">
-                                            <div class="col" style="padding: 0px;"><img style="width: 100%;height: 100%;" src="{% static 'bookalo/img/Imagen8.png' %}"></div>
-                                            <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">50 likes</p>
-                                                <p><strong>100 €</strong></p><a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view">Ver más</a>
-                                                <button
-                                                    class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -265,40 +219,18 @@
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" role="tabpanel" id="tab-1">
-                                <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;"><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                    <button
-                                        class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                            type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                            style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                        <button
-                                            class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                                style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                            <button
-                                                class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                    type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                                    style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                                <button
-                                                    class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                        type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button></div>
+                                <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
+                                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana
+                                    </button>
+                                </div>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="tab-2">
-                                <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;"><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                    <button
-                                        class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                            type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                            style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                        <button
-                                            class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                                style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                            <button
-                                                class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                    type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary"
-                                                    style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button>
-                                                <button
-                                                    class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;" type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 0px 0px 10px 0px;width: 90%;"
-                                                        type="button"><img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana</button></div>
+                                <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
+                                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{% static 'bookalo/img/agriculture-beautiful-view-city-park-1080722(2).jpg' %}">&nbsp; &nbsp; &nbsp;Lengua castellana
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
