@@ -156,22 +156,24 @@ def GetUserProfile(request, format=None):
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
 	elif token == 'nothing' and user_uid != 'nothing':
 		fetch_user2 = GetOtherUserProfile(user_uid)
+		logged_in = check_user_logged_in(token)
 		if fetch_user2 == None:
-			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged_in, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 
 				'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
 	else:
 		fetch_user2 = GetOtherUserProfile(user_uid)
+		logged_in = check_user_logged_in(token)
 		if fetch_user2 == None:
-			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged_in, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			serializer_favs = ProductosFavoritos(token,0,-1)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
 				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 
 				'coincidentUser': False})
 

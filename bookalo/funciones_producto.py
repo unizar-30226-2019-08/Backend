@@ -150,7 +150,8 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 				filtered_products.append(product)
 
 	#final_product_list = list(set(products_search) & set(filtered_products))
-	final_product_list = set(products_search).union(set(filtered_products))
+	#final_product_list = set(products_search).union(set(filtered_products))
+	final_product_list = set(filtered_products).union(set(products_search))
 
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
