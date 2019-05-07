@@ -144,9 +144,6 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
-					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
@@ -210,6 +207,8 @@ def FilterProduct(request, format=None):
 			max_price = request.POST.get('precio_maximo', -1)
 			min_score = request.POST.get('calificacion_minima', -1)
 			search = request.POST.get('busqueda', -1)
+			if movil != 'true':
+				min_price, max_price = min_price.split(',')
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			
