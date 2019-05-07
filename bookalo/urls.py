@@ -22,5 +22,9 @@ urlpatterns = [
     re_path(r'privacypolicy', views.PrivacyPolicy),
     re_path(r'create_product', views.CreateProductRender),
     path(r'api/get_pending_notifications', views.GetPendingNotifications),
+    path(r'api/get_ratings', views.GetRatings),
+    path(r'api/get_user_info', views.GetUserInfo),
+    path(r'api/get_messages', views.GetMessages),
+    path(r'api/get_tags', views.GetTagList),
     re_path(r'logout', views.Logout),
 ]

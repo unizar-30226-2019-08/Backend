@@ -11,7 +11,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
     conectado = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones')
+        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones', 'ultima_conexion')
     def get_ciudad(self, obj):
         geolocator = Nominatim(user_agent="bookalo")
         location = geolocator.reverse(str(obj.latitud_registro) + ',' + str(obj.longitud_registro))
@@ -36,7 +36,7 @@ class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
     contenido_url = serializers.SerializerMethodField()
     class Meta:
         model = ContenidoMultimedia
-        fields = ('contenido_url', 'orden_en_producto')
+        fields = ('contenido_url',)
 
     def get_contenido_url(self, obj):
         return obj.contenido.url
@@ -59,7 +59,7 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
         model = Producto
         fields = ('pk','nombre', 'precio', 'estado_producto', 'estado_venta','valoracion_media_usuario',
          'latitud', 'longitud', 'tipo_envio', 'descripcion', 'tiene_tags',
-          'num_likes', 'contenido_multimedia')
+          'num_likes', 'contenido_multimedia', 'isbn')
 
     def get_contenido_multimedia(self, obj):
         contenido = ContenidoMultimedia.objects.filter(producto=obj.pk).order_by('orden_en_producto')
@@ -131,3 +131,16 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NotificacionesPendientes
         fields = ('usuario_pendiente', 'descripcion_notificacion')
+
+class MensajeSerializer(serializers.HyperlinkedModelSerializer):
+    es_suyo = serializers.SerializerMethodField()
+    class Meta:
+        model = Mensaje
+        fields = ('texto', 'hora')
+
+    def get_es_suyo(self, obj):
+        usuario = self.context.get('user', 'nothing')
+        if obj.emisor == usuario:
+            return True
+        else:
+            return False

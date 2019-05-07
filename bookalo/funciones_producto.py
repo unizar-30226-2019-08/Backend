@@ -16,6 +16,8 @@ from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from .funciones_usuario import *
+import itertools
+from django.db.models import Count
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -32,8 +34,12 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 	return R * c
 
 
-def GenericProducts(token):
+def GenericProducts(token,ultimo_indice,elementos_pagina):
 	products = Producto.objects.order_by('-num_likes')
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	user = get_user(token)
 	if user!=None:
 		serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
@@ -41,23 +47,34 @@ def GenericProducts(token):
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
 	return serializer
 
-def ProductosUsuario(token):
-	user_info = auth.get_account_info(token)
-	user_uid = user_info['users'][0]['localId']
-	user = Usuario.objects.get(uid=user_uid)
+def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
+	if token != 'nothing':
+		user_info = auth.get_account_info(token)
+		user_uid_wt = user_info['users'][0]['localId']
+		user = Usuario.objects.get(uid=user_uid_wt)
+	else:
+		user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(vendido_por=user)
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
-def ProductosFavoritos(token):
+def ProductosFavoritos(token,ultimo_indice,elementos_pagina):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(le_gusta_a=user)
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
-def FiltradoProducto(biblio,token):
+def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	tags = biblio['tags']
 	user_latitude = biblio['user_latitude']
 	user_longitude = biblio['user_longitude']
@@ -69,7 +86,7 @@ def FiltradoProducto(biblio,token):
 		min_score = -1
 	search = biblio['busqueda']
 	products_search = []
-	if search != 'nothing' and search != '':
+	if search != -1 and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
 		
@@ -79,21 +96,68 @@ def FiltradoProducto(biblio,token):
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
-	if user_latitude == '' or user_longitude == '' or max_distance == '' or min_price == '' or max_price == '' or min_score == '':
+	if search == -1 and user_latitude == -1 and user_longitude == -1 and max_distance == -1 and min_price == -1 and max_price == -1 and min_score == -1:
 		return 'Bad request'
-	if tags != '':
+	if tags != -1:
 		lista_tags = [x.strip() for x in tags.split(',')]
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
-		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+		if min_price == -1:
+			if max_price == -1:
+				if min_score == -1:
+					products = Producto.objects.filter(tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+			else:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+		else:
+			if max_price == -1:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+			else:
+				if min_score == -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
 	else:
-		products = Producto.objects.filter(precio__lte=Decimal(max_price), precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+		if min_price == -1:
+			if max_price == -1:
+				if min_score != -1:
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score)
+			else:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+				else:
+					products = Producto.objects.filter(precio__lte=Decimal(max_price))
+		else:
+			if max_price == -1:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+			else:
+				if min_score != -1:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price))
+
 	filtered_products = []
-	for product in products:
-		if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
-			filtered_products.append(product)
+	if user_latitude == -1 or user_longitude == -1 or max_distance == -1:
+		for product in products:
+			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
+				filtered_products.append(product)
 
 	#final_product_list = list(set(products_search) & set(filtered_products))
-	final_product_list =set(products_search).union(set(filtered_products))
+	#final_product_list = set(products_search).union(set(filtered_products))
+	final_product_list = set(filtered_products).union(set(products_search))
+
+	ultimo_indice = int(ultimo_indice)
+	elementos_pagina = int(elementos_pagina)
+	if(elementos_pagina != -1):
+		final_product_list = itertools.islice(final_product_list, ultimo_indice, ultimo_indice + elementos_pagina)
+
 	user = get_user(token)
 	if user!=None:
 		serializer = ProductoSerializerList(final_product_list, many=True, read_only=True, context = {"user": user})
@@ -148,7 +212,9 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	for tag in lista_tags:
-		producto.tiene_tags.get_or_create(nombre=tag)
+		fetched_tag = producto.tiene_tags.get_or_create(nombre=tag)
+		fetched_tag.number_of_uses = fetched_tag.number_of_uses + 1
+		fetched_tag.save()
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
@@ -211,3 +277,14 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		return True
 	except:
 		return False
+
+def GetTags(amount):
+	try:
+		if amount == 'all':
+			sorted_tags = Tag.objects.all().order_by('-number_of_uses')
+			return TagSerializer(sorted_tags, many=True).data
+		else:
+			sorted_tags = Tag.objects.all().order_by('-number_of_uses')[:amount]
+			return TagSerializer(sorted_tags, many=True).data
+	except:
+		return None
