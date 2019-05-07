@@ -65,7 +65,9 @@ class Tag(models.Model):
     es_predeterminado = models.BooleanField(
         default=False,
         verbose_name='Marca si un tag ha sido creado por los administradores de la aplicacion')
-    
+    number_of_uses = models.IntegerField(
+        default=0,
+        verbose_name='Número de veces que el tag ha sido utilizado')
     def __str__(self):
         return self.nombre
 
@@ -130,6 +132,10 @@ class Producto(models.Model):
     descripcion = models.CharField(
         max_length=1000,
         verbose_name='Descripcion asociada al producto')
+    isbn = models.CharField(
+        max_length=50,
+        default='',
+        verbose_name='ISBN del libro')
     tiene_tags = models.ManyToManyField(
         Tag,
         blank=True,

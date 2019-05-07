@@ -110,9 +110,15 @@ def GetOtherUserProfile(user_uid):
 		return None
 
 def usuario_getvaloraciones(user_uid):
-	valoraciones = ValidacionEstrella.objects.filter(usuario_valorado__uid=user_uid)
-	serializer = ValidacionEstrellaSerializer(valoraciones, many=True, read_only=True)
-	return serializer.data
+	try:
+		if user_uid == 'nothing':
+			return None
+		else:
+			user = Usuario.objects.get(uid=user_uid)
+			ratings = ValidacionEstrella.objects.filter(usuario_valorado=user)
+			return ValidacionEstrellaSerializer(ratings, many=True).data
+	except:
+		return None
 
 
 def GetNotifications(token):
@@ -125,3 +131,12 @@ def GetNotifications(token):
 			return 'NOT FOUND'
 	except:
 		return 'NOT FOUND'
+
+def GetBasicInfo(user_uid):
+	if user_uid == 'nothing':
+		return None
+	else:
+		try:
+			return UserSerializer(Usuario.objects.get(uid=user_uid)).data
+		except:
+			return None
