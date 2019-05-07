@@ -379,6 +379,7 @@ def CreateReport(request, format=None):
 		token = request.session.get('token', 'nothing')
 
 	reporteduserUid = request.POST.get('uid', 'nothing')
+	print(reporteduserUid)
 	cause = request.POST.get('causa', 'nothing')
 	comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing' or cause == 'nothing':
