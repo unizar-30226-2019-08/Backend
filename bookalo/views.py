@@ -369,6 +369,7 @@ def CreateProduct(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def CreateReport(request, format=None):
+	print("A crear")
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
@@ -387,6 +388,7 @@ def CreateReport(request, format=None):
 		try:
 			logged = check_user_logged_in(token)
 			if logged:
+				print("Voy a crear")
 				CrearReport(reporteduserUid, cause, comment)
 				if movil == 'true':
 					return Response(status=status.HTTP_201_CREATED)
@@ -546,6 +548,7 @@ def SendMessage(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def GetMessages(request, format=None):
+	print("Getting")
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', '')
@@ -562,9 +565,11 @@ def GetMessages(request, format=None):
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		user = get_user(token)
 		messages = GetUserMessages(chat_id, user)
+		print(messages)
 		if messages != None:
 			return Response({'mensajes':messages}, status=status.HTTP_200_OK)	
 		else:
+			print("404")
 			return Response(status=status.HTTP_404_NOT_FOUND)	
 	else:
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
