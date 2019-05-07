@@ -226,10 +226,10 @@ def FilterProduct(request, format=None):
 			if search == '':
 				search = '-1'
 			if movil != 'true':
-				if min_price != '':
+				if min_price != '-1':
 					min_price, max_price = min_price.split(',')
 				else:
-					min_price = '-1'
+					#min_price = '-1'
 					max_price = '-1'
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
@@ -286,10 +286,12 @@ def GetUserProducts(request, format=None):
 	else:
 		logged = check_user_logged_in(token)
 		user = get_user(token)
+
 		try:
 			if movil == 'true' and token == 'nothing' and user_uid == 'nothing':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			serializer = ProductosUsuario(token, last_index, nelements, user_uid)
+			
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:

@@ -49,9 +49,7 @@ def GenericProducts(token,ultimo_indice,elementos_pagina):
 
 def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
 	if token != 'nothing':
-		user_info = auth.get_account_info(token)
-		user_uid_wt = user_info['users'][0]['localId']
-		user = Usuario.objects.get(uid=user_uid_wt)
+		user = get_user(token)
 	else:
 		user = Usuario.objects.get(uid=user_uid)
 	products = Producto.objects.filter(vendido_por=user)
@@ -87,6 +85,10 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		min_score = '-1'
 	search = biblio['busqueda']
 	products_search = []
+
+	user_latitude = 15
+	user_longitude = 15
+
 	if search != '-1' and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
@@ -99,8 +101,10 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 	if search == '-1' and user_latitude == '-1' and user_longitude == '-1' and max_distance == '-1' and min_price == '-1' and max_price == '-1' and min_score == '-1':
 		return 'Bad request'
+
 	if tags != '-1':
 		lista_tags = [x.strip() for x in tags.split(',')]
+		lista_tags = [x.lower() for x in lista_tags]
 		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 		if min_price == '-1':
@@ -147,7 +151,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 	#print(products)
 	filtered_products = []
-	if user_latitude != '-1' or user_longitude != '-1' or max_distance != '-1':
+	if user_latitude != '-1' and user_longitude != '-1' and max_distance != '-1':
 		print("Voy a calcular distancias")
 		for product in products:
 			#print("Distancia maxima: " + max_distance)
@@ -155,6 +159,9 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
 				print("Anyadido producto")
 				filtered_products.append(product)
+	else:
+		for product in products:
+			filtered_products.append(product)
 
 	if search != '-1':
 		print("Voy a hacer la interseccion")
@@ -226,7 +233,8 @@ def CreacionProducto(biblio):
 	print(producto)
 	for tag in lista_tags:
 		print(tag)
-		producto.tiene_tags.get_or_create(nombre=tag)
+		tag_estandar = tag.lower()
+		producto.tiene_tags.get_or_create(nombre=tag_estandar)
 	tags_in_producto = producto.tiene_tags.all()
 	for tag in tags_in_producto:
 		tag.number_of_uses = tag.number_of_uses + 1
