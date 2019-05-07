@@ -192,22 +192,22 @@
                             <div class="card" style="margin: 2px 0px 0px 0px;">
                                 <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
                                     <h5 class="mb-0">
-                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.nombre }}</a>
+                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.info_producto.nombre }}</a>
                                     </h5>
                                 </div>
                                 <div class="collapse item-{{ forloop.counter }} text-center" role="tabpanel" data-parent="#accordion-1">
                                     <div class="card-body">
                                         <div class="row" style="margin: -19px -20px;">
                                             <div class="col" style="padding: 0px;">
-                                                <img style="width: 100%;height: 102%;" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                                <img style="width: 100%;height: 102%;" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
                                             </div>
                                             <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">{{ p.num_likes }} likes</p>
+                                                <p style="margin: 0px 0px 0px;">{{ p.info_producto.num_likes }} likes</p>
                                                 <p>
-                                                    <strong>{{ p.precio }} €</strong>
+                                                    <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
-                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.pk }}">Ver más</a>
-                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
+                                                <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -224,14 +224,14 @@
         <div class="col d-lg-flex d-xl-flex align-self-center justify-content-lg-center justify-content-xl-center">
             <div class="carousel slide d-lg-flex d-xl-flex" data-ride="carousel" id="carousel-1" style="height: 450px;width: 75%;">
                 <div class="carousel-inner" role="listbox">
-                    {% for elemento in producto.contenido_multimedia %}
+                    {% for elemento in producto.info_producto.contenido_multimedia %}
                         <div class="carousel-item {% if forloop.first %} active {% endif %}" style="filter: grayscale(0%) hue-rotate(0deg) invert(0%) sepia(0%);margin: 0px;"><img class="w-100 d-block" src="{{ elemento.contenido_url }}" alt="Slide Image" style="height: 450px;"></div>
                     {% endfor %}
                 </div>
                 <div><a class="carousel-control-prev" href="#carousel-1" role="button" data-slide="prev"><span class="carousel-control-prev-icon" style="color: rgb(0,0,0);"></span><span class="sr-only" style="color: rgb(0,0,0);">Previous</span></a><a class="carousel-control-next"
                         href="#carousel-1" role="button" data-slide="next"><span class="carousel-control-next-icon"></span><span class="sr-only">Next</span></a></div>
                 <ol class="carousel-indicators">
-                    {% for elemento in producto.contenido_multimedia %}
+                    {% for elemento in producto.info_producto.contenido_multimedia %}
                         <li data-target="#carousel-1" data-slide-to="{{ forloop.counter0 }}" {% if forloop.first %} class="active" {% endif %}></li>
                     {% endfor %}
                 </ol>
@@ -242,12 +242,12 @@
         <div class="col">
             <div class="row" style="margin: 20px 0px 0px 0px;font-family: Antic, sans-serif;">
                 <div class="col" style="padding: 0px 25px;">
-                    <h1>{{ producto.nombre }}</h1>
+                    <h1>{{ producto.info_producto.nombre }}</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
-                    <p style="padding: 0px 15px;font-size: 24px;"><strong>{{ producto.precio }}€</strong></p>
+                    <p style="padding: 0px 15px;font-size: 24px;"><strong>{{ producto.info_producto.precio }}€</strong></p>
                 </div>
             </div>
             <div class="row">
@@ -284,14 +284,14 @@
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
-                    <p style="padding: 0px 15px;margin: 15px 0px 16px 0px;font-family: Antic, sans-serif;">{{ producto.descripcion }}</p>
+                    <p style="padding: 0px 15px;margin: 15px 0px 16px 0px;font-family: Antic, sans-serif;">{{ producto.info_producto.descripcion }}</p>
                 </div>
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
                     <h3 style="padding: 0px 15px;margin: 15px 0px 25px 0px;font-family: Antic, sans-serif;">Etiquetas del producto</h3>
                     <div style="margin: 15px 0px 16px 0px;padding: 0px 15px;">
-                        {% for tag in producto.tiene_tags %}
+                        {% for tag in producto.info_producto.tiene_tags %}
                             <button class="btn btn-secondary" style="background-color: #e91e63;opacity: 1;border-color: transparent;border-radius: 20px;margin: 0px 10px 10px 0px;" type="button">{{ tag.nombre }}</button>
                         {% endfor %}
                     </div>
@@ -306,19 +306,19 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col" style="padding: 0px 45px;">
-                    {% if producto.estado_producto == "Nuevo" %}
+                    {% if producto.info_producto.estado_producto == "Nuevo" %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Nuevo<i class="material-icons" style="margin: 0px 0px 0px 10px;">fiber_new</i></p>
-                    {% elif producto.estado_producto == "Usado" %}
+                    {% elif producto.info_producto.estado_producto == "Usado" %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Usado</p>
                     {% else %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Semi-nuevo</p>
                     {% endif %}
-                    {% if producto.tipo_envio %}
+                    {% if producto.info_producto.tipo_envio %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Con envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
                     {% else %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Sin envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
                     {% endif %}
-                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
+                    <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.info_producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
                 </div>
             </div>
             <div class="row" style="padding: 0px;margin: 20px 0px 0px 0px;">
@@ -328,12 +328,27 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col text-center" style="padding: 0px;margin: 10px 0px 0px 0px;">
-                    <button onclick="anadirFavorito('{{ producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button"><i id="{{ producto.pk }}Icon" class="fa fa-thumbs-up" style="color:#ffffff;font-size:30px;"></i></button>
-                    <a class="btn btn-link btn-circle" role="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 14px 0px 0px;border-color: transparent;" href="/api/get_chats"> <i class="fa fa-wechat d-xl-flex justify-content-xl-center align-items-xl-center" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i></a>
-                    <button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 10px 0px 0px;"
-                            type="button"><i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i></button>
-                    <a class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;"
-                            role="button" data-toggle="modal" data-target="#modalReport"><i class="fa fa-ban" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i></a></div>
+                    <button onclick="anadirFavorito('{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button">
+                        {% if producto.le_gusta %}
+                        <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-down" style="color:#ffffff;font-size:30px;"></i>
+                        {% else %}
+                        <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-up" style="color:#ffffff;font-size:30px;"></i>
+                        {% endif %}
+                    </button>
+                    {% if loggedin %}
+                    <button onclick="crearChat('{{ producto.vendido_por.uid }}', '{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" role="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 14px 0px 0px;border-color: transparent;" href="/api/get_chats">
+                        <i class="fa fa-wechat d-xl-flex justify-content-xl-center align-items-xl-center" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i>
+                    </button>
+                    {% endif %}
+                    <button class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 10px 0px 0px;" type="button">
+                        <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
+                    </button>
+                    {% if loggedin %}
+                    <a class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" role="button" data-toggle="modal" data-target="#modalReport">
+                        <i class="fa fa-ban" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i>
+                    </a>
+                    {% endif %}
+                </div>
             </div>
             <div class="row" style="margin: 20px 0px 0px 0px;">
                 <div class="col"><iframe allowfullscreen="" frameborder="0" src="https://www.google.com/maps/embed/v1/place?key=++AIzaSyBhAdbDKlmf63Ew7ZgJB-UnXf9EbCurTnU&amp;q=Zaragoza%2C+Espa%C3%B1a&amp;zoom=11" width="100%" height="400"></iframe></div>
@@ -516,14 +531,21 @@
     </script>
     <script>
         function anadirFavorito(id){
-            if(document.getElementById(id + "Icon").className == "fas fa-thumbs-up"){
-                document.getElementById(id + "Icon").className = "fas fa-thumbs-down";
+            if(document.getElementById(id + "Icon").className == "fa fa-thumbs-up"){
+                document.getElementById(id + "Icon").className = "fa fa-thumbs-down";
             } else{
-                document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
+                document.getElementById(id + "Icon").className = "fa fa-thumbs-up";
             }
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/like_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
             document.location.reload(true);
+        }
+    </script>
+    <script>
+        function crearChat(uid, id){
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/create_chat", {'csrfmiddlewaretoken': csrftoken, 'uidUsuario': uid, 'idProducto': id});
+            window.location.href = "https://bookalo.es/api/get_chats";
         }
     </script>
 </body>

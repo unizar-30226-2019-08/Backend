@@ -122,22 +122,22 @@
                             <div class="card" style="margin: 2px 0px 0px 0px;">
                                 <div class="card-header" role="tab" style="background-color: rgba(233,30,99,0.6);margin: -1px -1px -1px -1px;">
                                     <h5 class="mb-0">
-                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.nombre }}</a>
+                                        <a data-toggle="collapse" aria-expanded="false" aria-controls="accordion-1 .item-{{ forloop.counter }}" href="div#accordion-1 .item-{{ forloop.counter }}" style="color: rgb(0,0,0);margin: 0px 0px 0px 0px;font-size: 17px;">{{ p.info_producto.nombre }}</a>
                                     </h5>
                                 </div>
                                 <div class="collapse item-{{ forloop.counter }} text-center" role="tabpanel" data-parent="#accordion-1">
                                     <div class="card-body">
                                         <div class="row" style="margin: -19px -20px;">
                                             <div class="col" style="padding: 0px;">
-                                                <img style="width: 100%;height: 102%;" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                                <img style="width: 100%;height: 102%;" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
                                             </div>
                                             <div class="col text-left" style="padding: 0px;margin: 5px 0px 0px 10px;">
-                                                <p style="margin: 0px 0px 0px;">{{ p.num_likes }} likes</p>
+                                                <p style="margin: 0px 0px 0px;">{{ p.info_producto.num_likes }} likes</p>
                                                 <p>
-                                                    <strong>{{ p.precio }} €</strong>
+                                                    <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
-                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.pk }}">Ver más</a>
-                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
+                                                <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -203,8 +203,8 @@
                     <div class="col">
                         <div class="input-group mb-3 edtFormMarg">
                             <select class="custom-select" id="precio_minimo" name="precio_minimo">
-                                <option selected>Escoja uno...</option>
-                                <option value="100">Más de 100€</option>
+                                <option selected value="">Escoja uno...</option>
+                                <option value="100,infinito">Más de 100€</option>
                                 <option value="50,100">50 a 100€</option>
                                 <option value="25,50">25 a 50€</option>
                                 <option value="10,25">10 a 25€</option>
@@ -223,8 +223,8 @@
                     <div class="col">
                         <div class="input-group mb-3 edtFormMarg">
                             <select class="custom-select" id="distancia_maxima" name="distancia_maxima">
-                                <option selected>Escoja uno...</option>
-                                <option value="+100">Más de 100 km</option>
+                                <option selected value="">Escoja uno...</option>
+                                <option value="infinito">Más de 100 km</option>
                                 <option value="100">Hasta 100 km</option>
                                 <option value="50">Hasta 50 km</option>
                                 <option value="25">Hasta 25 km</option>
@@ -275,7 +275,7 @@
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
                             <div class="card border-dark" style="border-radius:20px">
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
-                                    <h5 class="m-0" style="width: 90%;">{{ p.nombre }}</h5>
+                                    <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                                     {% if loggedin %}
                                     {% if p.le_gusta %}
                                         <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-down"></i></span>
@@ -284,13 +284,13 @@
                                     {% endif %}
                                     {% endif %}
                                 </div>
-                                <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.contenido_multimedia.0.contenido_url }}">
+                                <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
                                 <div class="card-body">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
-                                        <h4 style="width: 60%;"><strong>{{ p.precio }}€</strong></h4>
+                                        <h4 style="width: 60%;"><strong>{{ p.info_producto.precio }}€</strong></h4>
                                         <h5 class="text-right" style="width: 40%;">1.500m</h5>
                                     </div>
-                                    <p class="card-text">{{ p.descripcion }}<br></p>
+                                    <p class="card-text">{{ p.info_producto.descripcion }}<br></p>
                                 </div>
                                 <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
                                     <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
@@ -306,7 +306,7 @@
                                         {% elif p.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
                                         {% else %}<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>{% endif %}
                                     </div>
-                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view/?id={{ p.pk }}"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
+                                    <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
                                 </div>
                             </div>
                         </div>

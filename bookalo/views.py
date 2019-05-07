@@ -51,9 +51,9 @@ def index(request):
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': []})
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
 			else:
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -148,6 +148,7 @@ def GetUserProfile(request, format=None):
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
+				print("Except")
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
@@ -208,7 +209,11 @@ def FilterProduct(request, format=None):
 			min_score = request.POST.get('calificacion_minima', -1)
 			search = request.POST.get('busqueda', -1)
 			if movil != 'true':
-				min_price, max_price = min_price.split(',')
+				if min_price != "":
+					min_price, max_price = min_price.split(',')
+				else:
+					min_price = -1
+					max_price = -1
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			
