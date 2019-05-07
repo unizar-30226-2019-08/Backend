@@ -19,6 +19,8 @@ from .funciones_usuario import *
 import itertools
 from django.db.models import Count
 import re
+#from unidecode import unidecode
+import unicodedata
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0
@@ -73,6 +75,27 @@ def ProductosFavoritos(token,ultimo_indice,elementos_pagina):
 	serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	return serializer
 
+
+
+def strip_accents(text):
+    """
+    Strip accents from input String.
+
+    :param text: The input string.
+    :type text: String.
+
+    :returns: The processed String.
+    :rtype: String.
+    """
+    try:
+        text = unicode(text, 'utf-8')
+    except (TypeError, NameError): # unicode is a default on python 3 
+        pass
+    text = unicodedata.normalize('NFD', text)
+    text = text.encode('ascii', 'ignore')
+    text = text.decode("utf-8")
+    return str(text)
+
 def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	tags = biblio['tags']
 	user_latitude = biblio['user_latitude']
@@ -104,19 +127,19 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		return 'Bad request'
 
 	if tags != '-1':
-		a,b = 'áéíóúü','aeiouu'
-		trans = str.maketrans(a,b)
 		#lista_tags = [x.strip() for x in tags.split(',')]
 		#lista_tags = [re.sub('[^A-Za-z0-9áéíóúüñ]+', '', x) for x in lista_tags]
 		#lista_tags = [x.translate(trans) for x in lista_tags]
 		#lista_tags = [x.lower() for x in lista_tags]
 		lista_tags = []
+		[print(x) for x in tags.split(',')]
 		for x in tags.split(','):
 			tag = x.strip()
-			tag = re.sub('[^A-Za-z0-9áéíóúüñ]+', '', tag)
-			tag = tag.translate(trans)
+			tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+			tag = strip_accents(tag)
 			tag = tag.lower()
 			lista_tags.append(tag)
+		[print(x) for x in lista_tags]
 
 		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
@@ -244,12 +267,10 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	print(producto)
-	a,b = 'áéíóúü','aeiouu'
-	trans = str.maketrans(a,b)
 	for tag in lista_tags:
 		print(tag)
-		tag_estandar = re.sub('[^A-Za-z0-9áéíóúüñ]+', '', tag)
-		tag_estandar = tag_estandar.translate(trans)
+		tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+		tag_estandar = strip_accents(tag_estandar)
 		tag_estandar = tag_estandar.lower()
 		producto.tiene_tags.get_or_create(nombre=tag_estandar)
 	tags_in_producto = producto.tiene_tags.all()
