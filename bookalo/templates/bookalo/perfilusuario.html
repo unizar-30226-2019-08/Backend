@@ -121,7 +121,7 @@
             <div class="modal-content">
                 <form action="/api/create_report" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ producto.vendido_por.nombre }}</h4>
+                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ informacion_basica.nombre }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -152,18 +152,32 @@
     <div class="modal fade" role="dialog" tabindex="-1" id="modalRating">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
+                <form action="/api/rate_user" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 28px;">Valora a Laura López</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
-                <div class="modal-body">
-                    <div class="text-center star-rating" style="margin: 15px 0px 0px 0px;"><span class="fa fa-star-o" data-rating="1"></span><span class="fa fa-star-o" data-rating="2"></span><span class="fa fa-star-o" data-rating="3"></span><span class="fa fa-star-o" data-rating="4"></span><span class="fa fa-star-o" data-rating="5"></span>
-                        <input
-                            type="hidden" class="rating-value" name="whatever1" value="2.56"></div>
-                    <h5 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Deja un comentario (opcional):</h5>
-                    <div class="col d-sm-flex d-xl-flex align-self-center justify-content-sm-center justify-content-xl-center" style="margin: 30px 0px 0px 0px;"><textarea class="form-control-lg d-xl-flex" style="font-size: 12px;width: 80%;height: 50%;" spellcheck="true"></textarea></div>
+                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 28px;">Valora a {{ producto.vendido_por.nombre }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
                 </div>
-                <div class="modal-footer d-xl-flex justify-content-xl-center"><button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">No valorar</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px"
-                        type="submit">Compra no realizada</button><button class="btn btn-secondary text-center action-button" style="margin: 10px 0px 10px 0px;background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport"
-                        data-dismiss="modal" type="button">Reportar</button><button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">Enviar</button></div>
+                <div class="modal-body">
+                    <div class="text-center star-rating" style="margin: 15px 0px 0px 0px;">
+                        <span class="fa fa-star-o" data-rating="1"></span>
+                        <span class="fa fa-star-o" data-rating="2"></span>
+                        <span class="fa fa-star-o" data-rating="3"></span>
+                        <span class="fa fa-star-o" data-rating="4"></span>
+                        <span class="fa fa-star-o" data-rating="5"></span>
+                        <input type="hidden" class="rating-value" name="whatever1" value="2"></div>
+                    <h5 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Deja un comentario (opcional):</h5>
+                    <div class="col d-sm-flex d-xl-flex align-self-center justify-content-sm-center justify-content-xl-center" style="margin: 30px 0px 0px 0px;">
+                        <textarea class="form-control-lg d-xl-flex" style="font-size: 12px;width: 80%;height: 50%;" spellcheck="true"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer d-xl-flex justify-content-xl-center">
+                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">No valorar</button>
+                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">Compra no realizada</button>
+                    <button class="btn btn-secondary text-center action-button" style="margin: 10px 0px 10px 0px;background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport" data-dismiss="modal" type="button">Reportar</button>
+                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">Enviar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -235,16 +249,18 @@
     </div>
     <div class="row" style="margin: 15px 0px 0px 0px;">
         <div class="col text-center" style="margin: 0px 0px 0px 0px;">
-            <a href="https://twitter.com/intent/tweet?text=Mira%20el%20perfil%20de%20{{ informacion_basica.nombre }}%20en%20Bookalo:%20https://bookalo.es/api/get_user_profile" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 20px 0px 0px;" type="button">
+            <a href="https://twitter.com/intent/tweet?text=Mira%20el%20perfil%20de%20{{ informacion_basica.nombre }}%20en%20Bookalo:%20https://bookalo.es/api/get_user_profile" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;" type="button">
                 <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
             </a>
             <button onClick="document.getElementById('productos').scrollIntoView();" class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;">
                 <i class="fa fa-shopping-bag" style="color:#ffffff;font-size:30px;"></i>
             </button>
             {% if loggedin %}
+            {% if not coincidentUser %}
             <button class="btn btn-link btn-circle action-button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;" data-toggle="modal" data-target="#modalReport" type="button">
                 <i class="fa fa-ban" style="color:#ffffff;font-size:30px;"></i>
             </button>
+            {% endif %}
             {% endif %}
         </div>
     </div>

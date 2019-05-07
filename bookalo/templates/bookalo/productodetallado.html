@@ -328,6 +328,7 @@
             </div>
             <div class="row" style="margin: 0px;">
                 <div class="col text-center" style="padding: 0px;margin: 10px 0px 0px 0px;">
+                    {% if loggedin %}
                     <button onclick="anadirFavorito('{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button">
                         {% if producto.le_gusta %}
                         <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-down" style="color:#ffffff;font-size:30px;"></i>
@@ -335,7 +336,6 @@
                         <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-up" style="color:#ffffff;font-size:30px;"></i>
                         {% endif %}
                     </button>
-                    {% if loggedin %}
                     <button onclick="crearChat('{{ producto.vendido_por.uid }}', '{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" role="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 14px 0px 0px;border-color: transparent;" href="/api/get_chats">
                         <i class="fa fa-wechat d-xl-flex justify-content-xl-center align-items-xl-center" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i>
                     </button>
