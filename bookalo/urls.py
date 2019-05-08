@@ -28,5 +28,6 @@ urlpatterns = [
     path(r'api/get_tags', views.GetTagList),
     path(r'api/sell_product', views.SellProduct),
     path(r'api/get_favorites', views.GetLikedProducts),
+    path(r'api/marcar_vendido', views.Vender_producto),
     re_path(r'logout', views.Logout),
 ]
