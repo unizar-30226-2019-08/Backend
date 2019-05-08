@@ -822,3 +822,53 @@ def GetPendingNotifications(request, format=None):
 def Logout(request, format=None):
 	request.session.pop('token')
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+# Dado un identificador de chat, marca el producto como vendido y crea
+# dos instancias en la tbla notificaciones , una para cada usuario de que
+# el producto ha sido vendido
+def Vender_producto(request, format=None):
+	token = request.POST.get('token', 'nothing')
+	id_chat = request.POST.get('id_chat', 'nothing')
+
+	if token == 'nothing' or 'chat' == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	
+	else:
+
+		try:
+			chat_buscado = Chat.objects.get(pk=int(id_chat))
+			respuesta = MarkAsSold(chat_buscado.producto.id,token)
+		
+
+			if respuesta == False:
+				# No se ha podido markar como vendido
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			else:
+				# Se ha podido marcar como vendido
+				# Se crea instancia
+
+				Mensaje = "Se ha vendido el producto: "	+chat_buscado.producto.nombre	
+				user1 = chat_buscado.vendedor
+				user2 = chat_buscado.comprador
+
+				try:
+					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, descripcion_notificacion= Mensaje)
+					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, descripcion_notificacion= Mensaje)
+					notificacion1.save()
+					notificacion2.save()
+
+					return Response(status=status.HTTP_200_OK)
+				except:
+					return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+				 
+		except:
+			# No se ha encontrado el chat
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+

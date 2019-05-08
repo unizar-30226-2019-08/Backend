@@ -52,10 +52,18 @@ def CrearMensaje(token, chat_id, message):
 	try:
 		user = get_user(token)
 		chat = Chat.objects.get(pk=int(chat_id))
+
 		Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
 		return True
 	except:
 		return False	
+
+def CrearNotificiacion(usuario, message):
+	try:
+		NotificacionesPendientes.objects.create(usuario_pendiente=usuario, descripcion_notificacion=message)
+		return True
+	except:
+		return False
 
 def GetUserMessages(chat_pk, user):
 	try:
