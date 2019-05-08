@@ -1,6 +1,6 @@
 from bookalo.models import *
 from rest_framework import serializers
-from geopy import Nominatim
+#from geopy import Nominatim
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
@@ -14,12 +14,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         model = Usuario
         fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones', 'ultima_conexion')
     def get_ciudad(self, obj):
-        geolocator = Nominatim(user_agent="bookalo")
-        location = geolocator.reverse(str(obj.latitud_registro) + ',' + str(obj.longitud_registro))
-        try:
-            return location.raw['address']['city']
-        except:
-            return location.raw['address']['county']
+        return 'Zaragoza'
     
     def get_conectado(self, obj):
         ahora = timezone_now()
