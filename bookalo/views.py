@@ -145,6 +145,9 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
+				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
+					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
+					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
@@ -815,6 +818,82 @@ def GetPendingNotifications(request, format=None):
 		except:
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def EditProductRender(request, format=None):
+	token = request.session.get('token', 'nothing')
+	id_product = request.POST.get('id_producto', 'nothing')
+	logged = check_user_logged_in(token)
+	if logged:
+		serializer_favs = ProductosFavoritos(token ,0 ,-1)
+		serialized_tags = GetTags(5)
+		if serialized_tags == None:
+			serialized_tags = []	
+		try:
+			user = get_user(token)
+			product = Producto.objects.get(pk=id_product)
+			if product.vendido_por == user:
+				return render(request, 'bookalo/edicionproducto.html', {'loggedin': logged, 
+					'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,
+					'producto': ProductoSerializer(product).data, 'tags':serialized_tags, 'editando' : True})
+			else:
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no es de ese usuario'})
+		except:
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no existe'})
+
+
+
+
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def EditProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	id_product = request.POST.get('id_producto', 'nothing')
+	try:
+		logged = check_user_logged_in(token)
+		files = request.FILES.getlist('files')
+		latitud = request.POST.get('latitud', '')
+		longitud = request.POST.get('longitud', '')
+		nombre = request.POST.get('nombre', '')
+		precio = request.POST.get('precio', '')
+		estado_producto = request.POST.get('estado_producto', '')
+		tipo_envio = request.POST.get('tipo_envio', '')
+		descripcion = request.POST.get('descripcion', '')
+		tags = request.POST.get('tags', '')
+		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
+									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
+									'descripcion':descripcion,'tags':tags,'token':token}
+		print(biblioteca)
+		result = EditarProducto(biblioteca,id_product)
+		if movil == 'true':
+			if result == 'Created':
+				return Response(status=status.HTTP_201_CREATED)
+			if result == 'Bad request':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			if result == 'Not found':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			if result == 'Created':
+				return redirect('/api/get_user_products')
+			else:
+				return redirect('/')
+	except:
+		if movil == 'true':
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			return redirect('/')
+
+
 #Funcion especifica para web para gestionar el logout
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -870,5 +949,3 @@ def Vender_producto(request, format=None):
 		except:
 			# No se ha encontrado el chat
 			return Response(status=status.HTTP_404_NOT_FOUND)
-
-
