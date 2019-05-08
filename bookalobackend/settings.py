@@ -11,11 +11,20 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-#from django_mobileesp.detector import mobileesp_agent as agent
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
+
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+if os.environ.get('TRAVIS'):
+    environ.Env.read_env(os.path.join(BASE_DIR, '.travis/travis.env'))
+else:
+    environ.Env.read_env()
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -28,7 +37,7 @@ GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 SECRET_KEY = 'c$uv!75pneq&c01kc*-ao&s-0ka9oxofy547an6qvbn+tbi1!9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['bookalo.es', 'localhost']
 
