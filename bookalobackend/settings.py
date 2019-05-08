@@ -97,6 +97,7 @@ if env('DEBUG'):
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
+    }
 else:
     DATABASES = {
         'default': {
@@ -107,7 +108,7 @@ else:
             'HOST': env('DB_HOST'),
             'PORT': '',
         },
-}
+    }
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
