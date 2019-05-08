@@ -835,9 +835,6 @@ def EditProductRender(request, format=None):
 			user = get_user(token)
 			product = Producto.objects.get(pk=id_product)
 			if product.vendido_por == user:
-				return Response({'loggedin': logged, 
-					'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,
-					'producto': ProductoSerializer(product).data, 'tags':serialized_tags, 'editando' : True}, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/edicionproducto.html', {'loggedin': logged, 
 					'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,
 					'producto': ProductoSerializer(product).data, 'tags':serialized_tags, 'editando' : True})
@@ -854,7 +851,11 @@ def EditProductRender(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def EditProduct(request, format=None):
-	token = request.session.get('token', 'nothing')
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
 	id_product = request.POST.get('id_producto', 'nothing')
 	try:
 		logged = check_user_logged_in(token)
@@ -872,12 +873,25 @@ def EditProduct(request, format=None):
 									'descripcion':descripcion,'tags':tags,'token':token}
 		print(biblioteca)
 		result = EditarProducto(biblioteca,id_product)
-		if result == 'Modified':
-			return redirect('/api/get_user_products')
+		if movil == 'true':
+			if result == 'Created':
+				return Response(status=status.HTTP_201_CREATED)
+			if result == 'Bad request':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			if result == 'Not found':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+		else:
+			if result == 'Created':
+				return redirect('/api/get_user_products')
+			else:
+				return redirect('/')
+	except:
+		if movil == 'true':
+			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			return redirect('/')
-	except:
-		return redirect('/')
 
 
 #Funcion especifica para web para gestionar el logout
@@ -887,3 +901,5 @@ def EditProduct(request, format=None):
 def Logout(request, format=None):
 	request.session.pop('token')
 	return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
