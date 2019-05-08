@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, True)
 )
 
 environ.Env.read_env()
@@ -91,7 +91,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-if env('DEBUG):
+if env('DEBUG'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
