@@ -16,6 +16,7 @@ from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from django.utils.timezone import now as timezone_now
+#from geopy import Nominatim
 
 def get_user(token):
 	try:
@@ -52,7 +53,6 @@ def usuario_login(token, token_fcm):
 
 	latitud_registro = 0.0
 	longitud_registro = 0.0
-	g = GeoIP2()
 	
 	latitud_registro = 41.683490
 	longitud_registro = -0.888479
@@ -79,7 +79,12 @@ def usuario_login(token, token_fcm):
 		
 		try:
 			user = Usuario.objects.get(uid=user_uid)
-
+			#geolocator = Nominatim(user_agent="bookalo")
+			#location = geolocator.reverse(str(user.latitud_registro) + ',' + str(user.longitud_registro))
+			#try:
+			#	return location.raw['address']['city']
+			#except:
+			#	return location.raw['address']['county']
 			if user.esta_baneado:
 				return status.HTTP_401_UNAUTHORIZED
 			else:
