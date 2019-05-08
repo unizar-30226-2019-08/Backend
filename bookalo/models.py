@@ -133,6 +133,7 @@ class Producto(models.Model):
         max_length=1000,
         verbose_name='Descripcion asociada al producto')
     isbn = models.CharField(
+        blank=True,
         max_length=50,
         default='',
         verbose_name='ISBN del libro')
