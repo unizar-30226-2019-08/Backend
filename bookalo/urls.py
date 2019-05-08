@@ -30,5 +30,6 @@ urlpatterns = [
     path(r'api/get_favorites', views.GetLikedProducts),
     path(r'api/edit_product_render', views.EditProductRender),
     path(r'api/edit_product', views.EditProduct),
+    path(r'api/marcar_vendido', views.Vender_producto),
     re_path(r'logout', views.Logout),
 ]
