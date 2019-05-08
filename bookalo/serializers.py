@@ -44,6 +44,7 @@ class MultimediaSerializer(serializers.HyperlinkedModelSerializer):
 
 class MiniProductoSerializer(serializers.HyperlinkedModelSerializer):
     contenido_multimedia = serializers.SerializerMethodField()
+    precio = serializers.SerializerMethodField()
     class Meta:
         model = Producto
         fields = ('pk','nombre', 'precio', 'estado_venta', 'contenido_multimedia')
@@ -52,11 +53,16 @@ class MiniProductoSerializer(serializers.HyperlinkedModelSerializer):
         contenido = ContenidoMultimedia.objects.get(producto=obj.pk, orden_en_producto=0)
         return MultimediaSerializer(contenido)
 
+    def get_precio(self,obj):
+        return Decimal(obj.precio)
+
 class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     tiene_tags = TagSerializer(many=True, read_only=True)
     contenido_multimedia = serializers.SerializerMethodField()
     valoracion_media_usuario = serializers.SerializerMethodField()
     precio = serializers.SerializerMethodField()
+    latitud = serializers.SerializerMethodField()
+    longitud = serializers.SerializerMethodField()
     class Meta:
         model = Producto
         fields = ('pk','nombre', 'precio', 'estado_producto', 'estado_venta','valoracion_media_usuario',
@@ -72,6 +78,12 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_precio(self,obj):
         return Decimal(obj.precio)
+
+    def get_latitud(self,obj):
+        return Decimal(obj.latitud)
+
+    def get_longitud(self,obj):
+        return Decimal(obj.longitud)
 
 
 class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
