@@ -200,76 +200,76 @@ def FilterProduct(request, format=None):
 			return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	else:
 		logged = check_user_logged_in(token)
-		#try:
-		tags = request.POST.get('tags', '-1')
-		if tags == '':
-			tags = '-1'
-		user_latitude = request.POST.get('latitud', '-1')
-		if user_latitude == '':
-			user_latitude = '-1'
-		user_longitude = request.POST.get('longitud', '-1')
-		if user_longitude == '':
-			user_longitude == '-1'
-		max_distance = request.POST.get('distancia_maxima', '-1')
-		if max_distance == '':
-			max_distance = '-1'
-		min_price = request.POST.get('precio_minimo', '-1')
-		if min_price == '':
-			min_price = '-1'
-		max_price = request.POST.get('precio_maximo', '-1')
-		if max_price == '':
-			max_price = '-1'
-		min_score = request.POST.get('calificacion_minima', '-1')
-		if min_score == '':
-			min_score = '-1'
-		search = request.POST.get('busqueda', '-1')
-		if search == '':
-			search = '-1'
-		if movil != 'true':
-			if min_price != '-1':
-				min_price, max_price = min_price.split(',')
-			else:
-				#min_price = '-1'
+		try:
+			tags = request.POST.get('tags', '-1')
+			if tags == '':
+				tags = '-1'
+			user_latitude = request.POST.get('latitud', '-1')
+			if user_latitude == '':
+				user_latitude = '-1'
+			user_longitude = request.POST.get('longitud', '-1')
+			if user_longitude == '':
+				user_longitude == '-1'
+			max_distance = request.POST.get('distancia_maxima', '-1')
+			if max_distance == '':
+				max_distance = '-1'
+			min_price = request.POST.get('precio_minimo', '-1')
+			if min_price == '':
+				min_price = '-1'
+			max_price = request.POST.get('precio_maximo', '-1')
+			if max_price == '':
 				max_price = '-1'
-		biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
-					'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
-		
-		serializer = FiltradoProducto(biblioteca,token,last_index,nelements)
-
-		if logged:
-			user = get_user(token)
-			if serializer == 'Bad request':
-				if movil == 'true':
-					return Response(status=status.HTTP_400_BAD_REQUEST)
+			min_score = request.POST.get('calificacion_minima', '-1')
+			if min_score == '':
+				min_score = '-1'
+			search = request.POST.get('busqueda', '-1')
+			if search == '':
+				search = '-1'
+			if movil != 'true':
+				if min_price != '-1':
+					min_price, max_price = min_price.split(',')
 				else:
+					#min_price = '-1'
+					max_price = '-1'
+			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
+						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
+			
+			serializer = FiltradoProducto(biblioteca,token,last_index,nelements)
+
+			if logged:
+				user = get_user(token)
+				if serializer == 'Bad request':
+					if movil == 'true':
+						return Response(status=status.HTTP_400_BAD_REQUEST)
+					else:
+						serializer_favs = ProductosFavoritos(token,last_index,nelements)
+						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+							'productos_favoritos':ProductosFavoritos(token,0,-1).data,  'productos': []})
+				if movil == 'true':
+					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+				else:
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
+					 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data})
+			else:
+				if serializer == 'Bad request':
+					if movil == 'true':
+						return Response(status=status.HTTP_400_BAD_REQUEST)
+					else:
+						return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
+				if movil == 'true':
+					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
+				else:
+					return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data})
+		except:
+			if movil == 'true':
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			else:
+				if logged:
 					serializer_favs = ProductosFavoritos(token,last_index,nelements)
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-						'productos_favoritos':ProductosFavoritos(token,0,-1).data,  'productos': []})
-			if movil == 'true':
-				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
-			else:
-				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
-				 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data})
-		else:
-			if serializer == 'Bad request':
-				if movil == 'true':
-					return Response(status=status.HTTP_400_BAD_REQUEST)
+						'productos_favoritos':serializer_favs.data, 'productos': []})
 				else:
-					return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
-			if movil == 'true':
-				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
-			else:
-				return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data})
-		#except:
-		#	if movil == 'true':
-		#		return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-		#	else:
-		#		if logged:
-		#			serializer_favs = ProductosFavoritos(token,last_index,nelements)
-		#			return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-		#				'productos_favoritos':serializer_favs.data, 'productos': []})
-		#		else:
-		#			return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
