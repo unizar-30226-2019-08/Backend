@@ -47,7 +47,7 @@ def strip_accents(text):
 
 
 def GenericProducts(token,ultimo_indice,elementos_pagina):
-	products = Producto.objects.order_by('-num_likes')
+	products = Producto.objects.filter(estado_venta=True).order_by('-num_likes')
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
@@ -100,9 +100,6 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	search = biblio['busqueda']
 	products_search = []
 
-	user_latitude = 15
-	user_longitude = 15
-
 	if search != '-1' and search != '':
 		preposiciones = ['a','ante','bajo','cabe','con','contra','de','desde','en','entre',
 		'hacia','hasta','para','por','segun','sin','so','sobre','tras']
@@ -122,82 +119,88 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		#lista_tags = [x.translate(trans) for x in lista_tags]
 		#lista_tags = [x.lower() for x in lista_tags]
 		lista_tags = []
-		[print(x) for x in tags.split(',')]
+		#[print(x) for x in tags.split(',')]
 		for x in tags.split(','):
 			tag = x.strip()
 			tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
 			tag = strip_accents(tag)
 			tag = tag.lower()
 			lista_tags.append(tag)
-		[print(x) for x in lista_tags]
+		#[print(x) for x in lista_tags]
 
 		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 		if min_price == '-1':
 			if max_price == '-1':
 				if min_score == '-1':
-					products = Producto.objects.filter(tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(tiene_tags__in=tag_queryset, estado_venta=True)
 				else:
-					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
 			else:
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True)
 				else:
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
 		else:
 			if max_price == '-1':
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset, estado_venta=True)
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
 			else:
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True)
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score, tiene_tags__in=tag_queryset)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
 	else:
 		if min_price == '-1':
 			if max_price == '-1':
 				if min_score != '-1':
-					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=min_score)
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
 			else:
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
 				else:
-					products = Producto.objects.filter(precio__lte=Decimal(max_price))
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), estado_venta=True)
 		else:
 			if max_price == '-1':
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=min_score)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
 			else:
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=min_score)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price))
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), estado_venta=True)
 
 	#print(products)
 	filtered_products = []
 	if user_latitude != '-1' and user_longitude != '-1' and max_distance != '-1':
-		print("Voy a calcular distancias")
+		#print("Voy a calcular distancias")
 		for product in products:
 			#print("Distancia maxima: " + max_distance)
 			#print("Distancia calculada: " + str(calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude))))
+			#print(Decimal(user_latitude))
+			#print(Decimal(user_longitude))
+			#print(Decimal(product.latitud))
+			#print(Decimal(product.longitud))
 			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
-				print("Anyadido producto")
+				#print("Anyadido producto")
 				filtered_products.append(product)
 	else:
 		for product in products:
 			filtered_products.append(product)
 
 	if search != '-1':
-		print("Voy a hacer la interseccion")
+		#print("Voy a hacer la interseccion")
+		#print(filtered_products)
+		#print(products_search)
 		final_product_list = set(filtered_products) & set(products_search)
 		final_product_list = list(final_product_list)
-		print("He hecho la interseccion")
+		#print("He hecho la interseccion")
 	else:
 		final_product_list = filtered_products
 
-	print(final_product_list)
+	#print(final_product_list)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
@@ -344,3 +347,17 @@ def GetTags(amount):
 			return TagSerializer(sorted_tags, many=True).data
 	except:
 		return None
+
+def MarkAsSold(product_id, token):
+	try:
+		user = get_user(token)
+		producto = Producto.objects.get(pk=int(product_id))
+		if producto.vendido_por != user:
+			return None
+	except:
+		return None
+	try:
+		Producto.objects.filter(pk=int(product_id)).update(estado_venta=False)
+		return True
+	except:
+		return False
