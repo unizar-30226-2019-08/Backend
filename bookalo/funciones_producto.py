@@ -97,6 +97,8 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	#print(biblio)
 	if int(min_score) == 0:
 		min_score = '-1'
+	if max_price == 'infinito':
+		max_price = '-1'
 	search = biblio['busqueda']
 	products_search = []
 
@@ -171,6 +173,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
 				else:
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), estado_venta=True)
+
 
 	#print(products)
 	filtered_products = []

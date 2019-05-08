@@ -243,11 +243,13 @@ def FilterProduct(request, format=None):
 						return Response(status=status.HTTP_400_BAD_REQUEST)
 					else:
 						serializer_favs = ProductosFavoritos(token,last_index,nelements)
-						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,  'productos': []})
+						return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+							'productos_favoritos':ProductosFavoritos(token,0,-1).data,  'productos': []})
 				if movil == 'true':
 					return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 				else:
-					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
+					 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data})
 			else:
 				if serializer == 'Bad request':
 					if movil == 'true':
