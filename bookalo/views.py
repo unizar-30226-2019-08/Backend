@@ -848,7 +848,8 @@ def Vender_producto(request, format=None):
 			else:
 				# Se ha podido marcar como vendido
 				# Se crea instancia
-	
+
+				Mensaje = "Se ha vendido el producto: "	+chat_buscado.producto.nombre	
 				user1 = chat_buscado.vendedor
 				user2 = chat_buscado.comprador
 
