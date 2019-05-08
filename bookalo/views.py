@@ -775,11 +775,14 @@ def PrivacyPolicy(request, format=None):
 	token = request.session.get('token', 'nothing')
 	if token == 'nothing':
 		logged = False
+		return Response(status=status.HTTP_404_NOT_FOUND)
 	else:
 		logged = check_user_logged_in(token)
-	if logged:
-		user = get_user(token)
-	return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
+		if logged:
+			user = get_user(token)
+			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
+		else:
+			return  Response(status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
