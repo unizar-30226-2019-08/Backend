@@ -471,16 +471,14 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     const messaging = firebase.messaging();
-                    //messaging.usePublicVapidKey("BClG38R8H1L_9nXVX49WasFY4SNBefdvq_f4X5NMdD7Y7550EFm7sa8bYnxgvX--xYCrbdsYoaDKs7GwDifRgUU");
                     messaging.requestPermission().then(function() {
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                alert(currentToken);
-                                //$.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                                //setTimeout(function(){
-                                    //document.location.reload(true);
-                                //}, 1500);
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'token_fcm': currentToken});
+                                setTimeout(function(){
+                                    document.location.reload(true);
+                                }, 1500);
                             } else {
                                 alert("No Instance ID token available");
                                 // Show permission request.
