@@ -301,6 +301,80 @@ def BorradoProducto(token,productId):
 		return 'Unauthorized'
 		return Response(status=status.HTTP_401_UNAUTHORIZED)
 
+def EditarProducto(biblio,id_producto):
+	token = biblio['token']
+	user_info = auth.get_account_info(token)
+	user_uid = user_info['users'][0]['localId']	
+	try:
+		user = Usuario.objects.get(uid=user_uid)
+	except:
+		return 'Not found'
+	if user == None:
+		return 'Not found'
+	#Get all the required parameters for the product
+	files = biblio['files']
+	latitud = biblio['latitud']
+	longitud = biblio['longitud']
+	nombre = biblio['nombre']
+	precio = biblio['precio']
+	estado_producto = biblio['estado_producto']
+	tipo_envio = biblio['tipo_envio']
+	descripcion = biblio['descripcion']
+	tags = biblio['tags']
+	#Check that the request is correct
+	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
+		return 'Bad request'
+	lista_tags = [x.strip() for x in tags.split(',')]
+	#Prueba si el precio es un numero o no
+	try:
+		precio = Decimal(precio)
+	except:
+		return 'Bad request'
+	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
+	if tipo_envio == 'True':
+		tipo_envio = True
+	else:
+		tipo_envio = False
+	#Selecciona el estado en el que se encuentra el producto, entre Nuevo, Seminuevo o Usado
+	if estado_producto != 'Nuevo' and estado_producto != 'Seminuevo' and estado_producto != 'Usado':
+		return 'Bad request'
+
+	try:
+		producto = Producto.objects.get(pk=id_producto)
+	except:
+		return 'Bad request'
+	producto.latitud = Decimal(latitud)
+	producto.longitud = Decimal(longitud)
+	producto.nombre = nombre
+	producto.precio = precio
+	producto.estado_producto = estado_producto
+	producto.tipo_envio = tipo_envio
+	producto.descripcion = descripcion
+	producto.save()
+	print(producto)
+	for tag in lista_tags:
+		tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+		tag_estandar = strip_accents(tag_estandar)
+		tag_estandar = tag_estandar.lower()
+		producto.tiene_tags.get_or_create(nombre=tag_estandar)
+	tags_in_producto = producto.tiene_tags.all()
+	for tag in tags_in_producto:
+		tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+		tag = strip_accents(tag)
+		tag = tag.lower()
+		print(tag)
+		if tag not in lista_tags:
+			print('ENTRA')
+			producto.tiene_tags.remove(tag)
+		else:
+			tag.number_of_uses = tag.number_of_uses + 1
+			tag.save()
+	#i = 0
+	#for file in files:
+	#	multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
+	#	multi.save()
+	#	i = i + 1
+	return 'Modified'
 
 def LikeProducto(token,productId):
 	check_user_logged_in(token)
