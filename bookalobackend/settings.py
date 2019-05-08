@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 env = environ.Env(
-    DEBUG=(bool, True)
+    DEBUG=(bool, True),
     SECRET_KEY=(str, 'nPW:f$rss4v22[N]:$}AbVFaPFj*A<y)*8T]ZqLSsw.bAf$^SF')
 )
 
