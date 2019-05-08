@@ -405,6 +405,7 @@
     <script src="{% static 'bookalo/js/sortable.js' %}"></script>
     <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
+    <script src="{% static 'bookalo/js/firebase-messaging-sw.js' %}"></script>
     <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
     <!-- Firebase App is always required and must be first -->
     <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
@@ -470,7 +471,7 @@
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
                     const messaging = firebase.messaging();
-                    messaging.usePublicVapidKey("BClG38R8H1L_9nXVX49WasFY4SNBefdvq_f4X5NMdD7Y7550EFm7sa8bYnxgvX--xYCrbdsYoaDKs7GwDifRgUU");
+                    //messaging.usePublicVapidKey("BClG38R8H1L_9nXVX49WasFY4SNBefdvq_f4X5NMdD7Y7550EFm7sa8bYnxgvX--xYCrbdsYoaDKs7GwDifRgUU");
                     messaging.requestPermission().then(function() {
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
