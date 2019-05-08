@@ -115,6 +115,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	if search == '-1' and user_latitude == '-1' and user_longitude == '-1' and max_distance == '-1' and min_price == '-1' and max_price == '-1' and min_score == '-1':
 		return 'Bad request'
 
+	products = Producto.objects.none()
 	if tags != '-1':
 		#lista_tags = [x.strip() for x in tags.split(',')]
 		#lista_tags = [re.sub('[^A-Za-z0-9áéíóúüñ]+', '', x) for x in lista_tags]
@@ -132,6 +133,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
+
 		if min_price == '-1':
 			if max_price == '-1':
 				if min_score == '-1':
@@ -168,6 +170,8 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 			if max_price == '-1':
 				if min_score != '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
+				else:
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), estado_venta=True)
 			else:
 				if min_score != '-1':
 					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
