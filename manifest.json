@@ -1,0 +1,6 @@
+{
+    "short_name": "Bookalo",
+    "name": "Bookalo, tu empresa de compraventa de productos de segunda mano",
+    "start_url": "index.html?launcher=true",
+    "gcm_sender_id": "103953800507"
+}
