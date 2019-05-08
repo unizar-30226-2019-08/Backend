@@ -274,8 +274,16 @@ def FilterProduct(request, format=None):
 @csrf_exempt
 def GetUserProducts(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	last_index = request.POST.get('ultimo_indice', 0)
-	nelements = request.POST.get('elementos_pagina', -1)
+	last_index = request.POST.get('ultimo_indice', 'nothing')
+	if last_index == 'nothing':
+		last_index = 0
+	else:
+		last_index = int(last_index)
+	nelements = request.POST.get('elementos_pagina', 'nothing')
+	if nelements == 'nothing':
+		nelements = -1
+	else:
+		nelements = int(nelements)
 	user_uid = request.POST.get('uid', 'nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
@@ -484,6 +492,30 @@ def LikeProduct(request, format=None):
 			else:
 				return redirect('/')
 
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetLikedProducts(request, format=None):
+	token = request.POST.get('token', '')
+	last_index = request.POST.get('ultimo_indice', '')
+	if last_index == '':
+		last_index = 0
+	else:
+		last_index = int(last_index)
+	nelements = request.POST.get('elementos_pagina', '')
+	if nelements == '':
+		nelements = -1
+	else:
+		nelements = int(nelements)
+	if token == '':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	else:
+		try:
+			serializer_favs = ProductosFavoritos(token, last_index, nelements)
+			return Response({'productos_favoritos':serializer_favs.data}, status=status.HTTP_200_OK)
+		except:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
@@ -570,7 +602,7 @@ def GetMessages(request, format=None):
 		messages = GetUserMessages(chat_id, user)
 		print(messages)
 		if messages != None:
-			return Response({'mensajes':messages}, status=status.HTTP_200_OK)	
+			return Response({'mensajes':messages.data}, status=status.HTTP_200_OK)	
 		else:
 			print("404")
 			return Response(status=status.HTTP_404_NOT_FOUND)	
@@ -685,6 +717,51 @@ def GetTagList(request, format=None):
 		return Response({'tags':serialized_tags}, status=status.HTTP_200_OK)
 	else:
 		return Response({'tags':[]}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def SellProduct(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	if token == 'nothing':
+		logged = False
+	else:
+		logged = check_user_logged_in(token)
+	if logged:
+		user = get_user(token)
+		serializer_favs = ProductosFavoritos(token, 0, -1)
+		product_id = request.POST.get('id_producto', '')
+		if product_id == '' or token == 'nothing':
+			if movil == 'true':
+				return Response(status=status.HTTP_400_BAD_REQUEST)
+			else:
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'Es necesario que la peticion tenga el id del producto'})
+		else:
+			was_marked = MarkAsSold(product_id, token)
+			if was_marked == None:
+				if movil == 'true':
+					return Response(status=status.HTTP_401_UNAUTHORIZED)
+				else:
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'El usuario no esta logeado o no es el dueño del producto'})
+			elif was_marked == False:
+				if movil == 'true':
+					return Response(status=status.HTTP_404_NOT_FOUND)
+				else:
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'El producto no se ha encontrado'})
+			else:
+				if movil == 'true':
+					return Response(status=status.HTTP_200_OK)
+				else:
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+	else:
+		if movil == 'true':
+			return Response(status=status.HTTP_401_UNAUTHORIZED)
+		else:
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no esta logeado o no se ha pasado el token'})
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))

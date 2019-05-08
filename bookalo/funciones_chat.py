@@ -49,8 +49,8 @@ def GetChatComprador(user,ultimo_indice,elementos_pagina):
 	return ChatSerializer(chats, many=True, read_only=True)
 
 def CrearMensaje(token, chat_id, message):
-	user = get_user(token)
 	try:
+		user = get_user(token)
 		chat = Chat.objects.get(pk=int(chat_id))
 		Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
 		return True
@@ -60,6 +60,6 @@ def CrearMensaje(token, chat_id, message):
 def GetUserMessages(chat_pk, user):
 	try:
 		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk)
-		return MensajeSerializer(messages, many=True, context = {"user": user}).data
+		return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None

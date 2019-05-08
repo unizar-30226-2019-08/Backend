@@ -68,6 +68,7 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
     def get_valoracion_media_usuario(self, obj):
         return Usuario.objects.get(pk=obj.vendido_por.pk).media_valoraciones
 
+
 class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
     le_gusta = serializers.SerializerMethodField()
@@ -136,9 +137,10 @@ class MensajeSerializer(serializers.HyperlinkedModelSerializer):
     es_suyo = serializers.SerializerMethodField()
     class Meta:
         model = Mensaje
-        fields = ('texto', 'hora')
+        fields = ('texto', 'hora', 'es_suyo')
 
     def get_es_suyo(self, obj):
+        print("He comprobado si era suyo")
         usuario = self.context.get('user', 'nothing')
         if obj.emisor == usuario:
             return True
