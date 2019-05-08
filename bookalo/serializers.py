@@ -10,9 +10,10 @@ from decimal import Decimal
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     ciudad = serializers.SerializerMethodField()
     conectado = serializers.SerializerMethodField()
+    numValoraciones = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones', 'ultima_conexion')
+        fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones', 'numValoraciones','ultima_conexion')
     def get_ciudad(self, obj):
         return 'Zaragoza'
     
@@ -22,6 +23,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         ultimaConexion = obj.ultima_conexion.replace(tzinfo=None)
         result = relativedelta(ahora, ultimaConexion)
         return result.days == 0 and result.hours == 0 and result.months == 0 and result.years == 0 and result.minutes < 5
+
+    def get_numValoraciones(self,obj):
+        return ValidacionEstrella.objects.filter(usuario_valorado=obj).count()
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
