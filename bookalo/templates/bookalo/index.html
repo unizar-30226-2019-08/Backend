@@ -105,7 +105,11 @@
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
                     <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
+                        {% if informacion_basica.media_valoraciones == -1 %}
+                        <h6 style="color: rgb(255,255,255);width: 150px;margin: px 0px 0px 0px;">Sin valoraciones</h6>
+                        {% else %}
                         <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
@@ -137,7 +141,7 @@
                                                 <p>
                                                     <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
-                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id?id={{ p.info_producto.pk }}">Ver más</a>
                                                 <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
@@ -191,7 +195,7 @@
                             <span class="fa fa-star-o" data-rating="3"></span>
                             <span class="fa fa-star-o" data-rating="4"></span>
                             <span class="fa fa-star-o" data-rating="5"></span>
-                            <input type="hidden" type="text" id="calificacion_minima" class="rating-value" name="calificacion_minima" value="2">
+                            <input type="hidden" type="text" id="calificacion_minima" class="rating-value" name="calificacion_minima" value="-2">
                         </div>
                     </div>
                 </div>
@@ -279,7 +283,7 @@
                                     <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                                     {% if loggedin %}
                                         {% if informacion_basica.uid == p.vendido_por.uid %}
-                                            <span id="foe" onclick="editarProducto('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-edit"></i></span>
+                                            <a style="color:#ffffff"href="/api/edit_product_render/?id_producto={{ p.pk }}"><span id="foe" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-edit"></i></span></a>
                                         {% else %}
                                             {% if p.le_gusta %}
                                                 <span id="foe" onclick="anadirFavorito('{{ p.pk }}')" style="cursor:pointer"><i id="{{ p.pk }}Icon" class="fas fa-thumbs-down"></i></span>
@@ -469,29 +473,28 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
-                    const messaging = firebase.messaging();
-                    messaging.requestPermission().then(function() {
-                        console.log('Notification permission granted.');
-                        messaging.getToken().then(function(currentToken) {
-                            if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken});
+                    //const messaging = firebase.messaging();
+                    //messaging.requestPermission().then(function() {
+                        //console.log('Notification permission granted.');
+                        //messaging.getToken().then(function(currentToken) {
+                            //if (currentToken) {
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
                                 setTimeout(function(){
                                     document.location.reload(true);
                                 }, 1500);
-                            } else {
-                                alert("No Instance ID token available");
+                            //} else {
+                                //alert("No Instance ID token available");
                                 // Show permission request.
-                                console.log('No Instance ID token available. Request permission to generate one.');
-                            }
-                        }).catch(function(err) {
-                            alert("An error occurred while retrieving token");
-                            console.log('An error occurred while retrieving token. ', err);
-                        });
-                    }).catch(function(err) {
-                        alert("Unable to get permission to notify");
-                        console.log('Unable to get permission to notify.', err);
-                    });
-                    
+                                //console.log('No Instance ID token available. Request permission to generate one.');
+                            //}
+                        //}).catch(function(err) {
+                            //alert("An error occurred while retrieving token");
+                            //console.log('An error occurred while retrieving token. ', err);
+                        //});
+                    //}).catch(function(err) {
+                        //alert("Unable to get permission to notify");
+                        //console.log('Unable to get permission to notify.', err);
+                    //});
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -522,10 +525,28 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
-                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                    setTimeout(function(){
-                        document.location.reload(true);
-                    }, 1500);
+                    //const messaging = firebase.messaging();
+                    //messaging.requestPermission().then(function() {
+                        //console.log('Notification permission granted.');
+                        //messaging.getToken().then(function(currentToken) {
+                            //if (currentToken) {
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                                setTimeout(function(){
+                                    document.location.reload(true);
+                                }, 1500);
+                            //} else {
+                                //alert("No Instance ID token available");
+                                // Show permission request.
+                                //console.log('No Instance ID token available. Request permission to generate one.');
+                            //}
+                        //}).catch(function(err) {
+                            //alert("An error occurred while retrieving token");
+                            //console.log('An error occurred while retrieving token. ', err);
+                        //});
+                    //}).catch(function(err) {
+                        //alert("Unable to get permission to notify");
+                        //console.log('Unable to get permission to notify.', err);
+                    //});
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -562,11 +583,6 @@
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/like_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
             document.location.reload(true);
-        }
-    </script>
-    <script>
-        function editarProducto(id){
-            alert(id);
         }
     </script>
 </body>

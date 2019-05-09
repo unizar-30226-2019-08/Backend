@@ -914,7 +914,7 @@ def Logout(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 # Dado un identificador de chat, marca el producto como vendido y crea
-# dos instancias en la tbla notificaciones , una para cada usuario de que
+# dos instancias en la tabla notificaciones , una para cada usuario de que
 # el producto ha sido vendido
 def Vender_producto(request, format=None):
 	token = request.POST.get('token', 'nothing')
