@@ -333,9 +333,9 @@ def EditarProducto(biblio,id_producto):
 	#Prueba si el precio es un numero o no
 	try:
 		if precio != '':
+			precio = precio.replace(',', '.')
 			precio = Decimal(precio)
 	except:
-		print('AQUI')
 		return 'Bad request'
 	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
 	if tipo_envio != '':

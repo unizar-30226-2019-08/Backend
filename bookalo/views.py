@@ -152,9 +152,9 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				#return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
-				#	'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-				#	'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
+				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
+					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
+					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
@@ -942,8 +942,10 @@ def Vender_producto(request, format=None):
 				user2 = chat_buscado.comprador
 
 				try:
-					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, descripcion_notificacion= Mensaje)
-					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, descripcion_notificacion= Mensaje)
+					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, producto=chat_buscado.producto, 
+						descripcion_notificacion= Mensaje)
+					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, producto=chat_buscado.producto,
+						descripcion_notificacion= Mensaje)
 					notificacion1.save()
 					notificacion2.save()
 
