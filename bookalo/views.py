@@ -851,7 +851,9 @@ def EditProductRender(request, format=None):
 			else:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no es de ese usuario'})
 		except:
-			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no existe'})
+			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no se ha encontrado'})
+	else:
+		return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no esta logeado'})
 
 
 @api_view(('POST','GET'))
