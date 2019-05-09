@@ -481,6 +481,7 @@
 
     <!-- Add additional services that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-messaging.js"></script>
     <script>
         // Initialize Firebase
         var config = {
@@ -537,10 +538,28 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
-                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                    setTimeout(function(){
-                        document.location.reload(true);
-                    }, 1500);
+                    const messaging = firebase.messaging();
+                    messaging.requestPermission().then(function() {
+                        console.log('Notification permission granted.');
+                        messaging.getToken().then(function(currentToken) {
+                            if (currentToken) {
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken});
+                                setTimeout(function(){
+                                    document.location.reload(true);
+                                }, 1500);
+                            } else {
+                                alert("No Instance ID token available");
+                                // Show permission request.
+                                console.log('No Instance ID token available. Request permission to generate one.');
+                            }
+                        }).catch(function(err) {
+                            alert("An error occurred while retrieving token");
+                            console.log('An error occurred while retrieving token. ', err);
+                        });
+                    }).catch(function(err) {
+                        alert("Unable to get permission to notify");
+                        console.log('Unable to get permission to notify.', err);
+                    });
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
@@ -571,10 +590,28 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
-                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
-                    setTimeout(function(){
-                        document.location.reload(true);
-                    }, 1500);
+                    const messaging = firebase.messaging();
+                    messaging.requestPermission().then(function() {
+                        console.log('Notification permission granted.');
+                        messaging.getToken().then(function(currentToken) {
+                            if (currentToken) {
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken});
+                                setTimeout(function(){
+                                    document.location.reload(true);
+                                }, 1500);
+                            } else {
+                                alert("No Instance ID token available");
+                                // Show permission request.
+                                console.log('No Instance ID token available. Request permission to generate one.');
+                            }
+                        }).catch(function(err) {
+                            alert("An error occurred while retrieving token");
+                            console.log('An error occurred while retrieving token. ', err);
+                        });
+                    }).catch(function(err) {
+                        alert("Unable to get permission to notify");
+                        console.log('Unable to get permission to notify.', err);
+                    });
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
