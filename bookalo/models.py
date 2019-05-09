@@ -331,6 +331,7 @@ class NotificacionesPendientes(models.Model):
     producto = models.ForeignKey(
         to=Producto,
         null=False,
+        blank=True,
         on_delete=models.CASCADE,
         related_name='producto_de_notificacion',
         verbose_name='Producto sobre el que se ha realizado la venta')
