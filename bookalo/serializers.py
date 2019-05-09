@@ -151,7 +151,7 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_pendiente = UserSerializer(read_only=True)
-    producto = ProductoSerializer(read_only=True)
+    producto = ProductoSerializerList(read_only=True)
     class Meta:
         model = NotificacionesPendientes
         fields = ('producto', 'descripcion_notificacion')
