@@ -72,7 +72,9 @@
                 <ul class="nav navbar-nav">
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;font-size: 16px;font-weight: bold;" href="/">Comprar</a></li>
                 </ul>
-                <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Ver modal</button>
+                {% if loggedin %}
+                <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Notificaciones</button>
+                {% endif %}
                 <form
                     class="form-inline mr-auto" target="_self">
                     <p></p>
@@ -141,7 +143,7 @@
                                                 <p>
                                                     <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
-                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id?id={{ p.info_producto.pk }}">Ver más</a>
+                                                <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
                                                 <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
@@ -351,9 +353,9 @@
                         </div>
                         <div class="row" style="margin: 20px 0px 0px 0px;">
                             <div class="col text-center">
-                                <button onclick="facebookLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="googleLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="twitterLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('facebookLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('googleLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('twitterLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
                             </div>
                         </div>
                     </div>
@@ -462,7 +464,22 @@
         }
     </script>
     <script>
-        function googleLogin(){
+        function getLocation(provider) {
+            if (navigator.geolocation) {
+                if(provider == "googleLogin"){
+                    navigator.geolocation.getCurrentPosition(googleLogin);
+                }else if(provider == "twitterLogin"){
+                    navigator.geolocation.getCurrentPosition(twitterLogin);
+                }else{
+                    navigator.geolocation.getCurrentPosition(facebookLogin);
+                }
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+    <script>
+        function googleLogin(position){
             var provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().useDeviceLanguage();
             firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -478,7 +495,7 @@
                         //console.log('Notification permission granted.');
                         //messaging.getToken().then(function(currentToken) {
                             //if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
                                 }, 1500);
@@ -512,7 +529,7 @@
         }
     </script>
     <script>
-        function twitterLogin(){
+        function twitterLogin(position){
             var provider = new firebase.auth.TwitterAuthProvider();
             firebase.auth().useDeviceLanguage();
             firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -530,7 +547,7 @@
                         //console.log('Notification permission granted.');
                         //messaging.getToken().then(function(currentToken) {
                             //if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
                                 }, 1500);

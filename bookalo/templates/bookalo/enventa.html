@@ -71,7 +71,9 @@
                 <ul class="nav navbar-nav">
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;font-size: 16px;font-weight: bold;" href="/">Comprar</a></li>
                 </ul>
-                <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Ver modal</button>
+                {% if loggedin %}
+                <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Notificaciones</button>
+                {% endif %}
                 <form
                     class="form-inline mr-auto" target="_self">
                     <p></p>
@@ -305,7 +307,22 @@
         firebase.initializeApp(config);
     </script>
     <script>
-        function facebookLogin(){
+        function getLocation(provider) {
+            if (navigator.geolocation) {
+                if(provider == "googleLogin"){
+                    navigator.geolocation.getCurrentPosition(googleLogin);
+                }else if(provider == "twitterLogin"){
+                    navigator.geolocation.getCurrentPosition(twitterLogin);
+                }else{
+                    navigator.geolocation.getCurrentPosition(facebookLogin);
+                }
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+    </script>
+    <script>
+        function facebookLogin(position){
             var provider = new firebase.auth.FacebookAuthProvider();
             firebase.auth().useDeviceLanguage();
             provider.setCustomParameters({
@@ -337,7 +354,7 @@
         }
     </script>
     <script>
-        function googleLogin(){
+        function googleLogin(position){
             var provider = new firebase.auth.GoogleAuthProvider();
             firebase.auth().useDeviceLanguage();
             firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -353,7 +370,7 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken});
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
                                 }, 1500);
@@ -387,7 +404,7 @@
         }
     </script>
     <script>
-        function twitterLogin(){
+        function twitterLogin(position){
             var provider = new firebase.auth.TwitterAuthProvider();
             firebase.auth().useDeviceLanguage();
             firebase.auth().signInWithPopup(provider).then(function(result) {
@@ -405,7 +422,7 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken});
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
                                 }, 1500);
