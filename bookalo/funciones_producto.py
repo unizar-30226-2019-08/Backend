@@ -276,11 +276,16 @@ def CreacionProducto(biblio):
 		tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
 		tag_estandar = strip_accents(tag_estandar)
 		tag_estandar = tag_estandar.lower()
-		producto.tiene_tags.get_or_create(nombre=tag_estandar)
-	tags_in_producto = producto.tiene_tags.all()
-	for tag in tags_in_producto:
-		tag.number_of_uses = tag.number_of_uses + 1
-		tag.save()
+		try:
+			t = Tag.objects.get(nombre=tag_estandar)
+			producto.tiene_tags.add(t)
+			t.number_of_uses = t.number_of_uses + 1
+			t.save()
+		except:
+			t = Tag.objects.create(nombre=tag_estandar)
+			producto.tiene_tags.add(t)
+			t.number_of_uses = t.number_of_uses + 1
+			t.save()
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
@@ -323,58 +328,65 @@ def EditarProducto(biblio,id_producto):
 	descripcion = biblio['descripcion']
 	tags = biblio['tags']
 	#Check that the request is correct
-	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
-		return 'Bad request'
-	lista_tags = [x.strip() for x in tags.split(',')]
+	if tags != '':
+		lista_tags = [x.strip() for x in tags.split(',')]
 	#Prueba si el precio es un numero o no
 	try:
-		precio = Decimal(precio)
+		if precio != '':
+			precio = Decimal(precio)
 	except:
+		print('AQUI')
 		return 'Bad request'
 	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
-	if tipo_envio == 'True':
-		tipo_envio = True
-	else:
-		tipo_envio = False
+	if tipo_envio != '':
+		if tipo_envio == 'True':
+			tipo_envio = True
+		else:
+			tipo_envio = False
 	#Selecciona el estado en el que se encuentra el producto, entre Nuevo, Seminuevo o Usado
-	if estado_producto != 'Nuevo' and estado_producto != 'Seminuevo' and estado_producto != 'Usado':
+	if estado_producto != '' and estado_producto != 'Nuevo' and estado_producto != 'Seminuevo' and estado_producto != 'Usado':
 		return 'Bad request'
 
 	try:
 		producto = Producto.objects.get(pk=id_producto)
 	except:
 		return 'Bad request'
-	producto.latitud = Decimal(latitud)
-	producto.longitud = Decimal(longitud)
-	producto.nombre = nombre
-	producto.precio = precio
-	producto.estado_producto = estado_producto
-	producto.tipo_envio = tipo_envio
-	producto.descripcion = descripcion
+	if latitud != '' and longitud != '':
+		producto.latitud = Decimal(latitud)
+		producto.longitud = Decimal(longitud)
+	if nombre != '':
+		producto.nombre = nombre
+	if precio != '':
+		producto.precio = precio
+	if estado_producto == '':
+		producto.estado_producto = estado_producto
+	if tipo_envio != '':
+		producto.tipo_envio = tipo_envio
+	if descripcion != '':
+		producto.descripcion = descripcion
 	producto.save()
-	print(producto)
-	for tag in lista_tags:
-		tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
-		tag_estandar = strip_accents(tag_estandar)
-		tag_estandar = tag_estandar.lower()
-		producto.tiene_tags.get_or_create(nombre=tag_estandar)
-	tags_in_producto = producto.tiene_tags.all()
-	for tag in tags_in_producto:
-		tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
-		tag = strip_accents(tag)
-		tag = tag.lower()
-		print(tag)
-		if tag not in lista_tags:
-			print('ENTRA')
-			producto.tiene_tags.remove(tag)
-		else:
-			tag.number_of_uses = tag.number_of_uses + 1
-			tag.save()
-	#i = 0
-	#for file in files:
-	#	multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
-	#	multi.save()
-	#	i = i + 1
+	if tags != '':
+		listtags = []
+		for tag in lista_tags:
+			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+			tag_estandar = strip_accents(tag_estandar)
+			tag_estandar = tag_estandar.lower()
+			producto.tiene_tags.get_or_create(nombre=tag_estandar)
+			listtags.append(tag_estandar)
+		tags_in_producto = producto.tiene_tags.all()
+		for tag in tags_in_producto:
+			if tag.nombre not in listtags:
+				producto.tiene_tags.remove(tag)
+			else:
+				tag.number_of_uses = tag.number_of_uses + 1
+				tag.save()
+	if files != []:
+		multiExistentes = ContenidoMultimedia.objects.filter(producto=producto)
+		i = multiExistentes.count()
+		for file in files:
+			multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
+			multi.save()
+			i = i + 1
 	return 'Modified'
 
 def LikeProducto(token,productId):
