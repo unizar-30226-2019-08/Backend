@@ -330,7 +330,6 @@ class NotificacionesPendientes(models.Model):
         verbose_name='Usuario que tiene la notificación pendiente')
     producto = models.ForeignKey(
         to=Producto,
-        null=False,
         blank=True,
         on_delete=models.CASCADE,
         related_name='producto_de_notificacion',
