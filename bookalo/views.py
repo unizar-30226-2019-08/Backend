@@ -27,8 +27,8 @@ import itertools
 
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	last_index = request.POST.get('ultimo_indice', 0)
-	nelements = request.POST.get('elementos_pagina', -1)
+	last_index = request.POST.get('ultimo_indice', '0')
+	nelements = request.POST.get('elementos_pagina', '-1')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -60,15 +60,22 @@ def index(request):
 @csrf_exempt
 def Login(request, format=None):
 	token = request.POST.get('token', 'nothing')
-	token_fcm = request.POST.get('token_fcm', 'nothing')
+	fcm_token = request.POST.get('fcm_token', 'nothing')
+	print(fcm_token)
+	latitude = request.POST.get('latitud', '-1')
+	longitude = request.POST.get('longitud', '-1')
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil != 'true':
+		fcm_type = 'web'
+	else:
+		fcm_type = 'android'
 	if request.method != 'POST':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'Token no recibido.'})
 	else:
-		retorno = usuario_login(token, token_fcm)
+		retorno = usuario_login(token, fcm_token, latitude, longitude, fcm_type)
 		if retorno == 'Error':
 			if movil != 'true':
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no existe.'})
@@ -145,9 +152,9 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
-					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
+				#return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
+				#	'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
+				#	'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
