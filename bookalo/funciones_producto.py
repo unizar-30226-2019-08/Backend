@@ -248,6 +248,7 @@ def CreacionProducto(biblio):
 	lista_tags = [x.strip() for x in tags.split(',')]
 	#Prueba si el precio es un numero o no
 	try:
+		precio = precio.replace(',', '.')
 		precio = Decimal(precio)
 	except:
 		return 'Bad request'
