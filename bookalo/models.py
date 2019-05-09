@@ -328,7 +328,12 @@ class NotificacionesPendientes(models.Model):
         on_delete=models.CASCADE,
         related_name='usuario_pendiente_notificacion',
         verbose_name='Usuario que tiene la notificación pendiente')
-
+    producto = models.ForeignKey(
+        to=Producto,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name='producto_de_notificacion',
+        verbose_name='Producto sobre el que se ha realizado la venta')
     descripcion_notificacion = models.CharField(
         max_length=1000,
         verbose_name='Texto de la notificacion')
