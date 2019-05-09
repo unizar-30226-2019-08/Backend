@@ -834,7 +834,7 @@ def GetPendingNotifications(request, format=None):
 @csrf_exempt
 def EditProductRender(request, format=None):
 	token = request.session.get('token', 'nothing')
-	id_product = request.POST.get('id_producto', 'nothing')
+	id_product = request.GET.get('id_producto', 'nothing')
 	logged = check_user_logged_in(token)
 	if logged:
 		serializer_favs = ProductosFavoritos(token ,0 ,-1)
