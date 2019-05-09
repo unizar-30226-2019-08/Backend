@@ -854,9 +854,6 @@ def EditProductRender(request, format=None):
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no existe'})
 
 
-
-
-
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
@@ -884,8 +881,8 @@ def EditProduct(request, format=None):
 		print(biblioteca)
 		result = EditarProducto(biblioteca,id_product)
 		if movil == 'true':
-			if result == 'Created':
-				return Response(status=status.HTTP_201_CREATED)
+			if result == 'Modified':
+				return Response(status=status.HTTP_200_OK)
 			if result == 'Bad request':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			if result == 'Not found':
