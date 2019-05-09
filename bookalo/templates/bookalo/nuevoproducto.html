@@ -224,7 +224,11 @@
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
                     <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
+                        {% if informacion_basica.media_valoraciones == -1 %}
+                        <h6 style="color: rgb(255,255,255);width: 150px;margin: px 0px 0px 0px;">Sin valoraciones</h6>
+                        {% else %}
                         <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">

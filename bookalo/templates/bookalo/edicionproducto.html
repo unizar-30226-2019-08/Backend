@@ -224,7 +224,11 @@
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
                     <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
+                        {% if informacion_basica.media_valoraciones == -1 %}
+                        <h6 style="color: rgb(255,255,255);width: 150px;margin: px 0px 0px 0px;">Sin valoraciones</h6>
+                        {% else %}
                         <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="row" style="margin: 20px 0px 0px 0px;padding: 0px;width: 100%;">
@@ -270,43 +274,46 @@
             </div>
         </div>
     </div>
-    <form enctype="multipart/form-data" action="/api/create_product" method = "post">
+    <form enctype="multipart/form-data" action="/api/edit_product" method = "post">
     {% csrf_token %}
-    <p>Atención: Las imágenes ya cargadas en el sistema se mantendrán.</p>
+    <p style="margin: 30px 0px 0px 30px; color: red">Atención: Las imágenes y etiquetas ya cargadas en el sistema se mantendrán.</p>
     <div class="row" style="padding: 20px 30px;">
-        <div class="col"><input type="file" id="files" class="file" multiple="" data-preview-file-type="text" name="files" data-show-caption="true" data-msg-placeholder="Seleccione las imágenes" data-show-upload="false" required="" accept="image/*"></div>
+        <div class="col"><input type="file" id="files" class="file" multiple="" data-preview-file-type="text" name="files" data-show-caption="true" data-msg-placeholder="Seleccione las imágenes" data-show-upload="false" accept="image/*"></div>
     </div>
     <div class="row" style="padding: 0px 15px;margin: 0px 0px 0px 0px;">
         <div class="col">
             <div class="form-group has-feedback" style="margin: 20px 0px 16px 0px;">
                 <label for="nombre" style="font-size: 30px;font-family: Antic, sans-serif;">Nombre del producto</label>
-                <input value="{{ producto.info_producto.nombre }}" class="form-control" type="text" id="nombre" tabindex="-1" placeholder="Nombre completo del producto" name="nombre" required="" maxlength="50">
+                <input value="{{ producto.nombre }}" class="form-control" type="text" id="nombre" tabindex="-1" placeholder="Nombre completo del producto" name="nombre" required="" maxlength="50">
             </div>
             <div class="form-group has-feedback" style="margin: 20px 0px 16px 0px;">
                 <label for="precio" style="font-size: 30px;font-family: Antic, sans-serif;">Precio del producto</label>
-                <input value="{{ producto.info_producto.precio }}" class="form-control" type="text" id="precio" tabindex="-1" placeholder="Precio del producto" name="precio" required="">
+                <input value="{{ producto.precio }}" class="form-control" type="text" id="precio" tabindex="-1" placeholder="Precio del producto" name="precio" required="">
             </div>
             <div class="form-group has-feedback" style="margin: 20px 0px 16px 0px;">
                 <label for="from_name" style="font-size: 30px;font-family: Antic, sans-serif;">Descripción del producto</label>
-                <textarea value="{{ producto.info_producto.descripcion }}" class="form-control" id="descripcion" placeholder="Descripción del producto" tabindex="-1" name="descripcion" rows="5" maxlength="1000" required=""></textarea>
+                <textarea value="{{ producto.descripcion }}" class="form-control" id="descripcion" placeholder="Descripción del producto" tabindex="-1" name="descripcion" rows="5" maxlength="1000" required="">{{ producto.descripcion }}</textarea>
             </div>
             <div class="form-group">
-                <label for="from_name" style="font-size: 30px;font-family: Antic, sans-serif;">Etiquetas del producto</label>
+                <label for="from_name" style="font-size: 30px;font-family: Antic, sans-serif;">Etiquetas del producto</label><br>
+                {% for tag in producto.tiene_tags %}
+                <span style="margin: 0px 0px 20px 0px" class="tag label label-info">{{ tag.nombre }}<span data-role="remove"></span></span>
+                {% endfor %}
                 <input class="form-control" type="text" id="tags" name="tags" data-role="tagsinput" data-class="label-info" placeholder="Añade las etiquetas del producto">
             </div>
             <div class="form-group"><label for="from_name" style="font-size: 30px;font-family: Antic, sans-serif;">Características del producto y envío</label>
             <div class="form-row">
                 <div class="col">
                     <div class="form-check text-left">
-                        <input class="form-check-input" type="radio" id="formCheck-1" name="estado_producto" value="Nuevo">
+                        <input class="form-check-input" type="radio" id="formCheck-1" name="estado_producto" value="Nuevo" {% if producto.estado_producto == "Nuevo"%} checked {% endif %}>
                         <label class="form-check-label" for="formCheck-1">Nuevo</label>
                     </div>
                     <div class="form-check text-left" style="margin: 0px;">
-                        <input class="form-check-input" type="radio" id="formCheck-2" name="estado_producto" value="Seminuevo">
+                        <input class="form-check-input" type="radio" id="formCheck-2" name="estado_producto" value="Seminuevo" {% if producto.estado_producto == "Seminuevo"%} checked {% endif %}>
                         <label class="form-check-label" for="formCheck-2">Seminuevo</label>
                     </div>
                     <div class="form-check text-left">
-                        <input class="form-check-input" type="radio" id="formCheck-3" name="estado_producto" value="Usado">
+                        <input class="form-check-input" type="radio" id="formCheck-3" name="estado_producto" value="Usado" {% if producto.estado_producto == "Usado"%} checked {% endif %}>
                         <label class="form-check-label" for="formCheck-3">Usado</label>
                     </div>
                 </div>
@@ -314,11 +321,11 @@
             <div class="form-row text-center" style="margin: 20px -5px 0px -5px;">
                 <div class="col-xl-12" style="margin: 0px;">
                     <div class="form-check text-left">
-                        <input class="form-check-input" type="radio" id="formCheck-4" name="tipo_envio" value="True">
+                        <input class="form-check-input" type="radio" id="formCheck-4" name="tipo_envio" value="True" {% if producto.tipo_envio %} checked {% endif %}>
                         <label class="form-check-label" for="formCheck-4">Con envío</label>
                     </div>
                     <div class="form-check text-left">
-                        <input class="form-check-input" type="radio" id="formCheck-5" name="tipo_envio" value="False">
+                        <input class="form-check-input" type="radio" id="formCheck-5" name="tipo_envio" value="False"{% if not producto.tipo_envio %} checked {% endif %}>
                         <label class="form-check-label" for="formCheck-5">Sin envío</label>
                     </div>
                 </div>
@@ -328,7 +335,7 @@
         <input id="longitud" name="longitud" type="hidden" value="">
         <div class="form-row">
             <div class="col text-center">
-                <button class="btn btn-secondary text-center" style="background-color: #e91e63;border-color: transparent;margin: 20px 0px 30px 0px;" type="submit">Añadir producto</button>
+                <button class="btn btn-secondary text-center" style="background-color: #e91e63;border-color: transparent;margin: 20px 0px 30px 0px;" type="submit">Guardar cambios</button>
             </div>
         </div>
         </form>
