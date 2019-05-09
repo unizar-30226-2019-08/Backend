@@ -96,10 +96,10 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 				return status.HTTP_401_UNAUTHORIZED
 			else:
 				try:
-					device = FCMDevice.objects.get(registrarion_id=user.token_fcm)
+					device = FCMDevice.objects.get(registration_id=user.token_fcm)
 				except:
 					try:
-						FCMDevice.objects.create(registrarion_id=token_fcm, name=user.uid, type=fcm_type)
+						FCMDevice.objects.create(registration_id=token_fcm, name=user.uid, type=fcm_type)
 					except:
 						print('No se pudo crear el objeto FCMDevice para este usuario, quiza no reciba notificaciones')
 				user.token_fcm = token_fcm
