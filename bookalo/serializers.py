@@ -8,14 +8,11 @@ from django.utils.timezone import now as timezone_now
 from decimal import Decimal
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    ciudad = serializers.SerializerMethodField()
     conectado = serializers.SerializerMethodField()
     numValoraciones = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
         fields = ('uid', 'nombre', 'ciudad', 'conectado', 'imagen_perfil', 'media_valoraciones', 'numValoraciones','ultima_conexion')
-    def get_ciudad(self, obj):
-        return 'Zaragoza'
     
     def get_conectado(self, obj):
         ahora = timezone_now()

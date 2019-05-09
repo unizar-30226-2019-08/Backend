@@ -16,7 +16,8 @@ from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from django.utils.timezone import now as timezone_now
-#from geopy import Nominatim
+from geopy import Nominatim
+from fcm_django.models import FCMDevice
 
 def get_user(token):
 	try:
@@ -49,13 +50,16 @@ def check_user_logged_in(token):
 	except:
 		return False
 
-def usuario_login(token, token_fcm):
+def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
+	if latitude == '-1':
+		latitud_registro = 41.683490
+	else:
+		latitud_registro = Decimal(latitude)
 
-	latitud_registro = 0.0
-	longitud_registro = 0.0
-	
-	latitud_registro = 41.683490
-	longitud_registro = -0.888479
+	if longitude == '-1':
+		longitud_registro = -0.888479
+	else:
+		longitud_registro = Decimal(longitude)
 	
 	if token == 'nothing':
 		return 'Error'
@@ -76,26 +80,39 @@ def usuario_login(token, token_fcm):
 		except:	
 			print("Error con firebase en login social")
 			return 'Error'
-		
+		try:
+			geolocator = Nominatim(user_agent="bookalo")
+			location = geolocator.reverse(str(latitud_registro) + ',' + str(longitud_registro))
+			try:
+				ciudad = location.raw['address']['city']
+			except:
+				ciudad = location.raw['address']['county']
+		except:
+			ciudad = 'Zaragoza'
 		try:
 			user = Usuario.objects.get(uid=user_uid)
-			#geolocator = Nominatim(user_agent="bookalo")
-			#location = geolocator.reverse(str(user.latitud_registro) + ',' + str(user.longitud_registro))
-			#try:
-			#	return location.raw['address']['city']
-			#except:
-			#	return location.raw['address']['county']
+			
 			if user.esta_baneado:
 				return status.HTTP_401_UNAUTHORIZED
 			else:
+				try:
+					device = FCMDevice.objects.get(registrarion_id=user.token_fcm)
+				except:
+					try:
+						FCMDevice.objects.create(registrarion_id=token_fcm, name=user.uid, type=fcm_type)
+					except:
+						print('No se pudo crear el objeto FCMDevice para este usuario, quiza no reciba notificaciones')
 				user.token_fcm = token_fcm
+				user.latitud_registro = latitud_registro
+				user.longitud_registro = longitud_registro
+				user.ciudad = ciudad
 				user.save()
 				update_last_connection(user)
 				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
 
-			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, token_fcm=token_fcm, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image)
+			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, token_fcm=token_fcm, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image, ciudad=ciudad)
 			update_last_connection(new_user_data)
 			return UserSerializer(new_user_data).data
 

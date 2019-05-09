@@ -20,6 +20,7 @@ import itertools
 from django.db.models import Count
 import re
 import unicodedata
+from fcm_django.models import FCMDevice
 
 def calculate_distance(lat1, lon1, lat2, lon2):
 	R = 6373.0

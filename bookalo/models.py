@@ -38,6 +38,10 @@ class Usuario(AbstractUser):
     ultima_conexion = models.DateTimeField(
         default=timezone_now,
         verbose_name='Ultima conexion del usuario')
+    ciudad = models.CharField(
+        max_length=50,
+        default='Zaragoza',
+        verbose_name='Ciudad en la que se conecto por ultima vez el usuario')
     latitud_registro = models.DecimalField(
         null=True,
         verbose_name='Latitud del usuario cuando se registro',

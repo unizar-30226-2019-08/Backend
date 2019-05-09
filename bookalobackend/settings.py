@@ -50,7 +50,19 @@ INSTALLED_APPS = [
     'bookalo',
     'django.contrib.gis',
     'rest_framework',
+    'fcm_django'
 ]
+
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "AAAARwXiWF8:APA91bE_YAn1s99Rt7wGZIYFcPM2vRZbVEX5ChyIJR2gqeF2V_E9Z7s1m56UvZ299rNhtPR7bw33kPIWNfzLnwDLZVGQXrCLdSKGzeLASWksHIJjAajXAGHTk873wVLEaKPX_MA3kHjq",
+         # true if you want to have only one active device per registered user at a time
+         # default: False
+        "ONE_DEVICE_PER_USER": False,
+         # devices to which notifications cannot be sent,
+         # are deleted upon receiving error response from FCM
+         # default: False
+        "DELETE_INACTIVE_DEVICES": False,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
