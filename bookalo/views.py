@@ -780,16 +780,16 @@ def SellProduct(request, format=None):
 @csrf_exempt
 def PrivacyPolicy(request, format=None):
 	token = request.session.get('token', 'nothing')
+	print(token)
 	if token == 'nothing':
-		logged = False
-		return Response(status=status.HTTP_404_NOT_FOUND)
+		return render(request, 'bookalo/privacypolicy.html', {'loggedin': False})
 	else:
 		logged = check_user_logged_in(token)
 		if logged:
 			user = get_user(token)
 			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
 		else:
-			return  Response(status=status.HTTP_401_UNAUTHORIZED)
+			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
