@@ -99,3 +99,13 @@ def GetUserMessages(chat_pk, user):
 		return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None
+
+def GetChatInfoWeb(chat_id):
+	try:
+		chat = Chat.objects.get(pk=int(chat_id))
+		product = chat.producto
+		seller = chat.vendedor
+		buyer = chat.comprador
+		return {'comprador':UserSerializer(buyer).data, 'vendedor':UserSerializer(seller).data, 'producto': ProductoSerializer(product).data}
+	except:
+		return {'comprador': '', 'vendedor':'', 'producto': ''}
