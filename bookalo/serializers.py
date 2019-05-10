@@ -116,10 +116,9 @@ class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     productos_favoritos = serializers.SerializerMethodField()
     producto_del_usuario = ProductoSerializerList(read_only=True, many=True)
-    notificaciones = serializers.SerializerMethodField()
     class Meta:
         model = Usuario
-        fields = ('uid', 'nombre', 'imagen_perfil','media_valoraciones','esta_baneado','notificaciones', 
+        fields = ('uid', 'nombre', 'imagen_perfil','media_valoraciones','esta_baneado', 
             'producto_del_usuario', 'productos_favoritos')
 
     def get_usuario_valorado_estrella(self, obj):
@@ -130,9 +129,6 @@ class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
         favoritos = Producto.objects.filter(le_gusta_a__in=[obj.pk])
         return ProductoSerializerList(favoritos, many=True, read_only=True).data
 
-    def get_notificaciones(self,obj):
-        notif = NotificacionesPendientes.objects.filter(usuario_pendiente=obj)
-        return NotificationSerializer(notif, many=True).data
 
 class ReportSerializer(serializers.HyperlinkedModelSerializer):
     usuario_reportado = UserSerializer(read_only=True)
