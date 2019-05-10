@@ -618,7 +618,14 @@ def GetMessages(request, format=None):
 		messages = GetUserMessages(chat_id, user)
 		print(messages)
 		if messages != None:
-			return Response({'mensajes':messages.data}, status=status.HTTP_200_OK)	
+			if movil == 'true':
+				return Response({'mensajes':messages.data}, status=status.HTTP_200_OK)
+			else:
+				try:
+					info_messages = GetChatInfoWeb(chat_id)
+					return Response({'mensajes':messages.data, 'vendedor': info_messages['vendedor'], 'comprador': info_messages['comprador'], 'producto':info_messages['producto']}, status=status.HTTP_200_OK)
+				except:
+					return Response({'mensajes':messages.data}, status=status.HTTP_200_OK)	
 		else:
 			print("404")
 			return Response(status=status.HTTP_404_NOT_FOUND)	
