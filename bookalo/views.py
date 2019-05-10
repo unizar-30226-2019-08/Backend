@@ -152,8 +152,11 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				notif = NotificacionesPendientes.objects.filter(usuario_pendiente=fetch_user)
-				notif_serializer = NotificationSerializer(notif, many=True).data
+				try:
+					notif = NotificacionesPendientes.objects.filter(usuario_pendiente=fetch_user)
+					notif_serializer = NotificationSerializer(notif, many=True).data
+				except:
+					notif_serializer = []
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
@@ -443,6 +446,7 @@ def DeleteProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
+			print('ENTRO3')
 			return redirect('/')
 	else:
 		try:
@@ -455,13 +459,16 @@ def DeleteProduct(request, format=None):
 					return Response(status=status.HTTP_200_OK)
 			else:
 				if result == 'Unauthorized':
+					print('ENTRO2')
 					return redirect('/')
 				else:
+					print('ENTRO')
 					return redirect('/api/get_user_products')
 		except:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
+				print('ENTROEXCEPT')
 				return redirect('/')
 
 @api_view(('POST','GET'))
