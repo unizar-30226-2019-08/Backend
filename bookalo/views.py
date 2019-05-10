@@ -161,7 +161,6 @@ def GetUserProfile(request, format=None):
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
 					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
-				print("Except")
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
@@ -356,8 +355,8 @@ def CreateProduct(request, format=None):
 	try:
 		logged = check_user_logged_in(token)
 		files = request.FILES.getlist('files')
-		latitud = request.POST.get('latitud', '15')
-		longitud = request.POST.get('longitud', '15')
+		latitud = request.POST.get('latitud', '')
+		longitud = request.POST.get('longitud', '')
 		nombre = request.POST.get('nombre', '')
 		precio = request.POST.get('precio', '')
 		estado_producto = request.POST.get('estado_producto', '')
@@ -436,6 +435,7 @@ def CreateReport(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def DeleteProduct(request, format=None):
+	print('HEY')
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
@@ -447,7 +447,6 @@ def DeleteProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
-			print('ENTRO3')
 			return redirect('/')
 	else:
 		try:
@@ -460,16 +459,14 @@ def DeleteProduct(request, format=None):
 					return Response(status=status.HTTP_200_OK)
 			else:
 				if result == 'Unauthorized':
-					print('ENTRO2')
 					return redirect('/')
 				else:
-					print('ENTRO')
 					return redirect('/api/get_user_products')
 		except:
+			print('EXCEPCION FINAL')
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
-				print('ENTROEXCEPT')
 				return redirect('/')
 
 @api_view(('POST','GET'))
@@ -830,7 +827,7 @@ def GetPendingNotifications(request, format=None):
 		try:
 			result = GetNotifications(token)
 			if result != 'NOT FOUND':
-				return Response({'notifiaciones': result}, status=status.HTTP_200_OK)
+				return Response({'notificaciones': result}, status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_404_NOT_FOUND)
 		except:
@@ -952,10 +949,10 @@ def Vender_producto(request, format=None):
 				user2 = chat_buscado.comprador
 
 				try:
-					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, producto=chat_buscado.producto, 
-						descripcion_notificacion= Mensaje)
-					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, producto=chat_buscado.producto,
-						descripcion_notificacion= Mensaje)
+					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
+						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
+						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
 					notificacion1.save()
 					notificacion2.save()
 

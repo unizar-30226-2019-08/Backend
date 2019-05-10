@@ -303,10 +303,8 @@ def BorradoProducto(token,productId):
 	if product.vendido_por == user:
 		product.delete()
 		return 'Ok'
-		return Response(status=status.HTTP_200_OK)
 	else:
 		return 'Unauthorized'
-		return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 def EditarProducto(biblio,id_producto):
 	token = biblio['token']
@@ -359,7 +357,7 @@ def EditarProducto(biblio,id_producto):
 		producto.nombre = nombre
 	if precio != '':
 		producto.precio = precio
-	if estado_producto == '':
+	if estado_producto != '':
 		producto.estado_producto = estado_producto
 	if tipo_envio != '':
 		producto.tipo_envio = tipo_envio
