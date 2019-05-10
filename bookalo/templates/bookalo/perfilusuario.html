@@ -107,9 +107,9 @@
                         </div>
                         <div class="row" style="margin: 20px 0px 0px 0px;">
                             <div class="col text-center">
-                                <button onclick="facebookLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="googleLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="twitterLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('facebookLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('googleLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('twitterLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
                             </div>
                         </div>
                     </div>
@@ -123,7 +123,7 @@
             <div class="modal-content">
                 <form action="/api/create_report" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ informacion_basica.nombre }}</h4>
+                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ producto.vendido_por.nombre }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -143,7 +143,7 @@
                     <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4>
                     <textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;" id="comentario" name="comentario"></textarea>
                 </div>
-                <input type="hidden" id="uid" name="uid" value="{{ producto.vendido_por.uid }}">
+                <input type="hidden" id="uid" name="uid" value="{{ informacion_basica.uid }}">
                 <div class="modal-footer">
                     <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button>
                 </div>
@@ -258,9 +258,15 @@
             <a href="https://twitter.com/intent/tweet?text=Mira%20el%20perfil%20de%20{{ informacion_basica.nombre }}%20en%20Bookalo:%20https://bookalo.es/api/get_user_profile/?uid={{ informacion_basica.uid }}" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;" type="button">
                 <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
             </a>
+            {% if coincidentUser %}
+            <button onClick="document.getElementById('productos').scrollIntoView();" class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;">
+                <i class="fa fa-heart" style="color:#ffffff;font-size:30px;"></i>
+            </button>
+            {% else %}
             <button onClick="document.getElementById('productos').scrollIntoView();" class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;">
                 <i class="fa fa-shopping-bag" style="color:#ffffff;font-size:30px;"></i>
             </button>
+            {% endif %}
             {% if loggedin %}
             {% if not coincidentUser %}
             <button class="btn btn-link btn-circle action-button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;" data-toggle="modal" data-target="#modalReport" type="button">
@@ -296,27 +302,15 @@
     <div style="height: 200px;overflow-y: auto;margin: 20px 0px 0px 0px;">
         <div class="row" style="margin: 0px;">
             <div class="col">
+                {% for notificacion in notificaciones %}
                 <div class="card" style="margin: 0px 0px 15px 0px;">
                     <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
+                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ notificacion.producto.vendido_por.nombre }}<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
                         <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Le compraste: "Ceras Manley de múltiples colores"</h6>
                         <p class="card-text">Recuerda valorarle. ¡Con tu valoración ayudas a mejorar Bookalo!</p><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal"
                             data-target="#modalRating">Valorar compra</button></div>
                 </div>
-                <div class="card" style="margin: 0px 0px 15px 0px;">
-                    <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Le compraste: "Ceras Manley de múltiples colores"</h6>
-                        <p class="card-text">Recuerda valorarle. ¡Con tu valoración ayudas a mejorar Bookalo!</p><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal"
-                            data-target="#modalRating">Valorar compra</button></div>
-                </div>
-                <div class="card" style="margin: 0px 0px 15px 0px;">
-                    <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">Rosa Pérez<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{% static 'bookalo/img/th-11.jpg' %}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Le compraste: "Ceras Manley de múltiples colores"</h6>
-                        <p class="card-text">Recuerda valorarle. ¡Con tu valoración ayudas a mejorar Bookalo!</p><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal"
-                            data-target="#modalRating">Valorar compra</button></div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -345,14 +339,11 @@
                                 <img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ valoracion.usuario_que_valora.imagen_perfil }}">
                             </a>
                         </h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró
-                            <button onClick="document.getElementById('vendido').scrollIntoView();" class="btn btn-link btn-sm" type="button" style="color: rgb(109,109,109);font-size: 16px;margin: -5px 0px 0px 0px;">&quot;{{ valoracion.producto_asociado.nombre }}&quot;
-                            </button>
-                        </h6>
+                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró {{ valoracion.producto.nombre }}</h6>
                         <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}
                             <img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}">
                         </h1>
-                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp }}</h6>
+                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|date:'Y-m-d H:i' }}</h6>
                         <p class="card-text">{{ valoracion.comentario }}</p>
                     </div>
                 </div>
