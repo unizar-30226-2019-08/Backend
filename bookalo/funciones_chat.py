@@ -17,6 +17,7 @@ from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from .funciones_usuario import *
 import itertools
+from fcm_django.models import FCMDevice
 
 
 def CrearChat(token,otroUserUid,productId):
@@ -53,7 +54,22 @@ def CrearMensaje(token, chat_id, message):
 		user = get_user(token)
 		chat = Chat.objects.get(pk=int(chat_id))
 
-		Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
+		mensaje = Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
+		try:
+			device = FCMDevice.objects.all().first()
+			print(device)
+
+			if user == chat.vendedor:
+				otrouser = chat.comprador
+			else:
+				otroUser = chat.vendedor
+			data={'body': message}
+			data_message = {'to':otrouser.token_fcm, 'data':data}
+			#device.send_message(data_message)
+			device.send_message(data={"test": "test"})
+			#to=otrouser.token_fcm,
+		except:
+			print('Error en el envío del mensaje')
 		return True
 	except:
 		return False	

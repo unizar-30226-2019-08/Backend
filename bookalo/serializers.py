@@ -148,9 +148,10 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_pendiente = UserSerializer(read_only=True)
     producto = ProductoSerializerList(read_only=True)
+    otro_usuario_compra = UserSerializer(read_only=True)
     class Meta:
         model = NotificacionesPendientes
-        fields = ('producto', 'descripcion_notificacion')
+        fields = ('producto', 'otro_usuario_compra','descripcion_notificacion')
 
 class MensajeSerializer(serializers.HyperlinkedModelSerializer):
     es_suyo = serializers.SerializerMethodField()
