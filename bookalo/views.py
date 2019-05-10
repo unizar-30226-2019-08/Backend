@@ -152,12 +152,11 @@ def GetUserProfile(request, format=None):
 		if check_user_logged_in(token):
 			try:
 				fetch_user = get_user(token)
-				return Response({'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
-					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True }, status=status.HTTP_200_OK)
+				notif = NotificacionesPendientes.objects.filter(usuario_pendiente=fetch_user)
+				notif_serializer = NotificationSerializer(notif, many=True).data
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
+					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
 			except:
 				print("Except")
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
