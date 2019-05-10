@@ -49,6 +49,9 @@ def GetChatComprador(user,ultimo_indice,elementos_pagina):
 		chats = itertools.islice(chats, ultimo_indice, ultimo_indice + elementos_pagina)
 	return ChatSerializer(chats, many=True, read_only=True)
 
+from  pyfcm import FCMNotification
+
+
 def CrearMensaje(token, chat_id, message):
 	try:
 		user = get_user(token)
@@ -58,16 +61,25 @@ def CrearMensaje(token, chat_id, message):
 		try:
 			device = FCMDevice.objects.all().first()
 			print(device)
+			device.send_message("Title", "Message")
 
-			if user == chat.vendedor:
-				otrouser = chat.comprador
-			else:
-				otroUser = chat.vendedor
-			data={'body': message}
-			data_message = {'to':otrouser.token_fcm, 'data':data}
+
+			"""
+			#data={'body': message}
+			#data_message = {'to':otrouser.token_fcm, 'data':data}
 			#device.send_message(data_message)
-			device.send_message(data={"test": "test"})
+			#device.send_message(data={"test": "test"})
 			#to=otrouser.token_fcm,
+			#except:
+			#print('Error en el envío del mensaje')
+			"""
+
+			"""
+			fcm = FCM.new(Rails.application.config.api_key)
+			registration_ids= [otrouser.token_fcm] # an array of one or more client registration tokens
+			options = {data: {score: "123"}, collapse_key: "updated_score"}
+			response = fcm.send(registration_ids, options) 
+			"""
 		except:
 			print('Error en el envío del mensaje')
 		return True
@@ -83,7 +95,7 @@ def CrearNotificiacion(usuario, message):
 
 def GetUserMessages(chat_pk, user):
 	try:
-		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk)
+		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('-hora')
 		return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None
