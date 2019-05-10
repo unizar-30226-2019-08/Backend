@@ -280,7 +280,7 @@
                     <div class="row filtr-container">
                         {% for p in productos %}
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card border-dark" style="border-radius:20px">
+                            <div class="card" style="border-radius:20px">
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
                                     <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                                     {% if loggedin %}
@@ -296,7 +296,7 @@
                                     {% endif %}
                                 </div>
                                 <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
-                                <div class="card-body">
+                                <div class="card-body" style="background-color: #F0F0F0">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
                                         <h4 style="width: 60%;"><strong>{{ p.info_producto.precio }}€</strong></h4>
                                         <h5 class="text-right" style="width: 40%;">1.500m</h5>
@@ -515,7 +515,7 @@
                     alert("Error al iniciar sesión")
                     // Handle error
                 });
-                }).catch(function(error) {
+            	}).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
