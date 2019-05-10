@@ -442,6 +442,7 @@ def DeleteProduct(request, format=None):
 	else:
 		token = request.session.get('token', 'nothing')
 	productId = request.POST.get('idProducto', 'nothing')
+	print(productId)
 	if request.method != 'POST' or token == 'nothing' or productId == 'nothing':
 		if movil == 'true':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -802,6 +803,7 @@ def PrivacyPolicy(request, format=None):
 @csrf_exempt
 def CreateProductRender(request, format=None):
 	token = request.session.get('token', 'nothing')
+	print(token)
 	if token == 'nothing':
 		logged = False
 	else:

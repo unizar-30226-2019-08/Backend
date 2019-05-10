@@ -81,7 +81,7 @@
                 <ul class="nav navbar-nav">
                     {% if loggedin %}
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/create_product">Subir producto</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/create_product">Subir producto</a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="" onclick="cerrarSesion()">Cerrar sesión</a></li>
                     {% endif %}
                 </ul>
@@ -170,9 +170,9 @@
                         </div>
                         <div class="row" style="margin: 20px 0px 0px 0px;">
                             <div class="col text-center">
-                                <button onclick="facebookLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="googleLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
-                                <button onclick="twitterLogin()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('facebookLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #002649;border-color: 0px;padding: 0px;margin: 0px 15px 0px 0px;" type="button"><i class="icon ion-social-facebook" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('googleLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #db4437;border-color: transparent;padding: 0px;margin: 0px 20px 0px 0px;" type="button"><i class="icon ion-social-google" style="color:#ffffff;font-size:30px;"></i></button>
+                                <button onclick="getLocation('twitterLogin')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #00aced;border-color: transparent;padding: 0px;" type="button"><i class="icon ion-social-twitter" style="color:#ffffff;font-size:30px;"></i></button>
                             </div>
                         </div>
                     </div>
