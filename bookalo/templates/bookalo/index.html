@@ -503,7 +503,6 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                alert(currentToken);
                                 $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
