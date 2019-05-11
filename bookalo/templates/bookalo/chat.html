@@ -445,6 +445,7 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
+                                alert(currentToken);
                                 $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
                                 setTimeout(function(){
                                     document.location.reload(true);
@@ -622,6 +623,7 @@
         // - a message is received while the app has focus
         // - the user clicks on an app notification created by a service worker
         //   `messaging.setBackgroundMessageHandler` handler.
+        const messaging = firebase.messaging();
         messaging.onMessage(function(payload) {
             alert(payload);
         });
