@@ -426,6 +426,7 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		product = Producto.objects.get(pk=int(product_id))
 		validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
 		validacion.actualizar()
+		NotificacionesPendientes.objects.filter(producto=product, usuario_pendiente=user).delete()
 		return True
 	except:
 		return False
