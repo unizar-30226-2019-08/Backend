@@ -116,6 +116,11 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	if search == '-1' and user_latitude == '-1' and user_longitude == '-1' and max_distance == '-1' and min_price == '-1' and max_price == '-1' and min_score == '-1':
 		return 'Bad request'
 
+	if min_price != '-1':
+		min_price = min_price.replace(',', '.')
+	if max_price != '-1':
+		max_price = max_price.replace(',', '.')
+
 	products = Producto.objects.none()
 	if tags != '-1':
 		#lista_tags = [x.strip() for x in tags.split(',')]
