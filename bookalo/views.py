@@ -242,6 +242,8 @@ def FilterProduct(request, format=None):
 				else:
 					#min_price = '-1'
 					max_price = '-1'
+			print(user_latitude)
+			print(user_longitude)
 			biblioteca = {'tags':tags, 'user_latitude':user_latitude, 'user_longitude':user_longitude, 'max_distance':max_distance,
 						'min_price':min_price,'max_price':max_price,'min_score':min_score, 'busqueda' : search}
 			
@@ -679,12 +681,16 @@ def SendRating(request, format=None):
 		logged = check_user_logged_in(token)
 	if logged:
 		stars = request.POST.get('estrellas', 'nothing')
+		print(stars)
 		stars = int(stars)
 		if movil != 'true':
 			stars = stars * 2
 		rated_user_id = request.POST.get('uid_usuario_valorado', 'nothing')
+		print(rated_user_id)
 		comment = request.POST.get('comentario', '')
+		print(comment)
 		product_id = request.POST.get('id_producto_valorado', 'nothing')
+		print(product_id)
 		has_been_rated = ValorarVenta(token, rated_user_id, comment, product_id, stars)
 		if has_been_rated:
 			return Response(status=status.HTTP_200_OK)
@@ -695,6 +701,7 @@ def SendRating(request, format=None):
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		else:
 			return render(request, 'bookalo/chat.html', {'loggedin': logged})
+			
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
@@ -931,10 +938,14 @@ def Logout(request, format=None):
 # dos instancias en la tabla notificaciones , una para cada usuario de que
 # el producto ha sido vendido
 def Vender_producto(request, format=None):
-	token = request.POST.get('token', 'nothing')
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
 	id_chat = request.POST.get('id_chat', 'nothing')
 
-	if token == 'nothing' or 'chat' == 'nothing':
+	if token == 'nothing' or id_chat == 'nothing':
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 	
 	else:

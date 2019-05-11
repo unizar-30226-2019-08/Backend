@@ -59,7 +59,7 @@
     <link rel="manifest" href="{% static 'bookalo/manifest.json' %}">
 </head>
 
-<body>
+<body onload="getLocation('')">
     <nav class="navbar navbar-light navbar-expand-xl d-xl-flex justify-content-xl-start navigation-clean-search fixed-top" style="background-color: #e91e63;padding: 16px;filter: blur(0px);">
         <div class="container-fluid">
             <a class="navbar-brand" style="margin: -7px 0px 0px 0px;padding: 0px;" href="/">
@@ -251,6 +251,8 @@
                         <input type="text" data-role="tagsinput" id="tags" name="tags" data-class="label-info" placeholder="Añade las etiquetas">
                     </div>
                 </div>
+                <input type="hidden" id="latitud" name="latitud" value="">
+                <input type="hidden" id="longitud" name="longitud" value="">
                 <div class="row d-xl-flex" style="margin: 20px 0px 20px 0px;">
                     <div class="col text-center">
                         <button class="btn btn-secondary" type="submit" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Filtrar</button>
@@ -280,7 +282,7 @@
                     <div class="row filtr-container">
                         {% for p in productos %}
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card" style="border-radius:20px">
+                            <div class="card shadow" style="border-radius:20px; border-color: transparent">
                                 <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
                                     <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                                     {% if loggedin %}
@@ -303,7 +305,7 @@
                                     </div>
                                     <p class="card-text">{{ p.info_producto.descripcion }}<br></p>
                                 </div>
-                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-color:transparent;border-bottom-left-radius:20px;border-bottom-right-radius:20px; background-color: #F0F0F0">
                                     <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
                                         {% if p.vendido_por.media_valoraciones == 1 %}<i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
                                         {% elif p.vendido_por.media_valoraciones == 2 %}<i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
@@ -437,12 +439,19 @@
                     navigator.geolocation.getCurrentPosition(googleLogin);
                 }else if(provider == "twitterLogin"){
                     navigator.geolocation.getCurrentPosition(twitterLogin);
-                }else{
+                }else if(provider == "facebookLogin"){
                     navigator.geolocation.getCurrentPosition(facebookLogin);
+                }else{
+                    navigator.geolocation.getCurrentPosition(initCoords);
                 }
             } else {
                 alert("Geolocation is not supported by this browser.");
             }
+        }
+
+        function initCoords(position){
+            document.getElementById("latitud").value = position.coords.latitude;
+            document.getElementById("longitud").value = position.coords.longitude;
         }
     </script>
     <script>
@@ -515,7 +524,7 @@
                     alert("Error al iniciar sesión")
                     // Handle error
                 });
-            	}).catch(function(error) {
+                }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;

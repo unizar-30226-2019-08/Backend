@@ -335,6 +335,7 @@
             <div class="row" style="margin: 0px;">
                 <div class="col text-center" style="padding: 0px;margin: 10px 0px 0px 0px;">
                     {% if loggedin %}
+                    {% if producto.vendido_por.uid != informacion_basica.uid %}
                     <button onclick="anadirFavorito('{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button">
                         {% if producto.le_gusta %}
                         <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-down" style="color:#ffffff;font-size:30px;"></i>
@@ -346,13 +347,16 @@
                         <i class="fa fa-wechat d-xl-flex justify-content-xl-center align-items-xl-center" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i>
                     </button>
                     {% endif %}
+                    {% endif %}
                     <a href="https://twitter.com/intent/tweet?text={{ producto.info_producto.nombre }}%20está%20a%20la%20venta%20en%20Bookalo:%20https://bookalo.es/api/generic_product_view/?id={{ producto.info_producto.pk }}" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;" type="button">
                         <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
                     </a>
                     {% if loggedin %}
+                    {% if producto.vendido_por.uid != informacion_basica.uid %}
                     <a class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" role="button" data-toggle="modal" data-target="#modalReport">
                         <i class="fa fa-ban" style="color: #ffffff;font-size: 30px;margin: 8px 0px 0px 0px;"></i>
                     </a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>
