@@ -628,7 +628,7 @@
             console.log('Message received. ', payload);
             var objTo = document.getElementById('ventanaChat');
             var divtest = document.createElement("div");
-            divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notificacion.body + '<br></p> </div> </div>';
+            divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
             objTo.appendChild(divtest);
         });
     </script>
