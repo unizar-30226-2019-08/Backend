@@ -195,18 +195,35 @@
     </div>
     <div class="modal fade" role="dialog" tabindex="-1" id="modalReport">
         <div class="modal-dialog" role="document">
+            <form action="/api/create_report" method="post">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a Joseph Mancuso</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+                    <h4 id="tituloReporte" class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a Joseph Mancuso</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
                 <div class="modal-body">
                     <p style="font-family: Antic, sans-serif;">¡Vaya! Lamentamos tu mala experiencia en Bookalo. Para evitar que vuelva a ocurrir, por favor, indica el motivo del reporte.</p>
                     <h4 style="font-family: Antic, sans-serif;">Selecciona un motivo:</h4>
                     <div class="row d-xl-flex" style="margin: 20px 0px 0px 0px;">
-                        <div class="col d-sm-flex d-lg-flex d-xl-flex justify-content-sm-center justify-content-lg-center justify-content-xl-center"><select class="d-sm-flex d-lg-flex d-xl-flex" style="width: 80%;"><option value="Verbal" selected="">Violencia verbal</option><option value="Sexual">Violencia sexual</option><option value="Otros">Otros</option></select></div>
+                        <div class="col d-sm-flex d-lg-flex d-xl-flex justify-content-sm-center justify-content-lg-center justify-content-xl-center">
+                            <select class="d-sm-flex d-lg-flex d-xl-flex" style="width: 80%;" id="causa" name="causa">
+                                <option value="Verbal" selected="">Violencia verbal</option>
+                                <option value="Sexual">Violencia sexual</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
                     </div>
-                    <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4><textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;"></textarea></div>
-                <div class="modal-footer"><button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button></div>
+                    <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4>
+                    <textarea id="comentario" name="comentario" style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;"></textarea>
+                </div>
+                <input type="hidden" id="uid" name="uid" value="">
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button>
+                </div>
             </div>
+            </form>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -268,28 +285,29 @@
         </div>
         <div class="col-xl-3 text-right" style="width: 20%;">
             <div class="row" style="margin: 30px -15px 0px -15px;">
-                <div class="col text-center d-xl-flex justify-content-xl-center"><img class="border rounded-circle d-xl-flex" style="width: 150px;height: 150px;" src="{% static 'bookalo/img/avatar-dhg.png' %}"></div>
+                <div class="col text-center d-xl-flex justify-content-xl-center"><img id="imagenOtro" class="border rounded-circle d-xl-flex" style="width: 150px;height: 150px;" src="{{ informacion_basica.imagen_perfil }}"></div>
             </div>
             <div class="row">
                 <div class="col">
-                    <h1 class="text-center" style="font-family: Antic, sans-serif;font-size: 25px;margin: 15px 0px 0px 0px;">Joseph Mancuso</h1>
+                    <h1 id="nombreOtro" class="text-center" style="font-family: Antic, sans-serif;font-size: 25px;margin: 15px 0px 0px 0px;">{{ informacion_basica.nombre }}</h1>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center" style="margin: 20px 0px 0px 0px;">
-                    <h1 class="text-center" style="font-family: Antic, sans-serif;margin: 0px -15px 8px -15px;">quiere</h1>
+                    <h1 id="motivo" class="text-center" style="font-family: Antic, sans-serif;margin: 0px -15px 8px -15px;">quiere a</h1>
                 </div>
             </div>
             <div class="row text-center" style="margin: 20px -15px 0px -15px;">
-                <div class="col d-xl-flex justify-content-xl-center"><img class="border rounded-circle d-xl-flex" style="width: 150px;height: 150px;" src="{% static 'bookalo/img/978846738471.jpg' %}"></div>
+                <div class="col d-xl-flex justify-content-xl-center"><img id="producto" class="border rounded-circle d-xl-flex" style="width: 150px;height: 150px;" src="{{ informacion_basica.imagen_perfil }}"></div>
             </div>
             <div class="row text-center">
                 <div class="col">
-                    <h1 class="text-center" style="font-family: Antic, sans-serif;font-size: 25px;margin: 15px 0px 0px 0px;">Lengua castellana y literatura</h1>
+                    <h1 id="nombreProducto" class="text-center" style="font-family: Antic, sans-serif;font-size: 25px;margin: 15px 0px 0px 0px;">Bookalo</h1>
                 </div>
             </div>
+            <input type="hidden" id="id_producto" name="id_producto" value="">
             <div class="row" style="margin: 30px -15px 10px -15px;">
-                <div class="col text-center d-xl-flex justify-content-xl-center"><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Producto vendido</button></div>
+                <div class="col text-center d-xl-flex justify-content-xl-center"><button onclick="venderProducto()" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Producto vendido</button></div>
             </div>
             <div class="row" style="margin: 0px -15px 10px -15px;">
                 <div class="col text-center d-xl-flex justify-content-xl-center"><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport">Reportar usuario</button></div>
@@ -546,6 +564,7 @@
                 {'csrfmiddlewaretoken': csrftoken, 'id_chat': id},
                 function(data) {
                     var i = 0
+                    document.getElementById('id_producto').value = id;
                     for(mensaje in data.mensajes){
                         if(data.mensajes[i].es_suyo){
                             var objTo = document.getElementById('ventanaChat');
@@ -560,6 +579,21 @@
                         }
                         i = i + 1;
                     }
+                    if(document.getElementById('tituloTab').innerHTML == "Mis chats de compras"){
+                        document.getElementById('motivo').innerHTML = "te vende";
+                        document.getElementById('nombreOtro').innerHTML=data.vendedor.nombre;
+                        document.getElementById('imagenOtro').src=data.vendedor.imagen_perfil;
+                        document.getElementById('tituloReporte').innerHTML = "Reportar a " + data.vendedor.nombre;
+                        document.getElementById('uid').value = data.vendedor.uid;
+                    }else{
+                        document.getElementById('motivo').innerHTML = "quiere";
+                        document.getElementById('nombreOtro').innerHTML=data.comprador.nombre;
+                        document.getElementById('imagenOtro').src=data.comprador.imagen_perfil;
+                        document.getElementById('tituloReporte').innerHTML = "Reportar a " + data.comprador.nombre;
+                        document.getElementById('uid').value = data.comprador.uid;
+                    }
+                    document.getElementById('producto').src=data.producto.contenido_multimedia[0].contenido_url;
+                    document.getElementById('nombreProducto').innerHTML = data.producto.nombre;
                 }
             );
         }
@@ -567,7 +601,6 @@
     <script>
         function enviarMensaje(){
             var idChat = document.getElementById("idChat").value;
-            alert(idChat);
             var mensaje = document.getElementById("mensaje").value;
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/send_message", {'csrfmiddlewaretoken': csrftoken, 'mensaje': mensaje, 'id_chat': idChat});
@@ -576,6 +609,22 @@
             divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round right-in" style="margin: 0px 0px 20px 85px;width: 85%;"> <div class="d-xl-flex talktext"> <p style="color: rgb(255,255,255);margin: 0px;">' + mensaje + '<br></p> </div> </div>';
             objTo.appendChild(divtest);
         }
+    </script>
+    <script>
+        function venderProducto(){
+            var id_chat = document.getElementById("idChat").value;
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/marcar_vendido", {'csrfmiddlewaretoken': csrftoken, 'id_chat': id_chat});
+        }
+    </script>
+    <script>
+        // Handle incoming messages. Called when:
+        // - a message is received while the app has focus
+        // - the user clicks on an app notification created by a service worker
+        //   `messaging.setBackgroundMessageHandler` handler.
+        messaging.onMessage(function(payload) {
+            alert(payload);
+        });
     </script>
 </body>
 </html>

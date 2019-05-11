@@ -200,7 +200,7 @@
             <div class="row filtr-container">
                 {% for p in productos %}
                 <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                    <div class="card" style="border-radius:20px">
+                    <div class="card shadow" style="border-color: transparent;border-radius:20px">
                         <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
                             <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                             <span onclick="deleteProduct('{{ p.info_producto.pk }}')" id="{{ p.info_producto.pk }}Icon" style="cursor:pointer">
@@ -217,7 +217,7 @@
                             </div>
                             <p class="card-text">{{ p.info_producto.descripcion }}<br></p>
                         </div>
-                        <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                        <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="background-color: #F0F0F0; border-color:transparent;border-bottom-left-radius:20px;border-bottom-right-radius:20px">
                             <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
                                 {% if p.vendido_por.media_valoraciones == 1 %}<i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
                                 {% elif p.vendido_por.media_valoraciones == 2 %}<i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
