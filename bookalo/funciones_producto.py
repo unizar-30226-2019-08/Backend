@@ -61,7 +61,7 @@ def GenericProducts(token,ultimo_indice,elementos_pagina):
 	return serializer
 
 def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
-	if token != 'nothing':
+	if token != 'nothing' and user_uid == 'nothing':
 		user = get_user(token)
 	else:
 		user = Usuario.objects.get(uid=user_uid)
