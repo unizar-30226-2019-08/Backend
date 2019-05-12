@@ -611,7 +611,7 @@
         function crearChat(uid, id){
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/create_chat", {'csrfmiddlewaretoken': csrftoken, 'uidUsuario': uid, 'idProducto': id});
-            window.location.href = "http://localhost:8000/api/get_chats";
+            window.location.href = "http://bookalo.es/api/get_chats";
         }
     </script>
     <script>
