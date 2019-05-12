@@ -249,20 +249,34 @@
                             <div class="tab-pane active" role="tabpanel" id="tab-1">
                                 <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
                                     {% for elemento in chat_comprador %}
-                                    <button onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                    {% if not elemento.producto.info_producto.estado_venta %}
+                                    <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: maroon; border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
                                         <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
                                         &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
                                     </button>
+                                    {% else %}
+                                    <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                    </button>
+                                    {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
                             <div class="tab-pane" role="tabpanel" id="tab-2">
                                 <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
                                     {% for elemento in chat_vendedor %}
-                                    <button onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                    {% if not elemento.producto.info_producto.estado_venta %}
+                                    <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: maroon;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
                                         <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
                                         &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
                                     </button>
+                                    {% else %}
+                                    <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                    </button>
+                                    {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
@@ -307,13 +321,14 @@
             </div>
             <input type="hidden" id="id_producto" name="id_producto" value="">
             <div class="row" style="margin: 30px -15px 10px -15px;">
-                <div class="col text-center d-xl-flex justify-content-xl-center"><button onclick="venderProducto()" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Producto vendido</button></div>
+                <div id="divRating" class="col text-center d-xl-flex justify-content-xl-center"></div>
             </div>
             <div class="row" style="margin: 0px -15px 10px -15px;">
-                <div class="col text-center d-xl-flex justify-content-xl-center"><button class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport">Reportar usuario</button></div>
+                <div id="divReport" class="col text-center d-xl-flex justify-content-xl-center"></div>
             </div>
         </div>
     </div>
+    <input type="hidden" id="uidPropio" value="{{ informacion_basica.uid }}">
     <div class="footer-dark" style="margin: 20px 0px 0px 0px;">
         <footer>
             <div class="container">
@@ -594,6 +609,25 @@
                     }
                     document.getElementById('producto').src=data.producto.contenido_multimedia[0].contenido_url;
                     document.getElementById('nombreProducto').innerHTML = data.producto.nombre;
+                    if(document.getElementById('buttonReport') == null){
+                        var button = document.createElement("div");
+                        button.innerHTML = '<button id="buttonReport" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport">Reportar usuario</button>';
+                        document.getElementById('divReport').appendChild(button);
+                    }
+                    if(document.getElementById('buttonRating') == null && document.getElementById('tituloTab').innerHTML == "Mis chats de ventas" && data.producto.estado_venta){
+                        var button = document.createElement("div");
+                        button.innerHTML = '<button id="buttonRating" onclick="venderProducto()" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Producto vendido</button>';
+                        document.getElementById('divRating').appendChild(button);
+                    }else if(document.getElementById('tituloTab').innerHTML == "Mis chats de compras"){
+                        var buttonRating = document.getElementById("buttonRating");
+                        buttonRating.parentNode.removeChild(buttonRating);
+                    }
+                    var idChat = 'chat' + id;
+                    var icon = document.createElement("div");
+                    alert(icon);
+                    icon.innerHTML = '<i class="fa fa-envelope"></i>';
+                    alert(document.getElementById(idChat));
+                    document.getElementById(idChat).appendChild(icon);
                 }
             );
         }
@@ -614,7 +648,7 @@
         function venderProducto(){
             var id_chat = document.getElementById("idChat").value;
             var csrftoken = '{{ csrf_token }}';
-            $.post("/api/marcar_vendido", {'csrfmiddlewaretoken': csrftoken, 'id_chat': id_chat});
+            $.post("/api/sell_product", {'csrfmiddlewaretoken': csrftoken, 'id_chat': id_chat});
         }
     </script>
     <script>

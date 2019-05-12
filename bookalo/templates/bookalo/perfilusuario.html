@@ -309,7 +309,7 @@
                 <div class="card" style="margin: 0px 0px 15px 0px;">
                     <div class="card-body border-secondary">
                         <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ notificacion.otro_usuario_compra.nombre }}<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ notificacion.otro_usuario_compra.imagen_perfil }}"></h4>
-                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Le compraste {{ notificacion.producto.info_producto.nombre }}</h6>
+                        <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Intercambiasteis {{ notificacion.producto.info_producto.nombre }}</h6>
                         <p class="card-text">Recuerda valorarle. ¡Con tu valoración ayudas a mejorar Bookalo!</p>
                         <button onclick="abrirModalRating('{{ notificacion.otro_usuario_compra.uid }}', '{{ notificacion.producto.pk }}', '{{ notificacion.otro_usuario_compra.nombre }}')" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Valorar compra</button></div>
                 </div>
@@ -370,6 +370,36 @@
                     <div class="container">
                         <div class="row filtr-container">
                             {% for p in productos %}
+                                {% if not p.info_producto.estado_venta %}
+                                <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
+                                    <div class="card shadow" style="border-color:transparent;border-radius:20px">
+                                    <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                                        <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
+                                    </div>
+                                    <img class="img-fluid card-img w-100 d-block rounded-0" style="height:200px" src="{{ p.info_producto.contenido_multimedia.0.contenido_url }}">
+                                    <div class="card-body" style="background-color: darkgrey">
+                                        <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
+                                            <h4 style="width: 60%;"><strong>VENDIDO</strong></h4>
+                                        </div>
+                                        <p class="card-text">{{ p.info_producto.descripcion }}<br></p>
+                                    </div>
+                                    <div class="d-xl-flex d-flex align-items-xl-center card-footer" style="border-color:transparent;background-color: darkgrey;border-bottom-left-radius:20px;border-bottom-right-radius:20px">
+                                        <div class="d-xl-flex justify-content-xl-center align-items-xl-center" style="width: 35%;">
+                                            {% if p.vendido_por.media_valoraciones == 1 %}<i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 2 %}<i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 3 %}<i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 4 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 5 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 6 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 7 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 8 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 9 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+                                            {% elif p.vendido_por.media_valoraciones == 10 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                                            {% else %}<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% else %}
                                 <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
                                     <div class="card shadow" style="border-color:transparent;border-radius:20px">
                                     <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
@@ -407,6 +437,7 @@
                                         <a class="btn btn-outline-dark btn-sm ml-auto" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}"><i class="fa fa-eye"></i>&nbsp;Ver producto</a>
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
                             {% endfor %}
                         </div>
