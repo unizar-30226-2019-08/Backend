@@ -77,7 +77,7 @@ def ProductosFavoritos(token,ultimo_indice,elementos_pagina):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
 	user = Usuario.objects.get(uid=user_uid)
-	products = Producto.objects.filter(le_gusta_a=user)
+	products = Producto.objects.filter(le_gusta_a=user, estado_venta=True)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
