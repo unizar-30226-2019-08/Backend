@@ -95,7 +95,7 @@ def CrearNotificiacion(usuario, message):
 
 def GetUserMessages(chat_pk, user):
 	try:
-		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('-hora')
+		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
 		return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None
