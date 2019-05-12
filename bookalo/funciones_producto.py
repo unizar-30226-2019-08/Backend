@@ -116,6 +116,11 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 	if search == '-1' and user_latitude == '-1' and user_longitude == '-1' and max_distance == '-1' and min_price == '-1' and max_price == '-1' and min_score == '-1':
 		return 'Bad request'
 
+	if min_price != '-1':
+		min_price = min_price.replace(',', '.')
+	if max_price != '-1':
+		max_price = max_price.replace(',', '.')
+
 	products = Producto.objects.none()
 	if tags != '-1':
 		#lista_tags = [x.strip() for x in tags.split(',')]
@@ -182,18 +187,28 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 	#print(products)
 	filtered_products = []
-	if user_latitude != '-1' and user_longitude != '-1' and max_distance != '-1':
-		#print("Voy a calcular distancias")
-		for product in products:
-			#print("Distancia maxima: " + max_distance)
-			#print("Distancia calculada: " + str(calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude))))
-			#print(Decimal(user_latitude))
-			#print(Decimal(user_longitude))
-			#print(Decimal(product.latitud))
-			#print(Decimal(product.longitud))
-			if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
-				#print("Anyadido producto")
-				filtered_products.append(product)
+	print(user_latitude)
+	print(user_longitude)
+	print(max_distance)
+	#if user_latitude != '-1' and user_longitude != '-1' and max_distance != '-1':
+	if max_distance != '-1':
+		print("Voy a calcular distancias")
+		try:
+			if user_latitude == '-1' or user_longitude == '-1':
+				user = get_user(token)
+				user_latitude = user.latitud_registro
+				user_longitude = user.longitud_registro
+			for product in products:
+				print("Distancia maxima: " + max_distance)
+				print("Distancia calculada: " + str(calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude))))
+				print(Decimal(user_latitude))
+				print(Decimal(user_longitude))
+				print(Decimal(product.latitud))
+				print(Decimal(product.longitud))
+				if Decimal(max_distance) >= calculate_distance(Decimal(product.latitud), Decimal(product.longitud), Decimal(user_latitude), Decimal(user_longitude)):
+					filtered_products.append(product)
+		except: 
+			print('No logeado y no ubicacion')
 	else:
 		for product in products:
 			filtered_products.append(product)
@@ -250,6 +265,8 @@ def CreacionProducto(biblio):
 	try:
 		precio = precio.replace(',', '.')
 		precio = Decimal(precio)
+		latitud = latitud.replace(',', '.')
+		longitud = longitud.replace(',', '.')
 	except:
 		return 'Bad request'
 	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
@@ -334,6 +351,9 @@ def EditarProducto(biblio,id_producto):
 		if precio != '':
 			precio = precio.replace(',', '.')
 			precio = Decimal(precio)
+		if latitud != '' and longitud != '':
+			latitud = latitud.replace(',', '.')
+			longitud = longitud.replace(',', '.')
 	except:
 		return 'Bad request'
 	#Selecciona si el usuario ha creado el producto para enviar a domicilio o no
@@ -426,6 +446,7 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		product = Producto.objects.get(pk=int(product_id))
 		validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
 		validacion.actualizar()
+		NotificacionesPendientes.objects.filter(producto=product, usuario_pendiente=user).delete()
 		return True
 	except:
 		return False

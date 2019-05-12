@@ -691,11 +691,21 @@ def SendRating(request, format=None):
 		print(comment)
 		product_id = request.POST.get('id_producto_valorado', 'nothing')
 		print(product_id)
+		serializer_favs = ProductosFavoritos(token, 0, -1)
 		has_been_rated = ValorarVenta(token, rated_user_id, comment, product_id, stars)
+		user = get_user(token)
 		if has_been_rated:
-			return Response(status=status.HTTP_200_OK)
+			if movil == 'true':
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+					'productos_favoritos': serializer_favs.data})
 		else:
-			return Response(status=status.HTTP_404_NOT_FOUND)	
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+					'productos_favoritos': serializer_favs.data,'error':'La venta no ha podido ser valorada'})
 	else:
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -764,14 +774,16 @@ def SellProduct(request, format=None):
 	if logged:
 		user = get_user(token)
 		serializer_favs = ProductosFavoritos(token, 0, -1)
-		product_id = request.POST.get('id_producto', '')
-		if product_id == '' or token == 'nothing':
+		#product_id = request.POST.get('id_producto', '')
+		chat_id = request.POST.get('id_chat', '')
+		if chat_id == '' or token == 'nothing':
 			if movil == 'true':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			else:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'Es necesario que la peticion tenga el id del producto'})
 		else:
-			was_marked = MarkAsSold(product_id, token)
+			chat_buscado = Chat.objects.get(pk=int(chat_id))
+			was_marked = MarkAsSold(chat_buscado.producto.id, token)
 			if was_marked == None:
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -783,10 +795,26 @@ def SellProduct(request, format=None):
 				else:
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'El producto no se ha encontrado'})
 			else:
-				if movil == 'true':
-					return Response(status=status.HTTP_200_OK)
-				else:
-					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+				user1 = chat_buscado.vendedor
+				user2 = chat_buscado.comprador
+				try:
+					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
+						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
+						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+					notificacion1.save()
+					notificacion2.save()
+					if movil == 'true':
+						return Response(status=status.HTTP_200_OK)
+					else:
+						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+				except:
+					if movil == 'true':
+						return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+					else:
+						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+							'productos_favoritos': serializer_favs.data, 'error':'Error en las notificaciones'})
+				
 	else:
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -955,28 +983,29 @@ def Vender_producto(request, format=None):
 			respuesta = MarkAsSold(chat_buscado.producto.id,token)
 		
 
-			if respuesta == False:
+			if respuesta == False :
 				# No se ha podido markar como vendido
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-			else:
-				# Se ha podido marcar como vendido
-				# Se crea instancia
+			if respuesta == None:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+			# Se ha podido marcar como vendido
+			# Se crea instancia
 
-				Mensaje = "Se ha vendido el producto: "	+chat_buscado.producto.nombre	
-				user1 = chat_buscado.vendedor
-				user2 = chat_buscado.comprador
+			Mensaje = "Se ha vendido el producto: "	+chat_buscado.producto.nombre	
+			user1 = chat_buscado.vendedor
+			user2 = chat_buscado.comprador
 
-				try:
-					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
-						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
-					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
-						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
-					notificacion1.save()
-					notificacion2.save()
+			try:
+				notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
+					producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+				notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
+					producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+				notificacion1.save()
+				notificacion2.save()
 
-					return Response(status=status.HTTP_200_OK)
-				except:
-					return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+				return Response(status=status.HTTP_200_OK)
+			except:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 				 
