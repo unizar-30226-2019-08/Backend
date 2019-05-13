@@ -562,7 +562,6 @@ def CreateChat(request, format=None):
 		try:
 			logged = check_user_logged_in(token)
 			if logged:
-				print('LEGO')
 				chat = CrearChat(token, otroUserUid, productId)
 				if movil == 'true':
 					return Response({'chat_cargado': ChatSerializer(chat).data}, status=status.HTTP_201_CREATED)
