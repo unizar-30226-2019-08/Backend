@@ -105,13 +105,24 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
     producto = ProductoSerializer(read_only=True)
+    compra_o_venta = serializers.SerializerMethodField()
     class Meta:
         model = ValidacionEstrella
-        fields = ('pk','estrellas', 'comentario', 'timestamp', 'usuario_que_valora', 'producto')
+        fields = ('pk','estrellas', 'comentario', 'compra_o_venta','timestamp', 'usuario_que_valora', 'producto')
 
     def get_producto_asociado(self,obj):
         product = Producto.objects.get(pk=self.producto.pk)
         return MiniProductoSerializer(product, read_only=True).data
+
+    def get_compra_o_venta(self,obj):
+    	usuario = self.context.get('user', 'nothing')
+    	producto = obj.producto
+    	if producto.vendido_por == usuario:
+    		tipo = 'Venta'
+    	else:
+    		tipo = 'Compra'
+    	return tipo
+    	
 
 class UserProfileSerializer(serializers.HyperlinkedModelSerializer):
     productos_favoritos = serializers.SerializerMethodField()
@@ -152,6 +163,7 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = NotificacionesPendientes
         fields = ('producto', 'otro_usuario_compra','descripcion_notificacion')
+
 
 class MensajeSerializer(serializers.HyperlinkedModelSerializer):
     es_suyo = serializers.SerializerMethodField()

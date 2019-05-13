@@ -18,6 +18,7 @@ from decimal import Decimal
 from django.utils.timezone import now as timezone_now
 from geopy import Nominatim
 from fcm_django.models import FCMDevice
+import itertools
 
 def get_user(token):
 	try:
@@ -133,14 +134,19 @@ def GetOtherUserProfile(user_uid):
 	except:
 		return None
 
-def usuario_getvaloraciones(user_uid):
+def usuario_getvaloraciones(user_uid,ultimo_indice,elementos_pagina):
 	try:
 		if user_uid == 'nothing':
 			return None
 		else:
 			user = Usuario.objects.get(uid=user_uid)
 			ratings = ValidacionEstrella.objects.filter(usuario_valorado=user)
-			return ValidacionEstrellaSerializer(ratings, many=True).data
+			ultimo_indice = int(ultimo_indice)
+			elementos_pagina = int(elementos_pagina)
+			if(elementos_pagina != -1):
+				ratings = itertools.islice(ratings, ultimo_indice, ultimo_indice + elementos_pagina)
+			serializador = ValidacionEstrellaSerializer(ratings, many=True, context = {"user": user})
+			return serializador.data
 	except:
 		return None
 

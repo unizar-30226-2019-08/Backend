@@ -161,7 +161,7 @@ def GetUserProfile(request, format=None):
 					notif_serializer = []
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid), 'coincidentUser': True })
+					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid,-1,-1), 'coincidentUser': True })
 			except:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
@@ -175,7 +175,7 @@ def GetUserProfile(request, format=None):
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 
-				'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid), 'coincidentUser': False})
+				'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid,-1,-1), 'coincidentUser': False})
 	else:
 		fetch_user2 = GetOtherUserProfile(user_uid)
 		logged_in = check_user_logged_in(token)
@@ -186,7 +186,7 @@ def GetUserProfile(request, format=None):
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			serializer_favs = ProductosFavoritos(token,0,-1)
 			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
-				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid), 
+				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
 				'coincidentUser': False})
 
 
@@ -725,13 +725,15 @@ def SendRating(request, format=None):
 def GetRatings(request, format=None):
 	token = request.POST.get('token', 'nothing')
 	user_uid = request.POST.get('uid', 'nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if user_uid == 'nothing':
 		if token == 'nothing':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		else:
 			user = get_user(token)
 			user_uid = user.uid
-	serializer = usuario_getvaloraciones(user_uid)
+	serializer = usuario_getvaloraciones(user_uid,last_index,nelements)
 	if serializer == None:
 		return Response(status=status.HTTP_404_NOT_FOUND)
 	else:
