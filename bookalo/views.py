@@ -597,8 +597,17 @@ def SendMessage(request, format=None):
 		message = request.POST.get('mensaje', '')
 		chat_id = request.POST.get('id_chat', '')
 		message_created = CrearMensaje(token, chat_id, message)
+		try:
+			user = get_user(token)
+			fcm_token = user.token_fcm
+			message_created = True
+		except:
+			message_created = False
 		if message_created:
-			return Response(status=status.HTTP_200_OK)	
+			if SendFCMMessage(chat_id, message, fcm_token):
+				return Response(status=status.HTTP_200_OK)
+			else:
+				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
 		else:
 			return Response(status=status.HTTP_404_NOT_FOUND)	
 	else:
