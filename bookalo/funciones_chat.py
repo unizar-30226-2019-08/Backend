@@ -108,3 +108,13 @@ def GetChatInfoWeb(chat_id):
 		return {'comprador':UserSerializer(buyer).data, 'vendedor':UserSerializer(seller).data, 'producto': ProductoSerializer(product).data}
 	except:
 		return {'comprador': '', 'vendedor':'', 'producto': ''}
+
+def SendFCMMessage(chat_id, message, token):
+	try:
+		URL = 'https://fcm.googleapis.com/fcm/send'
+		data = '{"registration_ids":["' + token + '"],"notification": {"title":"' + str(chat_id) + '","body":"' + message + '"}}'
+		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
+		r = requests.post(url=URL, data=data, headers=headers)
+		return True
+	except:
+		return False

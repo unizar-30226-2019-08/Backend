@@ -217,6 +217,9 @@ class Mensaje(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Usuario que ha enviado el mensaje',
         related_name='emisor')
+    es_valoracion = models.BooleanField(
+        default=False,
+        verbose_name='Campo que indica si el mensaje pertenece a un mensaje - valoracion')
 
     def __str__(self):
         return self.texto
