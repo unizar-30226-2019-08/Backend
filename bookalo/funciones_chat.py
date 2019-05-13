@@ -49,7 +49,6 @@ def GetChatComprador(user,ultimo_indice,elementos_pagina):
 		chats = itertools.islice(chats, ultimo_indice, ultimo_indice + elementos_pagina)
 	return ChatSerializer(chats, many=True, read_only=True)
 
-from  pyfcm import FCMNotification
 
 
 def CrearMensaje(token, chat_id, message):

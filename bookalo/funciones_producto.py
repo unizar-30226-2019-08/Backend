@@ -187,9 +187,6 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 	#print(products)
 	filtered_products = []
-	print(user_latitude)
-	print(user_longitude)
-	print(max_distance)
 	#if user_latitude != '-1' and user_longitude != '-1' and max_distance != '-1':
 	if max_distance != '-1':
 		print("Voy a calcular distancias")
