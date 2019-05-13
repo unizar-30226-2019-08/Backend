@@ -568,7 +568,7 @@ def CreateChat(request, format=None):
 				else:
 					user = get_user(token)
 					serializer_favs = ProductosFavoritos(token,0,-1)
-					return HttpResponseRedirect('bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk)})
+					return render(request,'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk)})
 			else:
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
