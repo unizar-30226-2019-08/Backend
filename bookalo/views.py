@@ -604,7 +604,7 @@ def SendMessage(request, format=None):
 		except:
 			message_created = False
 		if message_created:
-			if SendFCMMessage(chat_id, message, fcm_token):
+			if SendFCMMessage(chat_id, message, fcm_token, user):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
