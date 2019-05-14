@@ -599,7 +599,11 @@ def SendMessage(request, format=None):
 		message_created = CrearMensaje(token, chat_id, message)
 		try:
 			user = get_user(token)
-			fcm_token = user.token_fcm
+			chat = Chat.objects.get(pk=int(chat_id))
+			if chat.vendedor == user:
+				fcm_token = chat.comprador.token_fcm
+			else:
+				fcm_token = chat.vendedor.token_fcm
 			message_created = True
 		except:
 			message_created = False
