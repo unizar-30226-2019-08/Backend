@@ -116,7 +116,7 @@ def SendFCMMessage(chat_id, message, token, emisor):
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		r = requests.post(url=URL, data=data, headers=headers)
 		chat = Chat.objects.get(pk=int(chat_id))
-		Mensaje.objects.create(texto='Este mensaje es para demostrar que se esta ejecutando esto', chat_asociado=chat, emisor=emisor)
+		#Mensaje.objects.create(texto='Este mensaje es para demostrar que se esta ejecutando esto', chat_asociado=chat, emisor=emisor)
 		return True
 	except:
 		return False
