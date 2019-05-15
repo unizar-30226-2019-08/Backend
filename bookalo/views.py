@@ -677,7 +677,7 @@ def GetChats(request, format=None):
 		serializer_chats_comprador = GetChatComprador(user,last_index,nelements)
 		if movil == 'true':
 			if what_chats == 'compra':
-				return Response('chats':serializer_chats_comprador.data}, status=status.HTTP_200_OK)
+				return Response({'chats':serializer_chats_comprador.data}, status=status.HTTP_200_OK)
 			elif what_chats == 'venta':
 				return Response({'chats': serializer_chats_vendedor.data}, status=status.HTTP_200_OK)
 			else:
