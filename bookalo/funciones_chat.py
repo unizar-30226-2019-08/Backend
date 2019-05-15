@@ -57,33 +57,9 @@ def CrearMensaje(token, chat_id, message):
 		chat = Chat.objects.get(pk=int(chat_id))
 
 		mensaje = Mensaje.objects.create(texto=message, chat_asociado=chat, emisor=user)
-		try:
-			device = FCMDevice.objects.all().first()
-			print(device)
-			device.send_message("Title", "Message")
-
-
-			"""
-			#data={'body': message}
-			#data_message = {'to':otrouser.token_fcm, 'data':data}
-			#device.send_message(data_message)
-			#device.send_message(data={"test": "test"})
-			#to=otrouser.token_fcm,
-			#except:
-			#print('Error en el envío del mensaje')
-			"""
-
-			"""
-			fcm = FCM.new(Rails.application.config.api_key)
-			registration_ids= [otrouser.token_fcm] # an array of one or more client registration tokens
-			options = {data: {score: "123"}, collapse_key: "updated_score"}
-			response = fcm.send(registration_ids, options) 
-			"""
-		except:
-			print('Error en el envío del mensaje')
-		return True
+		return mensaje
 	except:
-		return False	
+		return None	
 
 def CrearNotificiacion(usuario, message):
 	try:
@@ -109,14 +85,30 @@ def GetChatInfoWeb(chat_id):
 	except:
 		return {'comprador': '', 'vendedor':'', 'producto': ''}
 
-def SendFCMMessage(chat_id, message, token, emisor):
+def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 	try:
+		chat_obj = Chat.objects.get(pk=int(chat_id))
+		chat = ChatSerializer(chat_obj).data
+		mensaje = {
+			"texto":message.texto,
+			"timestamp":message.hora
+		}
 		URL = 'https://fcm.googleapis.com/fcm/send'
-		data = '{"registration_ids":["' + token + '"],"notification": {"title":"' + chat_id + '","body":"' + message + '"}}'
+		data = {"registration_ids":[token],
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto
+				},
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje
+				}
+
+		}
+		data = json.dumps(data)
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		r = requests.post(url=URL, data=data, headers=headers)
-		chat = Chat.objects.get(pk=int(chat_id))
-		#Mensaje.objects.create(texto='Este mensaje es para demostrar que se esta ejecutando esto', chat_asociado=chat, emisor=emisor)
 		return True
 	except:
 		return False
