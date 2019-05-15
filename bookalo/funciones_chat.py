@@ -20,11 +20,6 @@ import itertools
 import requests
 import json
 
-def decimal_default(obj):
-    if isinstance(obj, Decimal):
-        return float(obj)
-    raise TypeError
-
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
@@ -113,7 +108,7 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 				"es_mio":False
 			}
 		}
-		data = json.dumps(data, default=decimal_default)
+		data = json.dumps(data)
 		r = requests.post(url=URL, data=data, headers=headers)
 		data = {
 			"registration_ids":[token],

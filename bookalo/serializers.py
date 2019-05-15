@@ -73,13 +73,13 @@ class ProductoSerializer(serializers.HyperlinkedModelSerializer):
         return Usuario.objects.get(pk=obj.vendido_por.pk).media_valoraciones
 
     def get_precio(self,obj):
-        return Decimal(obj.precio)
+        return float(obj.precio)
 
     def get_latitud(self,obj):
-        return Decimal(obj.latitud)
+        return float(obj.latitud)
 
     def get_longitud(self,obj):
-        return Decimal(obj.longitud)
+        return float(obj.longitud)
 
 
 class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
