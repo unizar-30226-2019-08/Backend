@@ -17,9 +17,13 @@ from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
 from .funciones_usuario import *
 import itertools
-from fcm_django.models import FCMDevice
 import requests
 import json
+
+def decimal_default(obj):
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError
 
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
@@ -90,26 +94,8 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 	try:
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		URL = 'https://fcm.googleapis.com/fcm/send'
-		data = {
-			"registration_ids":[token],
-			"notification":{
-				"title":"Soy el mensaje antes del serializador del chat",
-				"body":"Voy a serializar el chat"
-			}
-		}
-		data = json.dumps(data)
-		r = requests.post(url=URL, data=data, headers=headers)
 		chat_obj = Chat.objects.get(pk=int(chat_id))
 		chat = ChatSerializer(chat_obj).data
-		data = {
-			"registration_ids":[token],
-			"notification":{
-				"title":"Soy el mensaje de despues de la serializacion del chat",
-				"body":r.text
-			}
-		}
-		data = json.dumps(data)
-		r = requests.post(url=URL, data=data, headers=headers)
 		mensaje = {
 			"texto":message.texto,
 			"timestamp":message.hora
@@ -123,7 +109,17 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 			"data":{
 				"chat":chat,
 				"soy_vendedor":soy_vendedor,
-				"mensaje":mensaje
+				"mensaje":mensaje,
+				"es_mio":False
+			}
+		}
+		data = json.dumps(data, default=decimal_default)
+		r = requests.post(url=URL, data=data, headers=headers)
+		data = {
+			"registration_ids":[token],
+			"notification":{
+				"title":"Mensaje de DEBUG",
+				"body":"Output de FCM: " + r.text
 			}
 		}
 		data = json.dumps(data)
@@ -133,8 +129,8 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 		data = {
 			"registration_ids":[token],
 			"notification":{
-				"title":"Soy el mensaje de fallo",
-				"body":str(ex)
+				"title":"Bookalo: Fallo en recepción",
+				"body":"Un error ocurrió mientras recibías el mensaje: " + str(ex)
 			}
 		}
 		data = json.dumps(data)
