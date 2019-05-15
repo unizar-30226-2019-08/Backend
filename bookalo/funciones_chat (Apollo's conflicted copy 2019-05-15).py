@@ -89,63 +89,25 @@ def GetChatInfoWeb(chat_id):
 def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 	try:
 		chat_obj = Chat.objects.get(pk=int(chat_id))
+		chat = ChatSerializer(chat_obj).data
 		mensaje = {
 			"texto":message.texto,
 			"timestamp":message.hora
 		}
 		URL = 'https://fcm.googleapis.com/fcm/send'
-		data = {
-			"registration_ids":[token],
-			"notification":{
-				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-				"body":message.texto
-			},
-			"data":{
-				"chat":{'pk':chat_obj.pk,
-						'vendedor': {
-							'uid':chat.vendedor.uid,
-							'imagen_perfil':chat.vendedor.imagen_perfil,
-							'nombre':chat.vendedor.nombre,
-							'ciudad':chat.vendedor.ciudad,
-							'ultima_conexion':chat.vendedor.ultima_conexion,
-							'numValoraciones':ValidacionEstrella.objects.filter(usuario_valorado=chat.vendedor).count()
-						},
-						'comprador': {
-							'uid':chat.comprador.uid,
-							'imagen_perfil':chat.comprador.imagen_perfil,
-							'nombre':chat.comprador.nombre,
-							'ciudad':chat.comprador.ciudad,
-							'ultima_conexion':chat.comprador.ultima_conexion,
-							'numValoraciones':ValidacionEstrella.objects.filter(usuario_valorado=chat.comprador).count()
-						},
-						'producto': {
-							'pk':chat.producto,
-							'info_producto': {
-								'pk':chat.producto.pk,
-								'nombre':chat.producto.nombre, 
-								'precio':Decimal(chat.producto.precio), 
-								'latitud':Decimal(chat.producto.latitud), 
-								'longitud':Decimal(chat.producto.longitud), 
-								'tipo_envio':chat.producto.tipo_envio, 
-								'descripcion':chat.producto.descripcion, 
-								'num_likes':chat.producto.num_likes, 
-								'contenido_multimedia':ContenidoMultimedia.objects.get(producto=obj.pk, orden_en_producto=0).url, 
-								'isbn':chat.producto.isbn
-							},
-							'vendido_por':{
-								'uid':chat.vendedor.uid,
-								'imagen_perfil':chat.vendedor.imagen_perfil,
-								'nombre':chat.vendedor.nombre,
-								'ciudad':chat.vendedor.ciudad,
-								'ultima_conexion':chat.vendedor.ultima_conexion,
-								'numValoraciones':ValidacionEstrella.objects.filter(usuario_valorado=chat.vendedor).count()
-							},
-							'le_gusta':False
-						}
+		data = {"registration_ids":[token],
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto
 				},
-				"soy_vendedor":soy_vendedor,
-				"mensaje":mensaje
-			}
+				"data":{
+					"chat":{'pk':chat_obj.pk,
+
+					}
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje
+				}
+
 		}
 		data = json.dumps(data)
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
