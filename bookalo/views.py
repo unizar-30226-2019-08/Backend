@@ -602,13 +602,14 @@ def SendMessage(request, format=None):
 			chat = Chat.objects.get(pk=int(chat_id))
 			if chat.vendedor == user:
 				fcm_token = chat.comprador.token_fcm
+				soy_vendedor = True
 			else:
 				fcm_token = chat.vendedor.token_fcm
-			message_created = True
+				soy_vendedor = False
 		except:
-			message_created = False
-		if message_created:
-			if SendFCMMessage(chat_id, message, fcm_token, user):
+			message_created = None
+		if message_created != None:
+			if SendFCMMessage(chat_id, message_created, fcm_token, user, soy_vendedor):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
@@ -661,6 +662,7 @@ def GetChats(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	last_index = request.POST.get('ultimo_indice', 0)
 	nelements = request.POST.get('elementos_pagina', -1)
+	what_chats = request.POST.get('tipo_chats', '')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -674,8 +676,12 @@ def GetChats(request, format=None):
 		serializer_chats_vendedor = GetChatVendedor(user,last_index,nelements)
 		serializer_chats_comprador = GetChatComprador(user,last_index,nelements)
 		if movil == 'true':
-			return Response({'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data}, 
-				status=status.HTTP_200_OK)
+			if what_chats == 'compra':
+				return Response('chats':serializer_chats_comprador.data}, status=status.HTTP_200_OK)
+			elif what_chats == 'venta':
+				return Response({'chats': serializer_chats_vendedor.data}, status=status.HTTP_200_OK)
+			else:
+				return Response({'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data}, status=status.HTTP_200_OK)
 		else:
 			serializer_favs = ProductosFavoritos(token,last_index,nelements)
 			return render(request, 'bookalo/chat.html', {'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data, 
