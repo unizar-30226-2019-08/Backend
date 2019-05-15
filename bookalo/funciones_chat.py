@@ -128,16 +128,7 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 			}
 		}
 		data = json.dumps(data)
-		r = requests.post(url=URL, data=data, headers=headers)
-		data = {
-			"registration_ids":[token],
-			"notification":{
-				"title":"Mensaje de DEBUG",
-				"body":"Output de FCM: " + r.text
-			}
-		}
-		data = json.dumps(data)
-		r = requests.post(url=URL, data=data, headers=headers)
+		requests.post(url=URL, data=data, headers=headers)
 		return True
 	except Exception as ex:
 		data = {
