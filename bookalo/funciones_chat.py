@@ -88,13 +88,32 @@ def GetChatInfoWeb(chat_id):
 
 def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 	try:
+		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
+		URL = 'https://fcm.googleapis.com/fcm/send'
+		data = {
+			"registration_ids":[token],
+			"notification":{
+				"title":"Soy el mensaje antes del serializador del chat",
+				"body":r.text
+			}
+		}
+		data = json.dumps(data)
+		r = requests.post(url=URL, data=data, headers=headers)
 		chat_obj = Chat.objects.get(pk=int(chat_id))
 		chat = ChatSerializer(chat_obj).data
+		data = {
+			"registration_ids":[token],
+			"notification":{
+				"title":"Soy el mensaje de despues de la serializacion del chat",
+				"body":r.text
+			}
+		}
+		data = json.dumps(data)
+		r = requests.post(url=URL, data=data, headers=headers)
 		mensaje = {
 			"texto":message.texto,
 			"timestamp":message.hora
 		}
-		URL = 'https://fcm.googleapis.com/fcm/send'
 		data = {
 			"registration_ids":[token],
 			"notification":{
@@ -108,17 +127,16 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 			}
 		}
 		data = json.dumps(data)
-		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		r = requests.post(url=URL, data=data, headers=headers)
+		return True
+	except Exception as ex:
 		data = {
 			"registration_ids":[token],
 			"notification":{
-				"title":"Soy el mensaje de correccion",
-				"body":r.text
+				"title":"Soy el mensaje de fallo",
+				"body":str(ex)
 			}
 		}
 		data = json.dumps(data)
 		r = requests.post(url=URL, data=data, headers=headers)
-		return True
-	except:
 		return False
