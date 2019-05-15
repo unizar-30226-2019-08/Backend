@@ -185,6 +185,12 @@ class Chat(models.Model):
         null=False,
         on_delete=models.CASCADE,
         verbose_name='Producto al que esta asociado el chat')
+    num_pendientes_vendedor = models.IntegerField(
+        default=0,
+        verbose_name='Indica si el vendedor tiene mensajes pendientes')
+    num_pendientes_comprador = models.IntegerField(
+        default=0,
+        verbose_name='Indica si el comprador tiene mensajes pendientes')
     
     def __str__(self):
         return str(self.vendedor) + "/" + str(self.comprador)

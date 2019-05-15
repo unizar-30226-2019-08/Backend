@@ -70,8 +70,21 @@ def CrearNotificiacion(usuario, message):
 
 def GetUserMessages(chat_pk, user):
 	try:
-		messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
-		return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
+		try:
+			chat = Chat.objects.get(pk=int(chat_pk))
+			if chat.vendedor == user:
+				chat.num_pendientes_vendedor = 0
+				chat.save()
+			elif chat.comprador == user:
+				chat.num_pendientes_comprador = 0
+				chat.save()
+			else:
+				chat.save()
+			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
+			return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
+		except:
+			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
+			return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None
 
@@ -90,10 +103,16 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		URL = 'https://fcm.googleapis.com/fcm/send'
 		chat_obj = Chat.objects.get(pk=int(chat_id))
+		if chat_obj.vendedor == emisor:
+			chat_obj.num_pendientes_vendedor = chat_obj.num_pendientes_vendedor + 1
+			chat_obj.save()
+		else:
+			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
+			chat_obj.save()
 		chat = ChatSerializer(chat_obj).data
 		mensaje = {
 			"texto":message.texto,
-			"timestamp":message.hora
+			"timestamp":str(message.hora)
 		}
 		data = {
 			"registration_ids":[token],

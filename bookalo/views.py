@@ -1048,3 +1048,29 @@ def Vender_producto(request, format=None):
 		except:
 			# No se ha encontrado el chat
 			return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def ClearPendingMessages(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	id_chat = request.POST.get('id_chat', 'nothing')
+	try:
+		user = get_user(token)
+		chat = Chat.objects.get(pk=int(id_chat))
+		if chat.vendedor == user:
+			chat.num_pendientes_vendedor = 0
+			chat.save()
+			return Response(status=status.HTTP_200_OK)
+		elif chat.comprador == user:
+			chat.num_pendientes_comprador = 0
+			chat.save()
+			return Response(status=status.HTTP_200_OK)
+		else:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)

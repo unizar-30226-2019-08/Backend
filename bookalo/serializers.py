@@ -152,9 +152,20 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
     vendedor = UserSerializer(read_only=True)
     comprador = UserSerializer(read_only=True)
     producto = ProductoSerializerList(read_only=True)
+    num_pendientes = serializers.SerializerMethodField()
     class Meta:
         model = Chat
         fields = ('pk','vendedor', 'comprador', 'producto')
+
+    def get_num_pendientes(self, obj):
+        print("He calculado las pendientes")
+        usuario = self.context.get('user', 'nothing')
+        if obj.comprador == usuario:
+            return obj.num_pendientes_comprador
+        elif obj.vendedor == usuario:
+            return obj.num_pendientes_vendedor
+        else:
+            return 0
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_pendiente = UserSerializer(read_only=True)
