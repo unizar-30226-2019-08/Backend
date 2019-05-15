@@ -94,7 +94,7 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 			"registration_ids":[token],
 			"notification":{
 				"title":"Soy el mensaje antes del serializador del chat",
-				"body":r.text
+				"body":"Voy a serializar el chat"
 			}
 		}
 		data = json.dumps(data)
