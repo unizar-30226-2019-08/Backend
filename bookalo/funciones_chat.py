@@ -19,6 +19,7 @@ from .funciones_usuario import *
 import itertools
 from fcm_django.models import FCMDevice
 import requests
+import json
 
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
