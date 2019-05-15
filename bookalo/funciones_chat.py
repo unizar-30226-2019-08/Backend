@@ -117,6 +117,7 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 				"body":r.text
 			}
 		}
+		data = json.dumps(data)
 		r = requests.post(url=URL, data=data, headers=headers)
 		return True
 	except:
