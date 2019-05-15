@@ -32,4 +32,5 @@ urlpatterns = [
     path(r'api/edit_product', views.EditProduct),
     path(r'api/marcar_vendido', views.Vender_producto),
     re_path(r'logout', views.Logout),
+    path(r'api/delete_pending', views.ClearPendingMessages),
 ]
