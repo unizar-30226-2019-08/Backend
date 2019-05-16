@@ -46,7 +46,10 @@ def index(request):
 			if check_user_logged_in(token):
 				user = get_user(token)
 				serializer_favs = ProductosFavoritos(token,last_index,nelements)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
+					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
@@ -55,7 +58,11 @@ def index(request):
 		else:
 			if check_user_logged_in(token):
 				user = get_user(token)
-				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
+				serializer_favs = ProductosFavoritos(token,last_index,nelements)
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
+				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
+					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 
@@ -117,7 +124,10 @@ def GenericProductView(request, format=None):
 				if check_user_logged_in(token):
 					serializer_favs = ProductosFavoritos(token,0,-1)
 					user = get_user(token)
-					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
+					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,
+					 'productos_favoritos':serializer_favs.data,  'producto': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': serializer.data})
 		else:
@@ -127,7 +137,10 @@ def GenericProductView(request, format=None):
 				if check_user_logged_in(token):
 					serializer_favs = ProductosFavoritos(token,0,-1)
 					user = get_user(token)
-					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': serializer.data})
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
+					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
+						'productos_favoritos':serializer_favs.data,  'producto': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': False, 'producto': serializer.data})
 	except:
@@ -137,7 +150,10 @@ def GenericProductView(request, format=None):
 			if check_user_logged_in(token):
 				serializer_favs = ProductosFavoritos(token,0,-1)
 				user = get_user(token)
-				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 'productos_favoritos':serializer_favs.data,  'producto': 'exception_in_server'})
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
+				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,
+				 'productos_favoritos':serializer_favs.data,  'producto': 'exception_in_server', 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': 'exception_in_server'})
 
@@ -162,9 +178,11 @@ def GetUserProfile(request, format=None):
 					notif_serializer = NotificationSerializer(notif, many=True).data
 				except:
 					notif_serializer = []
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=fetch_user.uid).count()
+				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(fetch_user).data, 
 					'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos' : ProductosFavoritos(token,0,-1).data, 
-					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid,-1,-1), 'coincidentUser': True })
+					'notificaciones':notif_serializer, 'valoraciones': usuario_getvaloraciones(fetch_user.uid,-1,-1), 'coincidentUser': True , 'tiene_notificaciones':tiene_notificaciones})
 			except:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
@@ -185,12 +203,15 @@ def GetUserProfile(request, format=None):
 		if fetch_user2 == None:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged_in, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
-			products = Producto.objects.filter(vendido_por=fetch_user2)	
+			products = Producto.objects.filter(vendido_por=fetch_user2)
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			serializer_favs = ProductosFavoritos(token,0,-1)
+			user = get_user(token)
+			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+			tiene_notificaciones = notifications > 0
 			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
 				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
-				'coincidentUser': False})
+				'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
 
 
 @api_view(('POST','GET'))
@@ -263,14 +284,13 @@ def FilterProduct(request, format=None):
 					return Response(status=status.HTTP_400_BAD_REQUEST)
 				else:
 					return redirect('/')
-					serializer_favs = ProductosFavoritos(token,last_index,nelements)
-					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-						'productos_favoritos':ProductosFavoritos(token,0,-1).data,  'productos': []})
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
-				 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data})
+				 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 		else:
 			if serializer == 'Bad request':
 				if movil == 'true':
@@ -287,9 +307,12 @@ def FilterProduct(request, format=None):
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
 			if logged:
+				user = get_user(token)
 				serializer_favs = ProductosFavoritos(token,last_index,nelements)
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-					'productos_favoritos':serializer_favs.data, 'productos': []})
+					'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
@@ -330,8 +353,11 @@ def GetUserProducts(request, format=None):
 			else:
 				if logged:
 					serializer_favs = ProductosFavoritos(token,last_index,nelements)
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
 					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 
-						'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': serializer.data})
+						'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 
+						'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
 					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 'productos': serializer.data})
 
@@ -341,7 +367,10 @@ def GetUserProducts(request, format=None):
 			else:
 				if logged:
 					serializer_favs = ProductosFavoritos(token,last_index,nelements)
-					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 'productos': []})
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
+					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
+					 'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones})
 				else:
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
@@ -431,7 +460,10 @@ def CreateReport(request, format=None):
 				else:
 					user = get_user(token)
 					serializer_favs = ProductosFavoritos(token,0,-1)
-					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'info':'OK'})
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+						'productos_favoritos': serializer_favs.data, 'info':'OK', 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -571,7 +603,10 @@ def CreateChat(request, format=None):
 				else:
 					user = get_user(token)
 					serializer_favs = ProductosFavoritos(token,0,-1)
-					return render(request,'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk)})
+					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+					tiene_notificaciones = notifications > 0
+					return render(request,'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+						'productos_favoritos': serializer_favs.data, 'chat_cargado': str(chat.pk), 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -687,8 +722,10 @@ def GetChats(request, format=None):
 				return Response({'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data}, status=status.HTTP_200_OK)
 		else:
 			serializer_favs = ProductosFavoritos(token,last_index,nelements)
+			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+			tiene_notificaciones = notifications > 0
 			return render(request, 'bookalo/chat.html', {'chat_vendedor': serializer_chats_vendedor.data, 'chat_comprador':serializer_chats_comprador.data, 
-				'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+				'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones})
 	else:
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -727,14 +764,18 @@ def SendRating(request, format=None):
 			if movil == 'true':
 				return Response(status=status.HTTP_200_OK)
 			else:
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-					'productos_favoritos': serializer_favs.data})
+					'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones})
 		else:
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/chat.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-					'productos_favoritos': serializer_favs.data,'error':'La venta no ha podido ser valorada'})
+					'productos_favoritos': serializer_favs.data,'error':'La venta no ha podido ser valorada', 'tiene_notificaciones':tiene_notificaciones})
 	else:
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -805,13 +846,17 @@ def SellProduct(request, format=None):
 	if logged:
 		user = get_user(token)
 		serializer_favs = ProductosFavoritos(token, 0, -1)
+		notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+		tiene_notificaciones = notifications > 0
 		#product_id = request.POST.get('id_producto', '')
 		chat_id = request.POST.get('id_chat', '')
 		if chat_id == '' or token == 'nothing':
 			if movil == 'true':
 				return Response(status=status.HTTP_400_BAD_REQUEST)
 			else:
-				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'Es necesario que la peticion tenga el id del producto'})
+				
+				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+					'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'Es necesario que la peticion tenga el id del producto'})
 		else:
 			chat_buscado = Chat.objects.get(pk=int(chat_id))
 			was_marked = MarkAsSold(chat_buscado.producto.id, token)
@@ -819,12 +864,14 @@ def SellProduct(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
 				else:
-					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'El usuario no esta logeado o no es el dueño del producto'})
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+						'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'El usuario no esta logeado o no es el dueño del producto'})
 			elif was_marked == False:
 				if movil == 'true':
 					return Response(status=status.HTTP_404_NOT_FOUND)
 				else:
-					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data, 'error':'El producto no se ha encontrado'})
+					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+						'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'El producto no se ha encontrado'})
 			else:
 				user1 = chat_buscado.vendedor
 				user2 = chat_buscado.comprador
@@ -838,13 +885,14 @@ def SellProduct(request, format=None):
 					if movil == 'true':
 						return Response(status=status.HTTP_200_OK)
 					else:
-						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos': serializer_favs.data})
+						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
+						 'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones})
 				except:
 					if movil == 'true':
 						return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 					else:
 						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-							'productos_favoritos': serializer_favs.data, 'error':'Error en las notificaciones'})
+							'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'Error en las notificaciones'})
 				
 	else:
 		if movil == 'true':
@@ -864,7 +912,9 @@ def PrivacyPolicy(request, format=None):
 		logged = check_user_logged_in(token)
 		if logged:
 			user = get_user(token)
-			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data})
+			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+			tiene_notificaciones = notifications > 0
+			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data, 'tiene_notificaciones':tiene_notificaciones})
 		else:
 			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged})
 
@@ -884,8 +934,11 @@ def CreateProductRender(request, format=None):
 		if serialized_tags == None:
 			serialized_tags = []
 		user = get_user(token)
+		notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+		tiene_notificaciones = notifications > 0
 		print(logged)
-		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,'productos': [], 'tags':serialized_tags})
+		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+			'productos_favoritos':serializer_favs.data,'productos': [], 'tags':serialized_tags, 'tiene_notificaciones':tiene_notificaciones})
 	else:
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'productos': []})
 
@@ -921,11 +974,13 @@ def EditProductRender(request, format=None):
 			serialized_tags = []	
 		try:
 			user = get_user(token)
+			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+			tiene_notificaciones = notifications > 0
 			product = Producto.objects.get(pk=id_product)
 			if product.vendido_por == user:
 				return render(request, 'bookalo/edicionproducto.html', {'loggedin': logged, 
 					'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data,
-					'producto': ProductoSerializer(product).data, 'tags':serialized_tags, 'editando' : True})
+					'producto': ProductoSerializer(product).data, 'tags':serialized_tags, 'editando' : True, 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no es de ese usuario'})
 		except:
