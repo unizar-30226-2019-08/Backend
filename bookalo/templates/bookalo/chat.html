@@ -660,13 +660,13 @@
             console.log('Message received. ', payload);
             var chat = JSON.parse(payload.data.chat);
 
-            if(document.getElementById("idChat").value == payload.data.chat.pk){
+            if(document.getElementById("idChat").value == chat.pk){
                 var objTo = document.getElementById('ventanaChat');
                 var divtest = document.createElement("div");
                 divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
                 objTo.appendChild(divtest);
             }else{
-                var identifier = 'chat' + payload.data.chat.pk;
+                var identifier = 'chat' + chat.pk;
                 var buttonElement = document.getElementById(identifier);
                 buttonElement.innerHTML = buttonElement.innerHTML + '<i style="margin: 0px 0px 0px 20px" id="chat' + id + 'Icon" class="fa fa-envelope"></i>';
             }
