@@ -249,15 +249,21 @@
                             <div class="tab-pane active" role="tabpanel" id="tab-1">
                                 <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
                                     {% for elemento in chat_comprador %}
-                                    {% if not elemento.producto.info_producto.estado_venta %}
+                                    {% if not elemento.producto.estado_venta %}
                                     <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: maroon; border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
-                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
-                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.nombre }}
+                                        {% if elemento.num_pendientes > 0 %}
+                                        <i style="margin: 0px 0px 0px 20px" id="chat{{ elemento.pk }}Icon" class="fa fa-envelope"></i>
+                                        {% endif %}
                                     </button>
                                     {% else %}
                                     <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
-                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
-                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.nombre }}
+                                        {% if elemento.num_pendientes > 0 %}
+                                        <i style="margin: 0px 0px 0px 20px" id="chat{{ elemento.pk }}Icon" class="fa fa-envelope"></i>
+                                        {% endif %}
                                     </button>
                                     {% endif %}
                                     {% endfor %}
@@ -266,15 +272,15 @@
                             <div class="tab-pane" role="tabpanel" id="tab-2">
                                 <div class="text-center" style="height: 515px;overflow-y: auto;margin: 0px -15px 0px 0px;">
                                     {% for elemento in chat_vendedor %}
-                                    {% if not elemento.producto.info_producto.estado_venta %}
+                                    {% if not elemento.producto.estado_venta %}
                                     <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: maroon;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
-                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
-                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.nombre }}
                                     </button>
                                     {% else %}
                                     <button id="chat{{ elemento.pk }}" onclick="actualizarIdChat('{{ elemento.pk }}')" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;border-radius: 15px;height: 60px;margin: 10px 0px 10px 0px;width: 90%;" type="button">
-                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.info_producto.contenido_multimedia.0.contenido_url }}">
-                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.info_producto.nombre }}
+                                        <img class="border rounded-circle" style="width: 50px;height: 50px;border-color: transparent;" src="{{ elemento.producto.contenido_multimedia.0.contenido_url }}">
+                                        &nbsp; &nbsp; &nbsp;{{ elemento.producto.nombre }}
                                     </button>
                                     {% endif %}
                                     {% endfor %}
@@ -625,6 +631,8 @@
                             buttonRating.parentNode.removeChild(buttonRating);
                         }
                     }
+                    var objDiv = document.getElementById("ventanaChat");
+                    objDiv.scrollTop = objDiv.scrollHeight;
                 }
             );
         }
@@ -698,6 +706,8 @@
                             }
                             i = i + 1;
                         }
+                        var objDiv = document.getElementById("ventanaChat");
+                        objDiv.scrollTop = objDiv.scrollHeight;
                     }
                 );
             }
