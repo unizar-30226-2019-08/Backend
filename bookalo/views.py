@@ -1117,7 +1117,10 @@ def GetInfoISBN(request, format=None):
 		except:
 			lenguaje = 'Lenguaje no disponible'
 		try:
-			categorias = volume_info["volumeInfo"]["categories"]
+			lista_categorias = volume_info["volumeInfo"]["categories"]
+			categorias = ""
+			for c in lista_categorias:
+				categorias = categorias + c
 		except:
 			categorias = 'Categorias no disponibles'
 		try:
@@ -1125,30 +1128,21 @@ def GetInfoISBN(request, format=None):
 		except:
 			imagen = 'URL de imagen no disponible'
 
+		descripcion = "Resumen/sinopsis: " + resumen + "\nAutor/es: " + autores + "\nPaginas: " + str(page_count) + "\nIdioma: " + lenguaje + "\nCategorias: " + categorias
 		data_libro = {
 			"Titulo":titulo,
-			"Descripcion":{
-				"Resumen":resumen,
-				"Autor/es":autores,
-				"Paginas":page_count,
-				"Idioma":lenguaje,
-				"Categorias":categorias	
-			},
+			"Descripcion": descripcion,
 			"url_imagen":imagen
 		}
+		"""
+		"Resumen":resumen,
+		"Autor/es":autores,
+		"Paginas":page_count,
+		"Idioma":lenguaje,
+		"Categorias":categorias	
+		"""
 		#return data_libro
 		return Response(data_libro, status=status.HTTP_200_OK)
 
 	except:
-		"""
-		data_libro = {
-			"titulo":'Titulo no disponible',
-			"resumen":'Resumen no disponible',
-			"autores":'Autor no disponible',
-			"paginas":'Numero de paginas no disponible',
-			"lenguaje":'Lenguaje no disponible',
-			"imagen":'URL de imagen no disponible'
-		}
-		return data_libro
-		"""
 		return Response(status=status.HTTP_404_NOT_FOUND)
