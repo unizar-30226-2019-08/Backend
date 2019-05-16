@@ -39,7 +39,7 @@ def GetChatVendedor(user,ultimo_indice,elementos_pagina):
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
 		chats = itertools.islice(chats, ultimo_indice, ultimo_indice + elementos_pagina)
-	return ChatSerializer(chats, many=True, read_only=True)
+	return ChatSerializer(chats, many=True, read_only=True, context = {"user": user})
 
 def GetChatComprador(user,ultimo_indice,elementos_pagina):
 	chats = Chat.objects.filter(comprador=user)
@@ -47,7 +47,7 @@ def GetChatComprador(user,ultimo_indice,elementos_pagina):
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
 		chats = itertools.islice(chats, ultimo_indice, ultimo_indice + elementos_pagina)
-	return ChatSerializer(chats, many=True, read_only=True)
+	return ChatSerializer(chats, many=True, read_only=True, context = {"user": user})
 
 
 

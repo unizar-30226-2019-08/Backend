@@ -109,7 +109,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		
 		for word in search.split():
 			if word not in preposiciones:
-				productos_palabra = Producto.objects.filter(nombre__contains=word)
+				productos_palabra = Producto.objects.filter(nombre__icontains=word)
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
