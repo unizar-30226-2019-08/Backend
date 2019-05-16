@@ -660,6 +660,7 @@
             console.log('Message received. ', payload);
             alert(document.getElementById("idChat").value);
             alert(payload.data.chat);
+            JSON.parse(payload.data.chat);
             alert(payload.data.chat.pk);
 
             if(document.getElementById("idChat").value == payload.data.chat.pk){
