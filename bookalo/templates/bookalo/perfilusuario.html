@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load tz %}
 <html>
 
 <head>
@@ -346,7 +347,7 @@
                         <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}
                             <img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}">
                         </h1>
-                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|date:'Y-m-d H:i' }}</h6>
+                        <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|slice:"8:10" }}/{{ valoracion.timestamp|slice:"5:7" }}/{{ valoracion.timestamp|slice:"0:4" }} a las {{ valoracion.timestamp|slice:"11:19" }}</h6>
                         <p class="card-text">{{ valoracion.comentario }}</p>
                     </div>
                 </div>
