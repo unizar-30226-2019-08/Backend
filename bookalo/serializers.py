@@ -6,6 +6,21 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from django.utils.timezone import now as timezone_now
 from decimal import Decimal
+from math import sin, cos, sqrt, atan2, radians
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    R = 6373.0
+    lat1_rad = radians(lat1)
+    lon1_rad = radians(lon1)
+    lat2_rad = radians(lat2)
+    lon2_rad = radians(lon2)
+
+    dlon = lon2_rad - lon1_rad
+    dlat = lat2_rad - lat1_rad
+    a = sin(dlat / 2)**2 + cos(lat1_rad) * cos(lat2_rad) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    return R * c
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     conectado = serializers.SerializerMethodField()
@@ -86,10 +101,11 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     vendido_por = UserSerializer(read_only=True)
     le_gusta = serializers.SerializerMethodField()
     info_producto = serializers.SerializerMethodField()
+    distancia = serializers.SerializerMethodField()
     
     class Meta:
         model = Producto
-        fields = ('pk','le_gusta', 'vendido_por', 'info_producto')
+        fields = ('pk','le_gusta','distancia','vendido_por', 'info_producto')
 
     def get_le_gusta(self, obj):
         usuario = self.context.get('user', 'nothing')
@@ -101,6 +117,15 @@ class ProductoSerializerList(serializers.HyperlinkedModelSerializer):
     def get_info_producto(self, obj):
         prod = Producto.objects.get(pk = obj.pk)
         return ProductoSerializer(prod, read_only=True).data
+
+    def get_distancia(self,obj):
+        usuario = self.context.get('user', 'nothing')
+        if usuario != 'nothing':
+            distancia = calculate_distance(Decimal(obj.latitud), Decimal(obj.longitud), 
+                Decimal(usuario.latitud_registro), Decimal(usuario.longitud_registro))
+            return round(distancia,2)
+        else:
+            return 'No logeado'
 
 class ValidacionEstrellaSerializer(serializers.HyperlinkedModelSerializer):
     usuario_que_valora = UserSerializer(read_only=True)
