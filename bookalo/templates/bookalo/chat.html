@@ -329,6 +329,7 @@
         </div>
     </div>
     <input type="hidden" id="uidPropio" value="{{ informacion_basica.uid }}">
+    <input type="hidden" id="focused" value="false">
     <div class="footer-dark" style="margin: 20px 0px 0px 0px;">
         <footer>
             <div class="container">
@@ -571,6 +572,7 @@
     </script>
     <script>
         function actualizarIdChat(id){
+            $("#" + 'chat' + id + 'Icon').remove();
             document.getElementById("ventanaChat").innerHTML = "";
             document.getElementById("idChat").value = id;
             var csrftoken = '{{ csrf_token }}';
@@ -578,8 +580,7 @@
                 "/api/get_messages",
                 {'csrfmiddlewaretoken': csrftoken, 'id_chat': id},
                 function(data) {
-                    var i = 0
-                    document.getElementById('id_producto').value = id;
+                    var i = 0;
                     for(mensaje in data.mensajes){
                         if(data.mensajes[i].es_suyo){
                             var objTo = document.getElementById('ventanaChat');
@@ -620,14 +621,10 @@
                         document.getElementById('divRating').appendChild(button);
                     }else if(document.getElementById('tituloTab').innerHTML == "Mis chats de compras"){
                         var buttonRating = document.getElementById("buttonRating");
-                        buttonRating.parentNode.removeChild(buttonRating);
+                        if(buttonRating != null){
+                            buttonRating.parentNode.removeChild(buttonRating);
+                        }
                     }
-                    var idChat = 'chat' + id;
-                    var icon = document.createElement("div");
-                    alert(icon);
-                    icon.innerHTML = '<i class="fa fa-envelope"></i>';
-                    alert(document.getElementById(idChat));
-                    document.getElementById(idChat).appendChild(icon);
                 }
             );
         }
@@ -661,11 +658,53 @@
 
         messaging.onMessage(function(payload) {
             console.log('Message received. ', payload);
-            var objTo = document.getElementById('ventanaChat');
-            var divtest = document.createElement("div");
-            divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
-            objTo.appendChild(divtest);
+
+            if(document.getElementById("idChat").value == payload.data.chat.pk){
+                var objTo = document.getElementById('ventanaChat');
+                var divtest = document.createElement("div");
+                divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
+                objTo.appendChild(divtest);
+            }else{
+                var identifier = 'chat' + payload.data.chat.pk;
+                var buttonElement = document.getElementById(identifier);
+                buttonElement.innerHTML = buttonElement.innerHTML + '<i style="margin: 0px 0px 0px 20px" id="chat' + id + 'Icon" class="fa fa-envelope"></i>';
+            }
         });
+    </script>
+    <script>
+        window.onfocus = function() {
+            if(document.getElementById('focused').value == 'false'){
+                document.getElementById('focused').value = 'true';
+                document.getElementById("ventanaChat").innerHTML = "";
+                var idChat = document.getElementById("idChat").value;
+                var csrftoken = '{{ csrf_token }}';
+                $.post(
+                    "/api/get_messages",
+                    {'csrfmiddlewaretoken': csrftoken, 'id_chat': idChat},
+                    function(data) {
+                        var i = 0
+                        for(mensaje in data.mensajes){
+                            if(data.mensajes[i].es_suyo){
+                                var objTo = document.getElementById('ventanaChat');
+                                var divtest = document.createElement("div");
+                                divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round right-in" style="margin: 0px 0px 20px 85px;width: 85%;"> <div class="d-xl-flex talktext"> <p style="color: rgb(255,255,255);margin: 0px;">' + data.mensajes[i].texto + '<br></p> </div> </div>';
+                                objTo.appendChild(divtest);
+                            }else{
+                                var objTo = document.getElementById('ventanaChat');
+                                var divtest = document.createElement("div");
+                                divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + data.mensajes[i].texto + '<br></p> </div> </div>';
+                                objTo.appendChild(divtest);
+                            }
+                            i = i + 1;
+                        }
+                    }
+                );
+            }
+        };
+
+        window.onblur = function() {
+            document.getElementById('focused').value = 'false';
+        };
     </script>
 </body>
 </html>
