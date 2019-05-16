@@ -24,6 +24,9 @@ from django.http import HttpResponseRedirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import itertools
 from django.urls import reverse
+import urllib.request
+import json
+import textwrap
 
 
 def index(request):
@@ -1072,5 +1075,74 @@ def ClearPendingMessages(request, format=None):
 			return Response(status=status.HTTP_200_OK)
 		else:
 			return Response(status=status.HTTP_404_NOT_FOUND)
+	except:
+		return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def GetInfoISBN(request, format=None):
+	isbn = request.GET.get('isbn','nothing')
+	if isbn == 'nothing':
+		return Response(status=status.HTTP_400_BAD_REQUEST)
+	base_api_link = "https://www.googleapis.com/books/v1/volumes?q=isbn:"
+	user_input = isbn.strip()
+	with urllib.request.urlopen(base_api_link + user_input) as f:
+		text = f.read()
+
+	decoded_text = text.decode("utf-8")
+	obj = json.loads(decoded_text) # deserializes decoded_text to a Python object
+	try:
+		volume_info = obj["items"][0] 
+		authors = obj["items"][0]["volumeInfo"]["authors"]
+
+		try:
+			titulo = volume_info["volumeInfo"]["title"]
+		except:
+			titulo = 'Titulo no disponible'
+		try:
+			resumen = textwrap.fill(volume_info["searchInfo"]["textSnippet"])
+		except:
+			resumen = 'Resumen no disponible'
+		try:
+			autores = ",".join(authors)
+		except:
+			autores = 'Autor no disponible'
+		try:
+			page_count = volume_info["volumeInfo"]["pageCount"]
+		except:
+			page_count = 'Numero de paginas no disponible'
+		try:
+			lenguaje = volume_info["volumeInfo"]["language"]
+		except:
+			lenguaje = 'Lenguaje no disponible'
+		try:
+			lista_categorias = volume_info["volumeInfo"]["categories"]
+			categorias = ""
+			for c in lista_categorias:
+				categorias = categorias + c
+		except:
+			categorias = 'Categorias no disponibles'
+		try:
+			imagen = volume_info["volumeInfo"]["imageLinks"]["thumbnail"]
+		except:
+			imagen = 'URL de imagen no disponible'
+
+		descripcion = "Resumen/sinopsis: " + resumen + "\nAutor/es: " + autores + "\nPaginas: " + str(page_count) + "\nIdioma: " + lenguaje + "\nCategorias: " + categorias
+		data_libro = {
+			"Titulo":titulo,
+			"Descripcion": descripcion,
+			"url_imagen":imagen
+		}
+		"""
+		"Resumen":resumen,
+		"Autor/es":autores,
+		"Paginas":page_count,
+		"Idioma":lenguaje,
+		"Categorias":categorias	
+		"""
+		#return data_libro
+		return Response(data_libro, status=status.HTTP_200_OK)
+
 	except:
 		return Response(status=status.HTTP_404_NOT_FOUND)

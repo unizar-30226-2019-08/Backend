@@ -33,4 +33,5 @@ urlpatterns = [
     path(r'api/marcar_vendido', views.Vender_producto),
     re_path(r'logout', views.Logout),
     path(r'api/delete_pending', views.ClearPendingMessages),
+    path(r'api/get_info_isbn', views.GetInfoISBN),
 ]
