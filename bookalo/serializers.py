@@ -151,7 +151,7 @@ class ReportSerializer(serializers.HyperlinkedModelSerializer):
 class ChatSerializer(serializers.HyperlinkedModelSerializer):
     vendedor = UserSerializer(read_only=True)
     comprador = UserSerializer(read_only=True)
-    producto = ProductoSerializerList(read_only=True)
+    producto = ProductoSerializer(read_only=True)
     num_pendientes = serializers.SerializerMethodField()
     class Meta:
         model = Chat
