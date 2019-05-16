@@ -260,9 +260,6 @@ def FilterProduct(request, format=None):
 					return Response(status=status.HTTP_400_BAD_REQUEST)
 				else:
 					return redirect('/')
-					serializer_favs = ProductosFavoritos(token,last_index,nelements)
-					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-						'productos_favoritos':ProductosFavoritos(token,0,-1).data,  'productos': []})
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
