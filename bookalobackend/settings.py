@@ -26,6 +26,8 @@ environ.Env.read_env()
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+FILE_UPLOAD_PERMISSIONS = 0o644
+FILE_UPLOAD_MAX_MEMORY_SIZE = 41943040
 
 GEOIP_PATH = os.path.join(BASE_DIR, 'geoip2')
 
