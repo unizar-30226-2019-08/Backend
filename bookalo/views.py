@@ -51,6 +51,8 @@ def index(request):
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
 					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 			else:
+				if 'token' in request.session:
+						request.session.pop('token')
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 	except:
 		if movil == 'true':
@@ -64,6 +66,8 @@ def index(request):
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
 					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 			else:
+				if 'token' in request.session:
+						request.session.pop('token')
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
 
 @api_view(('POST','GET'))
@@ -129,6 +133,8 @@ def GenericProductView(request, format=None):
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,
 					 'productos_favoritos':serializer_favs.data,  'producto': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': serializer.data})
 		else:
 			if movil == 'true':
@@ -142,6 +148,8 @@ def GenericProductView(request, format=None):
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
 						'productos_favoritos':serializer_favs.data,  'producto': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return render(request, 'bookalo/productodetallado.html', {'loggedin': False, 'producto': serializer.data})
 	except:
 		if movil == 'true':
@@ -155,6 +163,8 @@ def GenericProductView(request, format=None):
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data,
 				 'productos_favoritos':serializer_favs.data,  'producto': 'exception_in_server', 'tiene_notificaciones':tiene_notificaciones})
 			else:
+				if 'token' in request.session:
+						request.session.pop('token')
 				return render(request, 'bookalo/productodetallado.html', {'loggedin': False,'producto': 'exception_in_server'})
 
 
@@ -186,6 +196,8 @@ def GetUserProfile(request, format=None):
 			except:
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': False, 'error' : 'El usuario no tiene sesión iniciada.'})
 	elif token == 'nothing' and user_uid != 'nothing':
 		fetch_user2 = GetOtherUserProfile(user_uid)
@@ -205,13 +217,20 @@ def GetUserProfile(request, format=None):
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			serializer_favs = ProductosFavoritos(token,0,-1)
-			user = get_user(token)
-			notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
-			tiene_notificaciones = notifications > 0
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
-				'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
-				'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
+			if logged_in:
+				user = get_user(token)
+				serializer_favs = ProductosFavoritos(token,0,-1)
+				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
+				tiene_notificaciones = notifications > 0
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
+					'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
+					'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
+			else:
+				if 'token' in request.session:
+					request.session.pop('token')
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
+					'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 'coincidentUser': False})
+
 
 
 @api_view(('POST','GET'))
@@ -296,11 +315,15 @@ def FilterProduct(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_400_BAD_REQUEST)
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return redirect('/')
 					#return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 			if movil == 'true':
 				return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 			else:
+				if 'token' in request.session:
+					request.session.pop('token')
 				return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data})
 	except:
 		if movil == 'true':
@@ -314,6 +337,8 @@ def FilterProduct(request, format=None):
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
 					'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones})
 			else:
+				if 'token' in request.session:
+					request.session.pop('token')
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
@@ -359,6 +384,8 @@ def GetUserProducts(request, format=None):
 						'informacion_basica' : UserProfileSerializer(user).data , 'productos_favoritos':serializer_favs.data, 
 						'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return render(request, 'bookalo/enventa.html', {'loggedin': logged, 'productos': serializer.data})
 
 		except:
@@ -372,6 +399,8 @@ def GetUserProducts(request, format=None):
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
 					 'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones})
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
@@ -427,6 +456,8 @@ def CreateProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return redirect('/')
 
 @api_view(('POST','GET'))
@@ -468,6 +499,8 @@ def CreateReport(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no tiene sesión iniciada'})
 		except:
 			if movil == 'true':
@@ -494,20 +527,26 @@ def DeleteProduct(request, format=None):
 			return redirect('/')
 	else:
 		try:
-			check_user_logged_in(token)
-			result = BorradoProducto(token,productId)
-			if movil == 'true':
-				if result == 'Unauthorized':
+			if check_user_logged_in(token):
+				result = BorradoProducto(token,productId)
+				if movil == 'true':
+					if result == 'Unauthorized':
+						return Response(status=status.HTTP_401_UNAUTHORIZED)
+					else:
+						return Response(status=status.HTTP_200_OK)
+				else:
+					if result == 'Unauthorized':
+						return redirect('/')
+					else:
+						return redirect('/api/get_user_products')
+			else:
+				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
 				else:
-					return Response(status=status.HTTP_200_OK)
-			else:
-				if result == 'Unauthorized':
+					if 'token' in request.session:
+						request.session.pop('token')
 					return redirect('/')
-				else:
-					return redirect('/api/get_user_products')
 		except:
-			print('EXCEPCION FINAL')
 			if movil == 'true':
 				return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
@@ -550,6 +589,8 @@ def LikeProduct(request, format=None):
 			if movil == 'true':
 					return Response(status=status.HTTP_404_NOT_FOUND)
 			else:
+				if 'token' in request.session:
+					request.session.pop('token')
 				return redirect('/')
 
 @api_view(('POST', 'GET'))
@@ -611,6 +652,8 @@ def CreateChat(request, format=None):
 				if movil == 'true':
 					return Response(status=status.HTTP_401_UNAUTHORIZED)
 				else:
+					if 'token' in request.session:
+						request.session.pop('token')
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no tiene sesión iniciada'})
 		except:
 			if movil == 'true':
@@ -730,6 +773,8 @@ def GetChats(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return render(request, 'bookalo/chat.html', {'loggedin': logged})
 
 @api_view(('POST','GET'))
@@ -780,6 +825,8 @@ def SendRating(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return render(request, 'bookalo/chat.html', {'loggedin': logged})
 			
 @api_view(('POST', 'GET'))
@@ -898,6 +945,8 @@ def SellProduct(request, format=None):
 		if movil == 'true':
 			return Response(status=status.HTTP_401_UNAUTHORIZED)
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no esta logeado o no se ha pasado el token'})
 
 @api_view(('POST', 'GET'))
@@ -916,6 +965,8 @@ def PrivacyPolicy(request, format=None):
 			tiene_notificaciones = notifications > 0
 			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data, 'tiene_notificaciones':tiene_notificaciones})
 		else:
+			if 'token' in request.session:
+				request.session.pop('token')
 			return render(request, 'bookalo/privacypolicy.html', {'loggedin': logged})
 
 @api_view(('POST','GET'))
@@ -940,6 +991,8 @@ def CreateProductRender(request, format=None):
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
 			'productos_favoritos':serializer_favs.data,'productos': [], 'tags':serialized_tags, 'tiene_notificaciones':tiene_notificaciones})
 	else:
+		if 'token' in request.session:
+			request.session.pop('token')
 		return render(request, 'bookalo/nuevoproducto.html', {'loggedin': logged, 'productos': []})
 
 @api_view(('POST','GET'))
@@ -986,6 +1039,8 @@ def EditProductRender(request, format=None):
 		except:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El producto no se ha encontrado'})
 	else:
+		if 'token' in request.session:
+			request.session.pop('token')
 		return redirect('/')
 		#return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no esta logeado'})
 
@@ -1002,33 +1057,41 @@ def EditProduct(request, format=None):
 	id_product = request.POST.get('id_producto', 'nothing')
 	try:
 		logged = check_user_logged_in(token)
-		files = request.FILES.getlist('files')
-		latitud = request.POST.get('latitud', '')
-		longitud = request.POST.get('longitud', '')
-		nombre = request.POST.get('nombre', '')
-		precio = request.POST.get('precio', '')
-		estado_producto = request.POST.get('estado_producto', '')
-		tipo_envio = request.POST.get('tipo_envio', '')
-		descripcion = request.POST.get('descripcion', '')
-		tags = request.POST.get('tags', '')
-		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
-									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
-									'descripcion':descripcion,'tags':tags,'token':token}
-		print(biblioteca)
-		result = EditarProducto(biblioteca,id_product)
-		if movil == 'true':
-			if result == 'Modified':
-				return Response(status=status.HTTP_200_OK)
-			if result == 'Bad request':
-				return Response(status=status.HTTP_400_BAD_REQUEST)
-			if result == 'Not found':
-				return Response(status=status.HTTP_404_NOT_FOUND)
+		if logged:
+			files = request.FILES.getlist('files')
+			latitud = request.POST.get('latitud', '')
+			longitud = request.POST.get('longitud', '')
+			nombre = request.POST.get('nombre', '')
+			precio = request.POST.get('precio', '')
+			estado_producto = request.POST.get('estado_producto', '')
+			tipo_envio = request.POST.get('tipo_envio', '')
+			descripcion = request.POST.get('descripcion', '')
+			tags = request.POST.get('tags', '')
+			biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
+										'estado_producto':estado_producto,'tipo_envio':tipo_envio,
+										'descripcion':descripcion,'tags':tags,'token':token}
+			print(biblioteca)
+			result = EditarProducto(biblioteca,id_product)
+			if movil == 'true':
+				if result == 'Modified':
+					return Response(status=status.HTTP_200_OK)
+				if result == 'Bad request':
+					return Response(status=status.HTTP_400_BAD_REQUEST)
+				if result == 'Not found':
+					return Response(status=status.HTTP_404_NOT_FOUND)
+				else:
+					return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 			else:
-				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+				if result == 'Created':
+					return redirect('/api/get_user_products')
+				else:
+					return redirect('/')
 		else:
-			if result == 'Created':
-				return redirect('/api/get_user_products')
+			if movil == 'true':
+				return Response(status=status.HTTP_401_UNAUTHORIZED)
 			else:
+				if 'token' in request.session:
+					request.session.pop('token')
 				return redirect('/')
 	except:
 		if movil == 'true':
@@ -1042,15 +1105,9 @@ def EditProduct(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def Logout(request, format=None):
-	request.session.pop('token')
-	#serializer = GenericProducts('no',0,-1)
-	#return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
-	#return redirect('index')
+	if 'token' in request.session:
+		request.session.pop('token')
 	return redirect('/')
-	#return HttpResponseRedirect('/api/login/')
-	#return HttpResponseRedirect('index')
-	#return redirect('/api/login')
-	#return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @api_view(('POST','GET'))
