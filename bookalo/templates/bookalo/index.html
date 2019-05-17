@@ -73,7 +73,9 @@
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;font-size: 16px;font-weight: bold;" href="/">Comprar</a></li>
                 </ul>
                 {% if loggedin %}
+                {% if tiene_notificaciones %}
                 <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Notificaciones</button>
+                {% endif %}
                 {% endif %}
                 <form
                     class="form-inline mr-auto" target="_self">
@@ -302,7 +304,9 @@
                                 <div class="card-body" style="background-color: #F0F0F0">
                                     <div class="d-inline-flex flex-row align-items-xl-center" style="width: 100%;">
                                         <h4 style="width: 60%;"><strong>{{ p.info_producto.precio }}€</strong></h4>
-                                        <h5 class="text-right" style="width: 40%;">1.500m</h5>
+                                        {% if loggedin %}
+                                        <h5 class="text-right" style="width: 40%;">{{ p.distancia }}km</h5>
+                                        {% endif %}
                                     </div>
                                     <p class="card-text">{{ p.info_producto.descripcion }}<br></p>
                                 </div>
@@ -336,7 +340,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Notificaciones</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
                 <div class="modal-body">
-                    <p>Joseph, tienes notificaciones pendientes de revisión</p>
+                    <p>{{ informacion_basica.nombre }}, tienes notificaciones pendientes de revisión</p>
                 </div>
                 <div class="modal-footer"><a class="btn btn-secondary" role="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" href="/api/get_user_profile">Ver notificaciones</a></div>
             </div>
@@ -527,7 +531,7 @@
                     alert("Error al iniciar sesión")
                     // Handle error
                 });
-            	}).catch(function(error) {
+                }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
