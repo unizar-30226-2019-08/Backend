@@ -705,6 +705,8 @@ def SendMessage(request, format=None):
 def GetMessages(request, format=None):
 	print("Getting")
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	last_index = request.POST.get('ultimo_indice', 0)
+	nelements = request.POST.get('elementos_pagina', -1)
 	if movil == 'true':
 		token = request.POST.get('token', '')
 	else:
@@ -719,7 +721,7 @@ def GetMessages(request, format=None):
 		if chat_id == '' or token == '':
 			return Response(status=status.HTTP_400_BAD_REQUEST)
 		user = get_user(token)
-		messages = GetUserMessages(chat_id, user)
+		messages = GetUserMessages(chat_id, user,last_index,nelements)
 		print(messages)
 		if messages != None:
 			if movil == 'true':
