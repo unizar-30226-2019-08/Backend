@@ -72,7 +72,9 @@
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;font-size: 16px;font-weight: bold;" href="/">Comprar</a></li>
                 </ul>
                 {% if loggedin %}
+                {% if tiene_notificaciones %}
                 <button class="btn btn-secondary action-button" type="button" style="background-color: rgba(4,143,131,0);border-color: transparent;font-weight: bold;color: rgb(255,255,255);" data-toggle="modal" data-target="#modalNotif">Notificaciones</button>
+                {% endif %}
                 {% endif %}
                 <form
                     class="form-inline mr-auto" target="_self">
@@ -99,7 +101,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Notificaciones</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
                 <div class="modal-body">
-                    <p>Joseph, tienes notificaciones pendientes de revisión</p>
+                    <p>{{ informacion_basica.nombre }}, tienes notificaciones pendientes de revisión</p>
                 </div>
                 <div class="modal-footer"><a class="btn btn-secondary" role="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px" href="/api/get_user_profile">Ver notificaciones</a></div>
             </div>
@@ -297,7 +299,7 @@
             <div class="row">
                 <div class="col text-center" style="margin: 20px 0px 0px 0px;">
                     <input id="mensaje" type="text" style="width: 80%;border-color: #e91e63;border-radius: 20px;" placeholder="  Escribe tu mensaje" maxlength="1000">
-                    <button onclick="enviarMensaje()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;width: 30px;height: 30px;border-color: transparent;margin: -4px 0px 0px 10px;" type="button">
+                    <button id="buttonEnvio" onclick="enviarMensaje()" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;width: 30px;height: 30px;border-color: transparent;margin: -4px 0px 0px 10px;" type="button">
                         <i class="icon ion-android-send" style="color: #ffffff;font-size: 12px;margin: -50px 0px 0px 0px;"></i>
                     </button>
                 </div>
@@ -579,7 +581,6 @@
     <script>
         function actualizarIdChat(id){
             $("#" + 'chat' + id + 'Icon').remove();
-            document.getElementById("ventanaChat").innerHTML = "";
             document.getElementById("idChat").value = id;
             var csrftoken = '{{ csrf_token }}';
             $.post(
@@ -587,6 +588,7 @@
                 {'csrfmiddlewaretoken': csrftoken, 'id_chat': id},
                 function(data) {
                     var i = 0;
+                    document.getElementById("ventanaChat").innerHTML = "";
                     for(mensaje in data.mensajes){
                         if(data.mensajes[i].es_suyo){
                             var objTo = document.getElementById('ventanaChat');
@@ -641,18 +643,34 @@
         function enviarMensaje(){
             var idChat = document.getElementById("idChat").value;
             var mensaje = document.getElementById("mensaje").value;
-            var csrftoken = '{{ csrf_token }}';
-            $.post("/api/send_message", {'csrfmiddlewaretoken': csrftoken, 'mensaje': mensaje, 'id_chat': idChat});
-            var objTo = document.getElementById('ventanaChat');
-            var divtest = document.createElement("div");
-            divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round right-in" style="margin: 0px 0px 20px 85px;width: 85%;"> <div class="d-xl-flex talktext"> <p style="color: rgb(255,255,255);margin: 0px;">' + mensaje + '<br></p> </div> </div>';
-            objTo.appendChild(divtest);
+            if(idChat == ''){
+                alert('Por favor, selecciona un chat de la izquierda antes de enviar un mensaje');
+            }else if(mensaje == ''){
+                alert('El mensaje está vacío. Por favor, escribe algo antes de enviarlo');
+            }else{
+                document.getElementById("mensaje").value = '';
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/send_message", {'csrfmiddlewaretoken': csrftoken, 'mensaje': mensaje, 'id_chat': idChat});
+                var objTo = document.getElementById('ventanaChat');
+                var divtest = document.createElement("div");
+                divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round right-in" style="margin: 0px 0px 20px 85px;width: 85%;"> <div class="d-xl-flex talktext"> <p style="color: rgb(255,255,255);margin: 0px;">' + mensaje + '<br></p> </div> </div>';
+                objTo.appendChild(divtest);
+                var objDiv = document.getElementById("ventanaChat");
+                objDiv.scrollTop = objDiv.scrollHeight;
+            }
         }
+
+        $("#mensaje").keyup(function(event) {
+            if (event.keyCode === 13) {
+                $("#buttonEnvio").click();
+            }
+        });
     </script>
     <script>
         function venderProducto(){
             var id_chat = document.getElementById("idChat").value;
             var csrftoken = '{{ csrf_token }}';
+            document.getElementById('chat' + id_chat).style.backgroundColor = "maroon";
             $.post("/api/sell_product", {'csrfmiddlewaretoken': csrftoken, 'id_chat': id_chat});
         }
     </script>
@@ -686,13 +704,13 @@
         window.onfocus = function() {
             if(document.getElementById('focused').value == 'false'){
                 document.getElementById('focused').value = 'true';
-                document.getElementById("ventanaChat").innerHTML = "";
                 var idChat = document.getElementById("idChat").value;
                 var csrftoken = '{{ csrf_token }}';
                 $.post(
                     "/api/get_messages",
                     {'csrfmiddlewaretoken': csrftoken, 'id_chat': idChat},
                     function(data) {
+                        document.getElementById("ventanaChat").innerHTML = "";
                         var i = 0
                         for(mensaje in data.mensajes){
                             if(data.mensajes[i].es_suyo){
