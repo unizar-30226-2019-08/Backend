@@ -68,7 +68,7 @@ def CrearNotificiacion(usuario, message):
 	except:
 		return False
 
-def GetUserMessages(chat_pk, user):
+def GetUserMessages(chat_pk, user,ultimo_indice,elementos_pagina):
 	try:
 		try:
 			chat = Chat.objects.get(pk=int(chat_pk))
@@ -81,9 +81,15 @@ def GetUserMessages(chat_pk, user):
 			else:
 				chat.save()
 			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
+			ultimo_indice = int(ultimo_indice)
+			elementos_pagina = int(elementos_pagina)
+			if(elementos_pagina != -1):
+				messages = itertools.islice(messages, ultimo_indice, ultimo_indice + elementos_pagina)
 			return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 		except:
 			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
+			if(elementos_pagina != -1):
+				messages = itertools.islice(messages, ultimo_indice, ultimo_indice + elementos_pagina)
 			return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 	except:
 		return None
