@@ -382,6 +382,7 @@ def EditarProducto(biblio,id_producto):
 		producto.descripcion = descripcion
 	producto.save()
 	if tags != '':
+		"""
 		listtags = []
 		for tag in lista_tags:
 			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
@@ -396,9 +397,29 @@ def EditarProducto(biblio,id_producto):
 			else:
 				tag.number_of_uses = tag.number_of_uses + 1
 				tag.save()
+		"""
+		tags_in_producto = producto.tiene_tags.all()
+		for tag in tags_in_producto:
+			tag.number_of_uses = tag.number_of_uses - 1
+			tag.save()
+			producto.tiene_tags.remove(tag)
+		for tag in lista_tags:
+			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+			tag_estandar = strip_accents(tag_estandar)
+			tag_estandar = tag_estandar.lower()
+			try:
+				t = Tag.objects.get(nombre=tag_estandar)
+			except:
+				t= Tag.objects.create(nombre=tag_estandar)
+			producto.tiene_tags.add(t)
+			t.number_of_uses = t.number_of_uses + 1
+			t.save()
+
 	if files != []:
-		multiExistentes = ContenidoMultimedia.objects.filter(producto=producto)
-		i = multiExistentes.count()
+		ContenidoMultimedia.objects.filter(producto=producto).delete()
+		#multiExistentes = ContenidoMultimedia.objects.filter(producto=producto)
+		#i = multiExistentes.count()
+		i = 0
 		for file in files:
 			multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
 			multi.save()
