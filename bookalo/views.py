@@ -1076,7 +1076,7 @@ def EditProduct(request, format=None):
 										'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 										'descripcion':descripcion,'tags':tags,'token':token}
 			print(biblioteca)
-			result = EditarProducto(biblioteca,id_product)
+			result = EditarProducto(biblioteca,id_product,movil)
 			if movil == 'true':
 				if result == 'Modified':
 					return Response(status=status.HTTP_200_OK)
