@@ -684,13 +684,15 @@ def SendMessage(request, format=None):
 			if chat.vendedor == user:
 				fcm_token = chat.comprador.token_fcm
 				soy_vendedor = True
+				user_recibe = chat.comprador
 			else:
 				fcm_token = chat.vendedor.token_fcm
 				soy_vendedor = False
+				user_recibe = chat.vendedor
 		except:
 			message_created = None
 		if message_created != None:
-			if SendFCMMessage(chat_id, message_created, fcm_token, user, soy_vendedor):
+			if SendFCMMessage(chat_id, message_created, fcm_token, user, soy_vendedor, user_recibe):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
