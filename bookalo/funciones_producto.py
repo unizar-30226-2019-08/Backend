@@ -320,7 +320,7 @@ def BorradoProducto(token,productId):
 	else:
 		return 'Unauthorized'
 
-def EditarProducto(biblio,id_producto):
+def EditarProducto(biblio,id_producto, movil):
 	token = biblio['token']
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']	
@@ -398,11 +398,12 @@ def EditarProducto(biblio,id_producto):
 				tag.number_of_uses = tag.number_of_uses + 1
 				tag.save()
 		"""
-		tags_in_producto = producto.tiene_tags.all()
-		for tag in tags_in_producto:
-			tag.number_of_uses = tag.number_of_uses - 1
-			tag.save()
-			producto.tiene_tags.remove(tag)
+		if movil == 'true':
+			tags_in_producto = producto.tiene_tags.all()
+			for tag in tags_in_producto:
+				tag.number_of_uses = tag.number_of_uses - 1
+				tag.save()
+				producto.tiene_tags.remove(tag)
 		for tag in lista_tags:
 			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
 			tag_estandar = strip_accents(tag_estandar)
@@ -410,16 +411,18 @@ def EditarProducto(biblio,id_producto):
 			try:
 				t = Tag.objects.get(nombre=tag_estandar)
 			except:
-				t= Tag.objects.create(nombre=tag_estandar)
+				t = Tag.objects.create(nombre=tag_estandar)
 			producto.tiene_tags.add(t)
 			t.number_of_uses = t.number_of_uses + 1
 			t.save()
 
 	if files != []:
-		ContenidoMultimedia.objects.filter(producto=producto).delete()
-		#multiExistentes = ContenidoMultimedia.objects.filter(producto=producto)
-		#i = multiExistentes.count()
-		i = 0
+		if movil == 'true':
+			ContenidoMultimedia.objects.filter(producto=producto).delete()
+			i = 0
+		else:
+			multiExistentes = ContenidoMultimedia.objects.filter(producto=producto)
+			i = multiExistentes.count()
 		for file in files:
 			multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)
 			multi.save()
