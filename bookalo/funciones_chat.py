@@ -104,7 +104,7 @@ def GetChatInfoWeb(chat_id):
 	except:
 		return {'comprador': '', 'vendedor':'', 'producto': ''}
 
-def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
+def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
 	try:
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		URL = 'https://fcm.googleapis.com/fcm/send'
@@ -116,10 +116,14 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
 			chat_obj.save()
 		chat = ChatSerializer(chat_obj).data
+		"""
 		mensaje = {
 			"texto":message.texto,
-			"timestamp":str(message.hora)
+			"hora":str(message.hora)
+			"es_suyo":False
 		}
+		"""
+		mensaje = MensajeSerializer(message, context = {"user": user_recibe}).data
 		data = {
 			"registration_ids":[token],
 			"notification":{
@@ -130,7 +134,6 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor):
 				"chat":chat,
 				"soy_vendedor":soy_vendedor,
 				"mensaje":mensaje,
-				"es_mio":False
 			}
 		}
 		data = json.dumps(data)
