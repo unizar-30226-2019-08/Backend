@@ -196,11 +196,23 @@
                     </div>
                 </div>
                 <div class="row" style="width: 100%;margin: 10px 0px 0px 0px;">
-                    <div class="col-xl-1" style="padding: 0px 0px 0px 10px;">
+                    <div class="col" style="padding: 0px 0px 0px 10px;">
                         {% if informacion_basica.media_valoraciones == -1 %}
                         <h6 style="color: rgb(255,255,255);width: 150px;margin: px 0px 0px 0px;">Sin valoraciones</h6>
                         {% else %}
-                        <h6 style="color: rgb(255,255,255);width: 23px;margin: px 0px 0px 0px;">{{ informacion_basica.media_valoraciones }}<img style="width: 15px;height: 15px;margin: -43px 0px 0px 20px;" src="{% static 'bookalo/img/star.png' %}"></h6>
+                        <div style="margin: 0px 0px 0px 0px;">
+                            {% if informacion_basica.media_valoraciones == 1 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-half-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 2 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 3 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-half-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 4 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 5 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-half-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 6 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 7 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-half-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 8 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 9 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-half-o"></i>
+                            {% elif informacion_basica.media_valoraciones == 10 %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star"></i>
+                            {% else %}<i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i><i style="color: rgb(255,255,255);font-size: 20px;" class="fa fa-star-o"></i>{% endif %}
+                        </div>
                         {% endif %}
                     </div>
                 </div>
@@ -300,6 +312,22 @@
             <h1 style="margin: 0px 0px 0px 15px;">Tus notificaciones</h1>
         </div>
     </div>
+    {% if notificaciones.0 == null %}
+    <div style="height: 180px;overflow-y: auto;margin: 20px 0px -20px 0px;">
+        <div class="row" style="margin: 0px;height: 180px;">
+            <div class="col">
+                <div class="row text-center">
+                    <div class="col"><i class="far fa-check-circle fa-7x" style="color: #e91e63;"></i></div>
+                </div>
+                <div class="row" style="margin: 20px 0px 0px 0px;">
+                    <div class="col">
+                        <h4 class="text-center" style="font-family: Antic, sans-serif;">No tienes notificaciones pendientes. ¡Genial!</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div style="height: 200px;overflow-y: auto;margin: 20px 0px 0px 0px;">
         <div class="row" style="margin: 0px;">
             <div class="col">
@@ -316,6 +344,7 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
     <div class="row" style="margin: 40px 0px 0px 0px;font-family: Antic, sans-serif;">
         <div class="col">
             {% if coincidentUser %}
@@ -325,6 +354,26 @@
             {% endif %}
         </div>
     </div>
+    {% if valoraciones.0 == null %}
+    <div style="height: 180px;overflow-y: auto;margin: 20px 0px -20px 0px;">
+        <div class="row" style="margin: 0px;height: 180px;">
+            <div class="col">
+                <div class="row text-center">
+                    <div class="col"><i class="far fa-sad-tear fa-7x" style="color: #e91e63;"></i></div>
+                </div>
+                <div class="row" style="margin: 20px 0px 0px 0px;">
+                    <div class="col">
+                        {% if coincidentUser %}
+                        <h4 class="text-center" style="font-family: Antic, sans-serif;">Vaya, aún no tienes valoraciones</h4>
+                        {% else %}
+                        <h4 class="text-center" style="font-family: Antic, sans-serif;">Vaya, {{ otro_usuario.nombre }} aún no tiene valoraciones</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div style="height: 200px;overflow-y: auto;margin: 20px 0px 0px 0px;">
         <div class="row" style="margin: 0px;">
             <div class="col">
@@ -341,9 +390,19 @@
                             </a>
                         </h4>
                         <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Compró {{ valoracion.producto.nombre }}</h6>
-                        <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 10px 0px;font-size: 20px;">{{ valoracion.estrellas }}
-                            <img style="width: 15px;height: 15px;margin: -4px 0px 0px 5px;" src="{% static 'bookalo/img/star.png' %}">
-                        </h1>
+                        <div style="margin: 0px 0px 10px 0px;">
+                            {% if valoracion.estrellas == 1 %}<i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 2 %}<i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 3 %}<i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 4 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 5 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 6 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 7 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 8 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+                            {% elif valoracion.estrellas == 9 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-o"></i>
+                            {% elif valoracion.estrellas == 10 %}<i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                            {% else %}<i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i>{% endif %}
+                        </div>
                         <h6 class="text-muted card-subtitle mb-2">{{ valoracion.timestamp|slice:"8:10" }}/{{ valoracion.timestamp|slice:"5:7" }}/{{ valoracion.timestamp|slice:"0:4" }} a las {{ valoracion.timestamp|slice:"11:19" }}</h6>
                         <p class="card-text">{{ valoracion.comentario }}</p>
                     </div>
@@ -352,6 +411,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <div class="row" style="margin: 40px 0px 0px 0px;font-family: Antic, sans-serif;">
         <div class="col">
             {% if coincidentUser %}
@@ -361,6 +421,26 @@
             {% endif %}
         </div>
     </div>
+    {% if productos.0 == null %}
+    <div style="height: 180px;overflow-y: auto;margin: 20px 0px 10px 0px;">
+        <div class="row" style="margin: 0px;height: 180px;">
+            <div class="col">
+                <div class="row text-center">
+                    <div class="col"><i class="far fa-sad-tear fa-7x" style="color: #e91e63;"></i></div>
+                </div>
+                <div class="row" style="margin: 20px 0px 0px 0px;">
+                    <div class="col">
+                        {% if coincidentUser %}
+                        <h4 class="text-center" style="font-family: Antic, sans-serif;">Vaya, aún no tienes productos favoritos</h4>
+                        {% else %}
+                        <h4 class="text-center" style="font-family: Antic, sans-serif;">Vaya, {{ otro_usuario.nombre }} aún no tiene productos a la venta</h4>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div id="productos">
         <div class="row">
             <div class="col">
@@ -446,6 +526,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
     <div class="footer-dark">
         <footer>
             <div class="container">
