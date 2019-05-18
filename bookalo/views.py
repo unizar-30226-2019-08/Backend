@@ -207,7 +207,7 @@ def GetUserProfile(request, format=None):
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)	
 			serializer = ProductoSerializerList(products, many=True, read_only=True)
-			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data, 
+			return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'otro_usuario' : UserProfileSerializer(fetch_user2).data, 
 				'productos' : serializer.data, 'valoraciones': usuario_getvaloraciones(fetch_user2.uid,-1,-1), 'coincidentUser': False})
 	else:
 		fetch_user2 = GetOtherUserProfile(user_uid)
@@ -222,14 +222,15 @@ def GetUserProfile(request, format=None):
 				serializer_favs = ProductosFavoritos(token,0,-1)
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
-				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(user).data , 
 					'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
-					'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
+					'otro_usuario': UserProfileSerializer(fetch_user2).data,'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
 			else:
 				if 'token' in request.session:
 					request.session.pop('token')
-				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'informacion_basica' : UserProfileSerializer(fetch_user2).data , 
-					'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 'coincidentUser': False})
+				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'productos' : serializer.data , 
+					'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 'otro_usuario': UserProfileSerializer(fetch_user2).data,
+					'coincidentUser': False})
 
 
 
