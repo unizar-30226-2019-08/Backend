@@ -468,6 +468,20 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
 		validacion.actualizar()
 		NotificacionesPendientes.objects.filter(producto=product, usuario_pendiente=user).delete()
+		chat_venta = Chat.objects.get(vendedor=rated_user, comprador=user, producto=product)
+		try:
+			mensaje_valoracion = Mensaje.objects.get(chat_asociado=chat_venta, es_valoracion=True)
+			mensaje_valoracion.valoracion = validacion
+			mensaje_valoracion.save()
+		except:
+			mensaje_valoracion = CrearMensaje(token, chat_venta.id, "Notificacion")
+			if mensaje_valoracion != None:
+				mensaje_valoracion.es_valoracion = True
+				mensaje_valoracion.valoracion = validacion
+				mensaje_valoracion.save()
+			else:
+				return False
+
 		return True
 	except:
 		return False

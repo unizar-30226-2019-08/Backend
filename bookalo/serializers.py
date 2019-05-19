@@ -205,9 +205,10 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
 
 class MensajeSerializer(serializers.HyperlinkedModelSerializer):
     es_suyo = serializers.SerializerMethodField()
+    valoracion = ValidacionEstrellaSerializer(read_only=True)
     class Meta:
         model = Mensaje
-        fields = ('texto', 'hora', 'es_suyo')
+        fields = ('texto', 'hora', 'es_suyo', 'es_valoracion', 'valoracion')
 
     def get_es_suyo(self, obj):
         print("He comprobado si era suyo")
