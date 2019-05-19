@@ -4,6 +4,26 @@
 <html>
 
 <head>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-app.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.0.2/firebase-messaging.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyBUH-4_qFvkszGWxII8HyooOJNDqbltDKo",
+        authDomain: "bookalo-9e0fe.firebaseapp.com",
+        databaseURL: "https://bookalo-9e0fe.firebaseio.com",
+        projectId: "bookalo-9e0fe",
+        storageBucket: "bookalo-9e0fe.appspot.com",
+        messagingSenderId: "305041397855",
+        appId: "1:305041397855:web:e1a3597e365315eb"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Bookalo</title>
@@ -121,7 +141,7 @@
             <div class="modal-content">
                 <form action="/api/create_report" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ producto.vendido_por.nombre }}</h4>
+                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ otro_usuario.nombre }}</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -141,7 +161,7 @@
                     <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4>
                     <textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;" id="comentario" name="comentario"></textarea>
                 </div>
-                <input type="hidden" id="uid" name="uid" value="{{ informacion_basica.uid }}">
+                <input type="hidden" id="uid" name="uid" value="{{ otro_usuario.uid }}">
                 <div class="modal-footer">
                     <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button>
                 </div>
@@ -175,8 +195,6 @@
                 <input type="hidden" id="uid_usuario_valorado" name="uid_usuario_valorado" value="">
                 <input type="hidden" id="id_producto_valorado" name="id_producto_valorado" value="">
                 <div class="modal-footer d-xl-flex justify-content-xl-center">
-                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">No valorar</button>
-                    <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">Compra no realizada</button>
                     <button class="btn btn-secondary text-center action-button" style="margin: 10px 0px 10px 0px;background-color: #e91e63;border-color:transparent;border-radius:20px" data-toggle="modal" data-target="#modalReport" data-dismiss="modal" type="button">Reportar</button>
                     <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent;border-radius:20px" type="submit">Enviar</button>
                 </div>
@@ -261,16 +279,28 @@
     </div>
     <div class="row" style="background-color: rgba(233,30,99,0.32);background-image: url(&quot;{% static 'bookalo/img/WhatsApp%20Image%202019-03-28%20at%2011.52.09.jpeg' %}&quot;);padding: 0px 0px 30px 0px;">
         <div class="col text-center">
-            <div style="margin: 130px 0px 0px 0px;"><img class="rounded-circle" style="margin-top:-70px;" src="{{ informacion_basica.imagen_perfil }}" height="150px">
+            <div style="margin: 130px 0px 0px 0px;">
+                {% if coincidentUser %}
+                <img class="rounded-circle" style="margin-top:-70px;" src="{{ informacion_basica.imagen_perfil }}" height="150px">
                 <h3 style="font-size: 35px;font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;color: rgb(255,255,255);">{{ informacion_basica.nombre }}</h3>
+                {% else %}
+                <img class="rounded-circle" style="margin-top:-70px;" src="{{ otro_usuario.imagen_perfil }}" height="150px">
+                <h3 style="font-size: 35px;font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;color: rgb(255,255,255);">{{ otro_usuario.nombre }}</h3>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="row" style="margin: 15px 0px 0px 0px;">
         <div class="col text-center" style="margin: 0px 0px 0px 0px;">
+            {% if coincidentUser %}
             <a href="https://twitter.com/intent/tweet?text=Mira%20el%20perfil%20de%20{{ informacion_basica.nombre }}%20en%20Bookalo:%20https://bookalo.es/api/get_user_profile/?uid={{ informacion_basica.uid }}" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;" type="button">
                 <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
             </a>
+            {% else %}
+            <a href="https://twitter.com/intent/tweet?text=Mira%20el%20perfil%20de%20{{ otro_usuario.nombre }}%20en%20Bookalo:%20https://bookalo.es/api/get_user_profile/?uid={{ otro_usuario.uid }}" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;" type="button">
+                <i class="icon ion-android-share-alt" style="color:#ffffff;font-size:30px;"></i>
+            </a>
+            {% endif %}
             {% if coincidentUser %}
             <button onClick="document.getElementById('productos').scrollIntoView();" class="btn btn-link btn-circle" type="button" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;border-color: transparent;margin: 0px 15px 0px 0px;">
                 <i class="fa fa-heart" style="color:#ffffff;font-size:30px;"></i>
@@ -292,6 +322,7 @@
     <div class="row d-xl-flex justify-content-xl-center align-items-xl-center" style="margin: 20px 0px 0px 0px;">
         <div class="col d-xl-flex justify-content-xl-center">
             <div class="text-center d-xl-flex justify-content-xl-center" style="margin: 10px 0px;">
+                {% if coincidentUser %}
                 {% if informacion_basica.media_valoraciones == 1 %}<i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
                 {% elif informacion_basica.media_valoraciones == 2 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
                 {% elif informacion_basica.media_valoraciones == 3 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
@@ -303,6 +334,19 @@
                 {% elif informacion_basica.media_valoraciones == 9 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i>
                 {% elif informacion_basica.media_valoraciones == 10 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i>
                 {% else %}<i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>{% endif %}
+                {% else %}
+                {% if otro_usuario.media_valoraciones == 1 %}<i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 2 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 3 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 4 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 5 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 6 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 7 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 8 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 9 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star-half-o" style="font-size:25px"></i>
+                {% elif otro_usuario.media_valoraciones == 10 %}<i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i><i class="fa fa-star" style="font-size:25px"></i>
+                {% else %}<i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i><i class="fa fa-star-o" style="font-size:25px"></i>{% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -350,7 +394,7 @@
             {% if coincidentUser %}
             <h1 style="margin: 0px 0px 0px 15px;">Tus valoraciones</h1>
             {% else %}
-            <h1 style="margin: 0px 0px 0px 15px;">Valoraciones de {{ informacion_basica.nombre }}</h1>
+            <h1 style="margin: 0px 0px 0px 15px;">Valoraciones de {{ otro_usuario.nombre }}</h1>
             {% endif %}
         </div>
     </div>
@@ -415,9 +459,9 @@
     <div class="row" style="margin: 40px 0px 0px 0px;font-family: Antic, sans-serif;">
         <div class="col">
             {% if coincidentUser %}
-            <h1 style="margin: 0px 0px 0px 15px;">Tus productos favoritos</h1>
+            <h1 id="productos" style="margin: 0px 0px 0px 15px;">Tus productos favoritos</h1>
             {% else %}
-            <h1 style="margin: 0px 0px 0px 15px;">Los productos de {{ informacion_basica.nombre }}</h1>
+            <h1 id="productos" style="margin: 0px 0px 0px 15px;">Los productos de {{ otro_usuario.nombre }}</h1>
             {% endif %}
         </div>
     </div>
@@ -441,7 +485,7 @@
         </div>
     </div>
     {% else %}
-    <div id="productos">
+    <div>
         <div class="row">
             <div class="col">
                 <section class="py-5" style="padding: 0;margin: 0;">
@@ -575,25 +619,6 @@
     <script src="{% static 'bookalo/js/sortable.js' %}"></script>
     <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.10.0/firebase.js"></script>
-    <!-- Firebase App is always required and must be first -->
-    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
-
-    <!-- Add additional services that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.9.1/firebase-messaging.js"></script>
-    <script>
-        // Initialize Firebase
-        var config = {
-            apiKey: "AIzaSyBUH-4_qFvkszGWxII8HyooOJNDqbltDKo",
-            authDomain: "bookalo-9e0fe.firebaseapp.com",
-            databaseURL: "https://bookalo-9e0fe.firebaseio.com",
-            projectId: "bookalo-9e0fe",
-            storageBucket: "bookalo-9e0fe.appspot.com",
-            messagingSenderId: "305041397855"
-        };
-        firebase.initializeApp(config);
-    </script>
     <script>
         function getLocation(provider) {
             if (navigator.geolocation) {
@@ -613,9 +638,6 @@
         function facebookLogin(position){
             var provider = new firebase.auth.FacebookAuthProvider();
             firebase.auth().useDeviceLanguage();
-            provider.setCustomParameters({
-                'display': 'popup'
-            });
             firebase.auth().signInWithPopup(provider).then(function(result) {
                 // This gives you a Facebook Access Token. You can use it to access the Facebook API.
                 var token = result.credential.accessToken;
@@ -624,12 +646,33 @@
                 // ...
                 firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                     var csrftoken = '{{ csrf_token }}';
-                    $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken});
+                    const messaging = firebase.messaging();
+                    messaging.requestPermission().then(function() {
+                        console.log('Notification permission granted.');
+                        messaging.getToken().then(function(currentToken) {
+                            if (currentToken) {
+                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
+                                setTimeout(function(){
+                                    document.location.reload(true);
+                                }, 1500);
+                            } else {
+                                alert("No Instance ID token available");
+                                // Show permission request.
+                                console.log('No Instance ID token available. Request permission to generate one.');
+                            }
+                        }).catch(function(err) {
+                            alert("An error occurred while retrieving token");
+                            console.log('An error occurred while retrieving token. ', err);
+                        });
+                    }).catch(function(err) {
+                        alert("Unable to get permission to notify");
+                        console.log('Unable to get permission to notify.', err);
+                    });
                 }).catch(function(error) {
                     alert("Error al iniciar sesión")
                     // Handle error
                 });
-                }).catch(function(error) {
+            }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
@@ -638,6 +681,7 @@
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
                 // ...
+                alert("No se pudo conectar con Facebook. Por favor, inténtelo de nuevo.")
             });
         }
     </script>
@@ -688,6 +732,7 @@
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
                 // ...
+                alert("No se pudo conectar con Google. Por favor, inténtelo de nuevo.");
             });
         }
     </script>
@@ -740,6 +785,7 @@
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
                 // ...
+                alert("No se pudo conectar con Twitter. Por favor, inténtelo de nuevo.");
             });
         }
     </script>
@@ -747,10 +793,11 @@
         function cerrarSesion(){
             var csrftoken = '{{ csrf_token }}';
             $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
-            firebase.auth().signOut();
-            setTimeout(function(){
-                document.location.reload(true);
-            }, 1500);
+            firebase.auth().signOut().then(function() {
+                window.location = "https://bookalo.es"
+            }).catch(function(error) {
+                alert("Error al cerrar sesión");
+            });
         }
     </script>
     <script>

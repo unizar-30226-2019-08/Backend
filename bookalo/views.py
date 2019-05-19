@@ -216,9 +216,9 @@ def GetUserProfile(request, format=None):
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged_in, 'error' : 'El usuario no ha sido encontrado.'})
 		else:
 			products = Producto.objects.filter(vendido_por=fetch_user2)
-			serializer = ProductoSerializerList(products, many=True, read_only=True)
 			if logged_in:
 				user = get_user(token)
+				serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 				serializer_favs = ProductosFavoritos(token,0,-1)
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
@@ -226,6 +226,7 @@ def GetUserProfile(request, format=None):
 					'productos_favoritos':serializer_favs.data, 'productos' : serializer.data , 'valoraciones': usuario_getvaloraciones(user_uid,-1,-1), 
 					'otro_usuario': UserProfileSerializer(fetch_user2).data,'coincidentUser': False, 'tiene_notificaciones':tiene_notificaciones})
 			else:
+				serializer = ProductoSerializerList(products, many=True, read_only=True)
 				if 'token' in request.session:
 					request.session.pop('token')
 				return render(request, 'bookalo/perfilusuario.html', {'loggedin': logged_in, 'productos' : serializer.data , 
@@ -1112,7 +1113,7 @@ def EditProduct(request, format=None):
 def Logout(request, format=None):
 	if 'token' in request.session:
 		request.session.pop('token')
-	return redirect('/')
+	return Response(status=status.HTTP_200_OK)
 
 
 @api_view(('POST','GET'))
