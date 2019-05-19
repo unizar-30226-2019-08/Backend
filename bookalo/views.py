@@ -935,11 +935,35 @@ def SellProduct(request, format=None):
 						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
 					notificacion1.save()
 					notificacion2.save()
-					if movil == 'true':
-						return Response(status=status.HTTP_200_OK)
+					try:
+						mensaje = Mensaje.objects.get(chat_asociado=chat_buscado, es_valoracion=True)#.delete()
+						mensaje = None
+					except:
+						print('Mensaje no existia')
+						mensaje = CrearMensaje(token, chat_buscado.id, "Notificacion")
+					if mensaje != None:
+						mensaje.es_valoracion = True
+						mensaje.save()
+						fcm_token = user2.token_fcm
+						soy_vendedor = True
+						if SendFCMMessage(chat_buscado.id, mensaje, fcm_token, user1, soy_vendedor, user2):
+							if movil == 'true':
+								return Response(status=status.HTTP_200_OK)
+							else:
+								return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
+								 'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones})
+						else:
+							if movil == 'true':
+								return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+							else:
+								return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+									'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'Error en las notificaciones'})
 					else:
-						return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
-						 'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones})
+						if movil == 'true':
+							return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+						else:
+							return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
+								'productos_favoritos': serializer_favs.data, 'tiene_notificaciones':tiene_notificaciones, 'error':'Error en las notificaciones'})
 				except:
 					if movil == 'true':
 						return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

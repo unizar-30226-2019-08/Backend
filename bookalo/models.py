@@ -195,40 +195,7 @@ class Chat(models.Model):
     def __str__(self):
         return str(self.vendedor) + "/" + str(self.comprador)
 
-# 	'''
-# 	Mensaje :
-# 		texto:			String
-# 		hora:			Date
-# 		Chat_asociado:	ID	(PK de Chat)
-# 	'''
-#
 
-
-class Mensaje(models.Model):
-    texto = models.CharField(
-        max_length=1000,
-        verbose_name='Contenido del mensaje')
-    hora = models.DateTimeField(
-        default=timezone_now,
-        verbose_name='Hora en la que se envio el mensaje')
-    chat_asociado = models.ForeignKey(
-        to=Chat,
-        null=False,
-        on_delete=models.CASCADE,
-        verbose_name='Chat en el que se encuentra el mensaje',
-        related_name='chat_del_mensaje')
-    emisor = models.ForeignKey(
-        to=Usuario,
-        null=False,
-        on_delete=models.CASCADE,
-        verbose_name='Usuario que ha enviado el mensaje',
-        related_name='emisor')
-    es_valoracion = models.BooleanField(
-        default=False,
-        verbose_name='Campo que indica si el mensaje pertenece a un mensaje - valoracion')
-
-    def __str__(self):
-        return self.texto
 
 # 	'''
 # 	Report :
@@ -305,6 +272,51 @@ class ValidacionEstrella(models.Model):
             num_valoraciones = 1
         self.usuario_valorado.media_valoraciones = suma_valoraciones / num_valoraciones
         self.usuario_valorado.save()
+
+
+#   '''
+#   Mensaje :
+#       texto:          String
+#       hora:           Date
+#       Chat_asociado:  ID  (PK de Chat)
+#   '''
+#
+
+
+class Mensaje(models.Model):
+    texto = models.CharField(
+        max_length=1000,
+        verbose_name='Contenido del mensaje')
+    hora = models.DateTimeField(
+        default=timezone_now,
+        verbose_name='Hora en la que se envio el mensaje')
+    chat_asociado = models.ForeignKey(
+        to=Chat,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Chat en el que se encuentra el mensaje',
+        related_name='chat_del_mensaje')
+    emisor = models.ForeignKey(
+        to=Usuario,
+        null=False,
+        on_delete=models.CASCADE,
+        verbose_name='Usuario que ha enviado el mensaje',
+        related_name='emisor')
+    es_valoracion = models.BooleanField(
+        default=False,
+        verbose_name='Campo que indica si el mensaje pertenece a un mensaje - valoracion')
+    valoracion = models.ForeignKey(
+        to=ValidacionEstrella,
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name='Valoracion relacionada con este mensaje')
+
+    def __str__(self):
+        return self.texto
+
+
 
 # 	'''
 # 	Contenido Multimedia :
