@@ -128,7 +128,8 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
 			"registration_ids":[token],
 			"notification":{
 				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-				"body":message.texto
+				"body":message.texto,
+				"icon":"https://bookalo.es/media/bookalo_logo.png"
 			},
 			"data":{
 				"chat":chat,
