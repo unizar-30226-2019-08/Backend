@@ -115,7 +115,7 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
 		else:
 			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
 			chat_obj.save()
-		chat = ChatSerializer(chat_obj).data
+		chat = ChatSerializer(chat_obj, context = {"user": user_recibe}).data
 		"""
 		mensaje = {
 			"texto":message.texto,
