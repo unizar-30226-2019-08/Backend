@@ -681,7 +681,8 @@
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
                 // ...
-                alert("No se pudo conectar con Facebook. Por favor, inténtelo de nuevo.")
+                alert("No se pudo conectar con Facebook. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
@@ -733,6 +734,7 @@
                 var credential = error.credential;
                 // ...
                 alert("No se pudo conectar con Google. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
@@ -786,6 +788,7 @@
                 var credential = error.credential;
                 // ...
                 alert("No se pudo conectar con Twitter. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
