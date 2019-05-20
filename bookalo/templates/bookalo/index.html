@@ -317,8 +317,8 @@
                     <div id="contenedorTarjetones" class="row filtr-container">
                         {% for p in productos %}
                         <div class="col-md-6 col-lg-4 filtr-item" data-category="2,3">
-                            <div class="card shadow" style="border-radius:20px; border-color: transparent">
-                                <div class="d-flex align-items-center card-header text-light" style="background: #;background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
+                            <div class="card shadow" style="border-radius:20px; border-color: transparent;">
+                                <div class="d-flex align-items-center card-header text-light" style="background-color: #e91e63;padding: 10px 20px;border-top-left-radius:20px;border-top-right-radius:20px">
                                     <h5 class="m-0" style="width: 90%;">{{ p.info_producto.nombre }}</h5>
                                     {% if loggedin %}
                                         {% if informacion_basica.uid == p.vendido_por.uid %}
@@ -531,7 +531,8 @@
                 // The firebase.auth.AuthCredential type that was used.
                 var credential = error.credential;
                 // ...
-                alert("No se pudo conectar con Facebook. Por favor, inténtelo de nuevo.")
+                alert("No se pudo conectar con Facebook. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
@@ -583,6 +584,7 @@
                 var credential = error.credential;
                 // ...
                 alert("No se pudo conectar con Google. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
@@ -636,6 +638,7 @@
                 var credential = error.credential;
                 // ...
                 alert("No se pudo conectar con Twitter. Por favor, inténtelo de nuevo.");
+                alert(errorMessage);
             });
         }
     </script>
