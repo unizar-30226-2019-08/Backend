@@ -51,14 +51,17 @@ def GenericProducts(token,ultimo_indice,elementos_pagina):
 	products = Producto.objects.filter(estado_venta=True).order_by('-num_likes')
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
+	tope=False
 	if(elementos_pagina != -1):
+		if (products.count() - (elementos_pagina + ultimo_indice) )<= 0:
+			tope = True
 		products = itertools.islice(products, ultimo_indice, ultimo_indice + elementos_pagina)
 	user = get_user(token)
 	if user!=None:
 		serializer = ProductoSerializerList(products, many=True, read_only=True, context = {"user": user})
 	else:
 		serializer = ProductoSerializerList(products, many=True, read_only=True)
-	return serializer
+	return serializer, tope
 
 def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
 	if token != 'nothing' and user_uid == 'nothing':

@@ -28,7 +28,9 @@ import urllib.request
 import json
 import textwrap
 
-
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -43,7 +45,7 @@ def index(request):
 		token = request.session.get('token', 'nothing')
 
 	try:
-		serializer = GenericProducts(token,last_index,nelements)
+		serializer, tope = GenericProducts(token,last_index,nelements)
 		if movil == 'true':
 			return Response({'productos': serializer.data}, status=status.HTTP_200_OK)
 		else:
@@ -66,6 +68,8 @@ def index(request):
 					ultimo_indice_anterior = 0
 				else:
 					ultimo_indice_anterior = int(last_index) - int(nelements)
+				return Response({'loggedin': False, 'productos': serializer.data,
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements), 'tope':tope}, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data,
 					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 	except:
@@ -82,7 +86,7 @@ def index(request):
 				else:
 					ultimo_indice_anterior = int(last_index) - int(nelements)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
-					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones,
+					'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones,
 					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 			else:
 				if 'token' in request.session:
@@ -91,7 +95,7 @@ def index(request):
 					ultimo_indice_anterior = 0
 				else:
 					ultimo_indice_anterior = int(last_index) - int(nelements)
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data,
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': [],
 					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 
 @api_view(('POST','GET'))
