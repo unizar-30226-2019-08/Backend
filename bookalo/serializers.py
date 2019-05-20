@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.timezone import now as timezone_now
 from decimal import Decimal
 from math import sin, cos, sqrt, atan2, radians
+from collections import OrderedDict
 
 def calculate_distance(lat1, lon1, lat2, lon2):
     R = 6373.0
@@ -178,7 +179,7 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
     comprador = UserSerializer(read_only=True)
     producto = ProductoSerializer(read_only=True)
     num_pendientes = serializers.SerializerMethodField()
-    ultimo_mensaje = serializers.SerializerMethodField()
+    ultimo_mensaje = serializers.SerializerMethodField(required=False)
     class Meta:
         model = Chat
         fields = ('pk','vendedor', 'comprador', 'producto', 'num_pendientes','ultimo_mensaje')
@@ -200,11 +201,36 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
         if usuario != 'nothing':
             if mensajes.count() > 0:
                 mensaje = mensajes.order_by('-hora')[0]
-                return MensajeSerializer(mensaje,read_only=True, context = {"user": usuario}).data
+                return MensajeSerializer(mensaje,read_only=True,required=False, context = {"user": usuario}).data
             else:
-                return False
+                return None
         else:
-            return False
+            return None
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        ret = OrderedDict()
+        fields = [field for field in self.fields.values() if not field.write_only]
+
+        for field in fields:
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            if attribute is not None:
+                represenation = field.to_representation(attribute)
+                if represenation is None:
+                    # Do not seralize empty objects
+                    continue
+                if isinstance(represenation, list) and not represenation:
+                   # Do not serialize empty lists
+                   continue
+                ret[field.field_name] = represenation
+
+        return ret
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_pendiente = UserSerializer(read_only=True)
