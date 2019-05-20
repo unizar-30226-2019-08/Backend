@@ -199,7 +199,7 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
         usuario = self.context.get('user', 'nothing')
         if usuario != 'nothing':
             if mensajes.count() > 0:
-                mensaje = mensajes.order_by('hora')[0]
+                mensaje = mensajes.order_by('-hora')[0]
                 return MensajeSerializer(mensaje,read_only=True, context = {"user": usuario}).data
             else:
                 return False
