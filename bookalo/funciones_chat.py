@@ -80,11 +80,13 @@ def GetUserMessages(chat_pk, user,ultimo_indice,elementos_pagina):
 				chat.save()
 			else:
 				chat.save()
-			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
 			ultimo_indice = int(ultimo_indice)
 			elementos_pagina = int(elementos_pagina)
 			if(elementos_pagina != -1):
+				messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('-hora')
 				messages = itertools.islice(messages, ultimo_indice, ultimo_indice + elementos_pagina)
+			else:
+				messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
 			return MensajeSerializer(messages, many=True, read_only=True, context = {"user": user})
 		except:
 			messages = Mensaje.objects.filter(chat_asociado__pk=chat_pk).order_by('hora')
