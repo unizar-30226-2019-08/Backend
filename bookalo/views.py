@@ -31,8 +31,12 @@ import textwrap
 
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	last_index = request.POST.get('ultimo_indice', '0')
-	nelements = request.POST.get('elementos_pagina', '-1')
+	if movil == 'true':
+		last_index = request.POST.get('ultimo_indice', '0')
+		nelements = request.POST.get('elementos_pagina', '-1')
+	else:
+		last_index = request.GET.get('ultimo_indice', '0')
+		nelements = request.GET.get('elementos_pagina', '6')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
 	else:
@@ -48,12 +52,22 @@ def index(request):
 				serializer_favs = ProductosFavoritos(token,last_index,nelements)
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
+				if int(last_index) - int(nelements) < 0:
+					ultimo_indice_anterior = 0
+				else:
+					ultimo_indice_anterior = int(last_index) - int(nelements)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
-					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
+					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones,
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 			else:
 				if 'token' in request.session:
 						request.session.pop('token')
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
+				if int(last_index) - int(nelements) < 0:
+					ultimo_indice_anterior = 0
+				else:
+					ultimo_indice_anterior = int(last_index) - int(nelements)
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data,
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 	except:
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -63,12 +77,22 @@ def index(request):
 				serializer_favs = ProductosFavoritos(token,last_index,nelements)
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
+				if int(last_index) - int(nelements) < 0:
+					ultimo_indice_anterior = 0
+				else:
+					ultimo_indice_anterior = int(last_index) - int(nelements)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
-					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
+					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones,
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 			else:
 				if 'token' in request.session:
 						request.session.pop('token')
-				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data})
+				if int(last_index) - int(nelements) < 0:
+					ultimo_indice_anterior = 0
+				else:
+					ultimo_indice_anterior = int(last_index) - int(nelements)
+				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data,
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
@@ -250,6 +274,8 @@ def FilterProduct(request, format=None):
 			#return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
+		if(token == 'nothing'):
+			token = request.session.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
 	#if token == 'nothing':
