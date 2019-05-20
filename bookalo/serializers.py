@@ -178,12 +178,12 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
     comprador = UserSerializer(read_only=True)
     producto = ProductoSerializer(read_only=True)
     num_pendientes = serializers.SerializerMethodField()
+    ultimo_mensaje = serializers.SerializerMethodField()
     class Meta:
         model = Chat
-        fields = ('pk','vendedor', 'comprador', 'producto', 'num_pendientes')
+        fields = ('pk','vendedor', 'comprador', 'producto', 'num_pendientes','ultimo_mensaje')
 
     def get_num_pendientes(self, obj):
-        print("He calculado las pendientes")
         usuario = self.context.get('user', 'nothing')
         if usuario == 'nothing':
             return 0
@@ -193,6 +193,18 @@ class ChatSerializer(serializers.HyperlinkedModelSerializer):
             return obj.num_pendientes_vendedor
         else:
             return 0
+
+    def get_ultimo_mensaje(self, obj):
+        mensajes = Mensaje.objects.filter(chat_asociado=obj)
+        usuario = self.context.get('user', 'nothing')
+        if usuario != 'nothing':
+            if mensajes.count() > 0:
+                mensaje = mensajes.order_by('-hora')[0]
+                return MensajeSerializer(mensaje,read_only=True, context = {"user": usuario}).data
+            else:
+                return False
+        else:
+            return False
 
 class NotificationSerializer(serializers.HyperlinkedModelSerializer):
     #usuario_pendiente = UserSerializer(read_only=True)
