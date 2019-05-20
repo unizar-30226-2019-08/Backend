@@ -28,9 +28,6 @@ import urllib.request
 import json
 import textwrap
 
-@api_view(('POST','GET'))
-@permission_classes((permissions.AllowAny,))
-@csrf_exempt
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -60,7 +57,7 @@ def index(request):
 					ultimo_indice_anterior = int(last_index) - int(nelements)
 				return render(request, 'bookalo/index.html', {'loggedin': True, 'informacion_basica' : UserProfileSerializer(user).data, 
 					'productos_favoritos':serializer_favs.data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones,
-					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements), 'tope':tope})
 			else:
 				if 'token' in request.session:
 						request.session.pop('token')
@@ -68,10 +65,8 @@ def index(request):
 					ultimo_indice_anterior = 0
 				else:
 					ultimo_indice_anterior = int(last_index) - int(nelements)
-				return Response({'loggedin': False, 'productos': serializer.data,
-					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements), 'tope':tope}, status=status.HTTP_200_OK)
 				return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': serializer.data,
-					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements)})
+					'ultimo_indice_anterior':ultimo_indice_anterior, 'ultimo_indice_siguiente':int(last_index)+int(nelements), 'tope':tope})
 	except:
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
