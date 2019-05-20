@@ -274,8 +274,6 @@ def FilterProduct(request, format=None):
 			#return render(request, 'bookalo/index.html', {'loggedin': False, 'productos': []})
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
-		if(token == 'nothing'):
-			token = request.session.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
 	#if token == 'nothing':
