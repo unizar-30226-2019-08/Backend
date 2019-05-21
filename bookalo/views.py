@@ -334,7 +334,8 @@ def FilterProduct(request, format=None):
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data ,
-				 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones})
+				 'productos_favoritos':ProductosFavoritos(token,0,-1).data, 'productos': serializer.data, 'tiene_notificaciones':tiene_notificaciones,
+				 'filter_product':True})
 		else:
 			if serializer == 'Bad request':
 				if movil == 'true':
@@ -349,7 +350,7 @@ def FilterProduct(request, format=None):
 			else:
 				if 'token' in request.session:
 					request.session.pop('token')
-				return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data})
+				return render(request, 'bookalo/index.html', {'loggedin': False,'productos': serializer.data, 'filter_product':True})
 	except:
 		if movil == 'true':
 			return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -360,11 +361,11 @@ def FilterProduct(request, format=None):
 				notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 				tiene_notificaciones = notifications > 0
 				return render(request, 'bookalo/index.html', {'loggedin': logged, 'informacion_basica' : UserProfileSerializer(user).data , 
-					'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones})
+					'productos_favoritos':serializer_favs.data, 'productos': [], 'tiene_notificaciones':tiene_notificaciones, 'filter_product':True})
 			else:
 				if 'token' in request.session:
 					request.session.pop('token')
-				return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': []})
+				return render(request, 'bookalo/index.html', {'loggedin': logged, 'productos': [], 'filter_product':True})
 
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
