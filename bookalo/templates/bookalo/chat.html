@@ -721,22 +721,32 @@
         messaging.usePublicVapidKey('BClG38R8H1L_9nXVX49WasFY4SNBefdvq_f4X5NMdD7Y7550EFm7sa8bYnxgvX--xYCrbdsYoaDKs7GwDifRgUU');
 
         messaging.onMessage(function(payload) {
-            console.log('Message received. ', payload);
+            
+            var mensaje = JSON.parse(payload.data.mensaje);
             var chat = JSON.parse(payload.data.chat);
 
-            if(document.getElementById("idChat").value == chat.pk){
-                var objTo = document.getElementById('ventanaChat');
-                var divtest = document.createElement("div");
-                divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
-                objTo.appendChild(divtest);
-                var objDiv = document.getElementById("ventanaChat");
-                objDiv.scrollTop = objDiv.scrollHeight;
-            }else{
-                var identifier = 'chat' + chat.pk;
-                var buttonElement = document.getElementById(identifier);
-                if(document.getElementById('chat' + chat.pk + 'Icon') == null){
-                    buttonElement.innerHTML = buttonElement.innerHTML + '<i style="margin: 0px 0px 0px 20px" id="chat' + chat.pk + 'Icon" class="fa fa-envelope"></i>';
+            if(!mensaje.es_valoracion){
+                console.log('Message received. ', payload);
+                if(document.getElementById("idChat").value == chat.pk){
+                    var objTo = document.getElementById('ventanaChat');
+                    var divtest = document.createElement("div");
+                    if(mensaje.es_suyo){
+                        divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round right-in" style="margin: 0px 0px 20px 85px;width: 85%;"> <div class="d-xl-flex talktext"> <p style="color: rgb(255,255,255);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
+                    }else{
+                        divtest.innerHTML = '<div class="d-xl-flex talk-bubble tri-right round left-in" style="margin: 0px 0px 20px 30px;width: 85%;background-color: #ff9cbe;"> <div class="d-xl-flex talktext"> <p style="color: rgb(0,0,0);margin: 0px;">' + payload.notification.body + '<br></p> </div> </div>';
+                    }
+                    objTo.appendChild(divtest);
+                    var objDiv = document.getElementById("ventanaChat");
+                    objDiv.scrollTop = objDiv.scrollHeight;
+                }else{
+                    var identifier = 'chat' + chat.pk;
+                    var buttonElement = document.getElementById(identifier);
+                    if(document.getElementById('chat' + chat.pk + 'Icon') == null){
+                        buttonElement.innerHTML = buttonElement.innerHTML + '<i style="margin: 0px 0px 0px 20px" id="chat' + chat.pk + 'Icon" class="fa fa-envelope"></i>';
+                    }
                 }
+            }else{
+                console.log('Message ignored. ', payload);
             }
         });
     </script>
