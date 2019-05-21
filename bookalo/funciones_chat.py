@@ -147,6 +147,8 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		requests.post(url=URL, data=data, headers=headers)
 
 		#Codigo para el emisor del mensaje
+		chat = ChatSerializer(chat_obj, context = {"user": emisor}).data
+		mensaje = MensajeSerializer(message, context = {"user": emisor}).data
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		data = {
 			"registration_ids":tokens_emisor,
