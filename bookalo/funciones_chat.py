@@ -20,6 +20,14 @@ import itertools
 import requests
 import json
 
+def get_list_tokens(user, token_to_omit):
+	sessions = Sesion.objects.filter(usuario=user)
+	final_tokens = []
+	for session in sessions:
+		if session.token_fcm != token_to_omit:
+			final_tokens = final_tokens + [session.token_fcm]
+	return final_tokens
+
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
@@ -106,7 +114,7 @@ def GetChatInfoWeb(chat_id):
 	except:
 		return {'comprador': '', 'vendedor':'', 'producto': ''}
 
-def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
+def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, receptor):
 	try:
 		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
 		URL = 'https://fcm.googleapis.com/fcm/send'
@@ -117,17 +125,13 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
 		else:
 			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
 			chat_obj.save()
-		chat = ChatSerializer(chat_obj, context = {"user": user_recibe}).data
-		"""
-		mensaje = {
-			"texto":message.texto,
-			"hora":str(message.hora)
-			"es_suyo":False
-		}
-		"""
-		mensaje = MensajeSerializer(message, context = {"user": user_recibe}).data
+		chat = ChatSerializer(chat_obj, context = {"user": receptor}).data
+		mensaje = MensajeSerializer(message, context = {"user": receptor}).data
+
+		#Codigo para el receptor del mensaje
+		tokens_receptor = get_list_tokens(receptor, "NONE")
 		data = {
-			"registration_ids":[token],
+			"registration_ids":tokens_receptor,
 			"notification":{
 				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
 				"body":message.texto,
@@ -141,15 +145,29 @@ def SendFCMMessage(chat_id, message, token, emisor, soy_vendedor,user_recibe):
 		}
 		data = json.dumps(data)
 		requests.post(url=URL, data=data, headers=headers)
-		return True
-	except Exception as ex:
+
+		#Codigo para el emisor del mensaje
+		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		data = {
-			"registration_ids":[token],
-			"notification":{
-				"title":"Bookalo: Fallo en recepción",
-				"body":"Un error ocurrió mientras recibías el mensaje: " + str(ex)
+			"registration_ids":tokens_emisor,
+			"data":{
+				"chat":chat,
+				"soy_vendedor":not soy_vendedor,
+				"mensaje":mensaje,
 			}
 		}
 		data = json.dumps(data)
-		r = requests.post(url=URL, data=data, headers=headers)
+		requests.post(url=URL, data=data, headers=headers)
+		return True
+	except Exception as ex:
+		tokens_emisor = get_list_tokens(emisor, token_emisor)
+		data = {
+			"registration_ids":[token_emisor],
+			"notification":{
+				"title":"Bookalo: Fallo en envio de mensaje",
+				"body":"Un error ocurrió mientras enviabas el mensaje - " + message.texto + " -: " + str(ex)
+			}
+		}
+		data = json.dumps(data)
+		requests.post(url=URL, data=data, headers=headers)
 		return False
