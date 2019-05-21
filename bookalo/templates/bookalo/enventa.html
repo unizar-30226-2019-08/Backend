@@ -506,9 +506,11 @@
     </script>
     <script>
         function deleteProduct(id){
-            var csrftoken = '{{ csrf_token }}';
-            $.post("/api/delete_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
-            document.location.reload(true);
+            if(confirm("¿Está seguro de querer borrar el producto seleccionado?")){
+                var csrftoken = '{{ csrf_token }}';
+                $.post("/api/delete_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
+                document.location.reload(true);
+            }
         }
     </script>
 </body>
