@@ -482,6 +482,12 @@
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
     <script>
         function getLocation(provider) {
+            if(navigator.userAgent.toLowerCase().indexOf("android") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
+            if(navigator.userAgent.toLowerCase().indexOf("iphone") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
             if (navigator.geolocation) {
                 if(provider == "googleLogin"){
                     navigator.geolocation.getCurrentPosition(googleLogin);
