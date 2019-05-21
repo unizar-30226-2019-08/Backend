@@ -707,17 +707,15 @@ def SendMessage(request, format=None):
 			user = get_user(token)
 			chat = Chat.objects.get(pk=int(chat_id))
 			if chat.vendedor == user:
-				fcm_token = chat.comprador.token_fcm
 				soy_vendedor = True
 				user_recibe = chat.comprador
 			else:
-				fcm_token = chat.vendedor.token_fcm
 				soy_vendedor = False
 				user_recibe = chat.vendedor
 		except:
 			message_created = None
 		if message_created != None:
-			if SendFCMMessage(chat_id, message_created, fcm_token, user, soy_vendedor, user_recibe):
+			if SendFCMMessage(chat_id, message_created, token, user, soy_vendedor, user_recibe):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
@@ -969,7 +967,7 @@ def SellProduct(request, format=None):
 						mensaje.save()
 						fcm_token = user2.token_fcm
 						soy_vendedor = True
-						if SendFCMMessage(chat_buscado.id, mensaje, fcm_token, user1, soy_vendedor, user2):
+						if SendFCMMessage(chat_buscado.id, mensaje, token, user1, soy_vendedor, user2):
 							if movil == 'true':
 								return Response(status=status.HTTP_200_OK)
 							else:

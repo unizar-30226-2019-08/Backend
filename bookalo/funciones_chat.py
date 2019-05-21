@@ -24,7 +24,7 @@ def get_list_tokens(user, token_to_omit):
 	sessions = Sesion.objects.filter(usuario=user)
 	final_tokens = []
 	for session in sessions:
-		if session.token_fcm != token_to_omit:
+		if session.token != token_to_omit:
 			final_tokens = final_tokens + [session.token_fcm]
 	return final_tokens
 
@@ -169,7 +169,7 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 	except Exception as ex:
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		data = {
-			"registration_ids":[token_emisor],
+			"registration_ids":[tokens_emisor],
 			"notification":{
 				"title":"Bookalo: Fallo en envio de mensaje",
 				"body":"Un error ocurrió mientras enviabas el mensaje - " + message.texto + " -: " + str(ex)
