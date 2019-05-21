@@ -42,7 +42,6 @@ def index(request):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
-	process_request(request)
 	try:
 		serializer, tope = GenericProducts(token,last_index,nelements)
 		if movil == 'true':
