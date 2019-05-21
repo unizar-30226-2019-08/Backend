@@ -55,14 +55,17 @@ def check_user_logged_in(token):
 		return False
 
 def session_needs_deleting(session):
-	ahora = timezone_now()
-	ahora = ahora.replace(tzinfo=None)
-	fecha_creacion = session.timestamp
-	result = relativedelta(ahora, fecha_creacion)
-	if result.days >= 1:
-		return True
-	else:
-		return check_user_logged_in(session.token)
+	try:
+		ahora = timezone_now()
+		ahora = ahora.replace(tzinfo=None)
+		fecha_creacion = session.timestamp
+		result = relativedelta(ahora, fecha_creacion)
+		if result.days >= 1:
+			return True
+		else:
+			return check_user_logged_in(session.token)
+	except:
+		return False
 
 def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 	if latitude == '-1':
@@ -116,12 +119,18 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 				update_last_connection(user)
 				try:
 					sessions = Sesion.objects.filter(usuario=user)
-					for session in sessions:
-						if session_needs_deleting(session):
-							session.delete()
-					session = Sesion.objects.get(usuario=user, token=token, token_fcm=token_fcm)
+					if sessions:
+						for session in sessions:
+							if session_needs_deleting(session):
+								session.delete()
+						user = Usuario.objects.get(uid=user_uid)
+						session = Sesion.objects.get(usuario=user, token=token, token_fcm=token_fcm)
 				except:
-					Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+					try:
+						user = Usuario.objects.get(uid=user_uid)
+						Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+					except:
+						user = Usuario.objects.get(uid=user_uid)
 				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
