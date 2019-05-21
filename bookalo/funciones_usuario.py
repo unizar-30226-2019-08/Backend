@@ -124,7 +124,7 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 							if session_needs_deleting(session):
 								session.delete()
 						user = Usuario.objects.get(uid=user_uid)
-						session = Sesion.objects.get(usuario=user, token=token, token_fcm=token_fcm)
+						Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
 					else:
 						try:
 							user = Usuario.objects.get(uid=user_uid)
