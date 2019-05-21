@@ -229,6 +229,14 @@
     </div>
     <h1 class="text-center" style="font-family: Antic, sans-serif;padding: 30px 0px;"><strong>Tus productos a la venta</strong></h1>
     <h5 class="text-center" style="font-family: Antic, sans-serif;margin: -20px 0px 0px 0px;">Estos son los productos que has puesto a la venta</h5>
+    {% if productos.0 == null %}
+    <div class="row" style="margin: 70px 0px 0px 0px;">
+        <div class="col text-center"><i class="far fa-sad-tear light" style="font-size: 200px;color: #e91e63;"></i>
+            <h1 style="font-family: Antic, sans-serif;font-size: 30px;margin: 30px 0px 0px 0px;">¡Vaya! Aún no has subido productos</h1>
+            <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 20px 0px;">¡Vende las cosas que ya no usas y gana dinero!</h1>
+        </div>
+    </div>
+    {% else %}
     <section class="py-5" style="padding: 0;margin: -25px 0px 0px 0px;">
         <div class="container">
             <div class="row filtr-container">
@@ -272,6 +280,7 @@
             </div>
         </div>
     </section>
+    {% endif %}
     <div class="footer-dark">
         <footer>
             <div class="container">
