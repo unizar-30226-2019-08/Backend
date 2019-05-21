@@ -1158,8 +1158,18 @@ def EditProduct(request, format=None):
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt
 def Logout(request, format=None):
-	if 'token' in request.session:
-		request.session.pop('token')
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+		if 'token' in request.session:
+			request.session.pop('token')
+	if token != 'nothing':
+		try:
+			Sesion.objects.filter(token=token).delete()
+		except:
+			print("Something went wrong while deleting the session")
 	return Response(status=status.HTTP_200_OK)
 
 
