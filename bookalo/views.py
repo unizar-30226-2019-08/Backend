@@ -1166,9 +1166,12 @@ def Logout(request, format=None):
 			request.session.pop('token')
 	if token != 'nothing':
 		try:
-			Sesion.objects.filter(token=token).delete()
+			sesiones = Sesion.objects.filter(token=token)
+			if sesiones:
+				for sesion in sesiones:
+					sesion.delete()
 		except:
-			print("Something went wrong while deleting the session")
+			return Response({'error':"Something went wrong while deleting the session"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	return Response(status=status.HTTP_200_OK)
 
 

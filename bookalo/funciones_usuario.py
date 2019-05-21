@@ -124,21 +124,21 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 							if session_needs_deleting(session):
 								session.delete()
 						user = Usuario.objects.get(uid=user_uid)
-						Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+						try:
+							sesion = Sesion.objects.get(token_fcm=token_fcm, usuario=user)
+							sesion.token = token
+							sesion.save()
+						except Exception as ex:
+							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
 					else:
 						try:
 							user = Usuario.objects.get(uid=user_uid)
 							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
 						except Exception as ex:
 							user = Usuario.objects.get(uid=user_uid)
-							Sesion.objects.create(token="Error en la creacion else", token_fcm=str(ex), usuario=user)
+							Sesion.objects.create(token=token, token_fcm=str(ex), usuario=user)
 				except Exception as ex:
-					try:
-						user = Usuario.objects.get(uid=user_uid)
-						Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
-					except:
-						user = Usuario.objects.get(uid=user_uid)
-						Sesion.objects.create(token="Error en la creacion", token_fcm=str(ex), usuario=user)
+					print("Error while looking for active sessions")
 				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
