@@ -126,21 +126,13 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 
 	products = Producto.objects.none()
 	if tags != '-1':
-		#lista_tags = [x.strip() for x in tags.split(',')]
-		#lista_tags = [re.sub('[^A-Za-z0-9áéíóúüñ]+', '', x) for x in lista_tags]
-		#lista_tags = [x.translate(trans) for x in lista_tags]
-		#lista_tags = [x.lower() for x in lista_tags]
 		lista_tags = []
-		#[print(x) for x in tags.split(',')]
 		for x in tags.split(','):
 			tag = x.strip()
 			tag = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
 			tag = strip_accents(tag)
 			tag = tag.lower()
 			lista_tags.append(tag)
-		#[print(x) for x in lista_tags]
-
-		#print(lista_tags)
 		tag_queryset = Tag.objects.filter(nombre__in=lista_tags)
 
 		if min_price == '-1':
@@ -385,22 +377,6 @@ def EditarProducto(biblio,id_producto, movil):
 		producto.descripcion = descripcion
 	producto.save()
 	if tags != '':
-		"""
-		listtags = []
-		for tag in lista_tags:
-			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
-			tag_estandar = strip_accents(tag_estandar)
-			tag_estandar = tag_estandar.lower()
-			producto.tiene_tags.get_or_create(nombre=tag_estandar)
-			listtags.append(tag_estandar)
-		tags_in_producto = producto.tiene_tags.all()
-		for tag in tags_in_producto:
-			if tag.nombre not in listtags:
-				producto.tiene_tags.remove(tag)
-			else:
-				tag.number_of_uses = tag.number_of_uses + 1
-				tag.save()
-		"""
 		if movil == 'true':
 			tags_in_producto = producto.tiene_tags.all()
 			for tag in tags_in_producto:

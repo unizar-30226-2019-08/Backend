@@ -15,6 +15,9 @@ from django.db.models import Q, Count
 from django.contrib.gis.geoip2 import GeoIP2
 from math import sin, cos, sqrt, atan2, radians
 from decimal import Decimal
+from datetime import datetime, timezone
+from dateutil.relativedelta import relativedelta
+from django.utils import timezone
 from django.utils.timezone import now as timezone_now
 from geopy import Nominatim
 from fcm_django.models import FCMDevice
@@ -50,6 +53,16 @@ def check_user_logged_in(token):
 		return True
 	except:
 		return False
+
+def session_needs_deleting(session):
+	ahora = timezone_now()
+	ahora = ahora.replace(tzinfo=None)
+	fecha_creacion = session.timestamp
+	result = relativedelta(ahora, fecha_creacion)
+	if result.days >= 1:
+		return True
+	else:
+		return check_user_logged_in(session.token)
 
 def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 	if latitude == '-1':
@@ -96,24 +109,25 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 			if user.esta_baneado:
 				return status.HTTP_401_UNAUTHORIZED
 			else:
-				try:
-					device = FCMDevice.objects.get(registration_id=user.token_fcm)
-				except:
-					try:
-						FCMDevice.objects.create(registration_id=token_fcm, name=user.uid, type=fcm_type)
-					except:
-						print('No se pudo crear el objeto FCMDevice para este usuario, quiza no reciba notificaciones')
-				user.token_fcm = token_fcm
 				user.latitud_registro = latitud_registro
 				user.longitud_registro = longitud_registro
 				user.ciudad = ciudad
 				user.save()
 				update_last_connection(user)
+				try:
+					sessions = Sesion.objects.filter(usuario=user)
+					for session in sessions:
+						if session_needs_deleting(session):
+							session.delete()
+					session = Sesion.objects.get(usuario=user, token=token, token_fcm=token_fcm)
+				except:
+					Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
 				return UserSerializer(user).data
 
 		except Usuario.DoesNotExist:
 
 			new_user_data = Usuario.objects.create(username=user_uid, uid=user_uid, token_fcm=token_fcm, nombre=name, latitud_registro=latitud_registro, longitud_registro=longitud_registro, imagen_perfil=profile_image, ciudad=ciudad)
+			Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=new_user_data)
 			update_last_connection(new_user_data)
 			return UserSerializer(new_user_data).data
 

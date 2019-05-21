@@ -369,3 +369,23 @@ class NotificacionesPendientes(models.Model):
     
     def __str__(self):
         return str(self.usuario_pendiente)
+
+class Sesion(models.Model):
+    usuario = models.ForeignKey(
+        to=Usuario,
+        null=False,
+        on_delete=models.CASCADE,
+        related_name='sesion_de_usuario',
+        verbose_name='Usuario que tiene la sesion abierta')
+    token_fcm = models.CharField(
+        default="",
+        max_length=1000,
+        verbose_name='Token del usuario para mensajería asíncrona de Firebase')
+    token = models.CharField(
+        default="",
+        max_length=1000,
+        verbose_name='Token temporal de sesion del usuario')
+    timestamp = models.DateTimeField(default=timezone_now)
+    
+    def __str__(self):
+        return str(self.usuario) + str(self.timestamp)
