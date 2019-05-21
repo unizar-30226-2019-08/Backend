@@ -125,6 +125,13 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 								session.delete()
 						user = Usuario.objects.get(uid=user_uid)
 						session = Sesion.objects.get(usuario=user, token=token, token_fcm=token_fcm)
+					else:
+						try:
+							user = Usuario.objects.get(uid=user_uid)
+							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+						except:
+							user = Usuario.objects.get(uid=user_uid)
+							Sesion.objects.create(token="Error en la creacion", token_fcm="Error en la creacion", usuario=user)
 				except:
 					try:
 						user = Usuario.objects.get(uid=user_uid)
