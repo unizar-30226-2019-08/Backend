@@ -128,6 +128,7 @@ def Login(request, format=None):
 			else:
 				if movil != 'true':
 					request.session['token'] = token
+					request.session['token_fcm'] = fcm_token
 					return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), retorno)
 				else:
 					return Response(retorno, status=status.HTTP_200_OK)
@@ -1160,13 +1161,17 @@ def Logout(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
+		token_fcm = request.POST.get('token_fcm', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
+		token_fcm = request.session.get('token_fcm', 'nothing')
 		if 'token' in request.session:
 			request.session.pop('token')
-	if token != 'nothing':
+		if 'token_fcm' in request.session:
+			request.session.pop('token_fcm')
+	if token_fcm != 'nothing':
 		try:
-			sesiones = Sesion.objects.filter(token=token)
+			sesiones = Sesion.objects.filter(token_fcm=token_fcm)
 			if sesiones:
 				for sesion in sesiones:
 					sesion.delete()
