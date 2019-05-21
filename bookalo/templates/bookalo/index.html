@@ -312,6 +312,19 @@
                     <a class="btn btn-link text-center d-inline-block float-left d-xl-flex" role="button" id="menu-toggle-Filtro" style="color: #e91e63;border-color: #e91e63;border-radius:20px" data-toggle="&quot;wrapperFilter&quot;" href="#menu-toggle">Buscar productos</a>
                 </div>
             </div>
+            {% if productos.0 == null %}
+            <div class="row" style="margin: 70px 0px 0px 0px;">
+                <div class="col text-center"><i class="far fa-sad-tear light" style="font-size: 200px;color: #e91e63;"></i>
+                    {% if not filter_product %}
+                    <h1 style="font-family: Antic, sans-serif;font-size: 30px;margin: 30px 0px 0px 0px;">¡Vaya! Aún no hay productos</h1>
+                    <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 20px 0px;">¡Sube las cosas que ya no usas y gana dinero!</h1>
+                    {% else %}
+                    <h1 style="font-family: Antic, sans-serif;font-size: 30px;margin: 30px 0px 0px 0px;">¡Vaya! No se han encontrado productos</h1>
+                    <h1 style="font-family: Antic, sans-serif;margin: 0px 0px 20px 0px;">Modifica los parámetros de la búsqueda</h1>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
             <section class="py-5" style="padding: 0;margin: 0;">
                 <div class="container">
                     <div id="contenedorTarjetones" class="row filtr-container">
@@ -364,16 +377,21 @@
                     </div>
                 </div>
             </section>
+            {% endif %}
+            {% if not filter_product %}
             <div class="row" style="margin: 0px 0px 20px 0px;">
                 <div class="col text-center">
                     {% if ultimo_indice_siguiente != 6 %}
                         <a href="https://bookalo.es/?ultimo_indice={{ ultimo_indice_anterior }}&elementos_pagina=6" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;margin: 0px 20px 0px 0px;border-radius:20px;color:#F0F0F0">Página anterior</a>
                     {% endif %}
                     {% if productos|length == 6 %}
+                    {% if not tope %}
                         <a href="https://bookalo.es/?ultimo_indice={{ ultimo_indice_siguiente }}&elementos_pagina=6" class="btn btn-secondary" style="background-color: #e91e63;border-color: transparent;margin: 0px 0px 0px 20px;border-radius:20px;color:#F0F0F0">Página siguiente</a>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>
+            {% endif %}
         </main>
     </div>
     <div class="modal fade" role="dialog" tabindex="-1" id="modalNotif">
