@@ -651,10 +651,11 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
-                                setTimeout(function(){
+                                $.post("/api/login",
+                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                function(){
                                     document.location.reload(true);
-                                }, 1500);
+                                })
                             } else {
                                 alert("No Instance ID token available");
                                 // Show permission request.
@@ -703,10 +704,11 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
-                                setTimeout(function(){
+                                $.post("/api/login",
+                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                function(){
                                     document.location.reload(true);
-                                }, 1500);
+                                })
                             } else {
                                 alert("No Instance ID token available");
                                 // Show permission request.
@@ -757,10 +759,11 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login", {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude});
-                                setTimeout(function(){
+                                $.post("/api/login",
+                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                function(){
                                     document.location.reload(true);
-                                }, 1500);
+                                })
                             } else {
                                 alert("No Instance ID token available");
                                 // Show permission request.
@@ -797,7 +800,7 @@
             var csrftoken = '{{ csrf_token }}';
             $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
             firebase.auth().signOut().then(function() {
-                window.location = "https://bookalo.es"
+                window.location.replace("https://bookalo.es");
             }).catch(function(error) {
                 alert("Error al cerrar sesión");
             });
@@ -811,8 +814,11 @@
                 document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
             }
             var csrftoken = '{{ csrf_token }}';
-            $.post("/api/like_product", {'csrfmiddlewaretoken': csrftoken, 'idProducto': id});
-            document.location.reload(true);
+            $.post("/api/like_product",
+            {'csrfmiddlewaretoken': csrftoken, 'idProducto': id},
+            function(){
+                document.location.reload(true);
+            });
         }
     </script>
     <script>
