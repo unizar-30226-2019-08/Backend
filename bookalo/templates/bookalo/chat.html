@@ -610,7 +610,7 @@
             var csrftoken = '{{ csrf_token }}';
             $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
             firebase.auth().signOut().then(function() {
-                window.location = "https://bookalo.es"
+                window.location.href = "https://bookalo.es";
             }).catch(function(error) {
                 alert("Error al cerrar sesión");
             });
