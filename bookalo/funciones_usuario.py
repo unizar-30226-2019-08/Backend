@@ -63,7 +63,7 @@ def session_needs_deleting(session):
 		if result.days >= 1:
 			return True
 		else:
-			return check_user_logged_in(session.token)
+			return not check_user_logged_in(session.token)
 	except:
 		return False
 

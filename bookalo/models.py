@@ -379,11 +379,11 @@ class Sesion(models.Model):
         verbose_name='Usuario que tiene la sesion abierta')
     token_fcm = models.CharField(
         default="",
-        max_length=1000,
+        max_length=2000,
         verbose_name='Token del usuario para mensajería asíncrona de Firebase')
     token = models.CharField(
         default="",
-        max_length=1000,
+        max_length=3000,
         verbose_name='Token temporal de sesion del usuario')
     timestamp = models.DateTimeField(default=timezone_now)
     
