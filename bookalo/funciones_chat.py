@@ -152,6 +152,11 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		data = {
 			"registration_ids":tokens_emisor,
+			"notification":{
+				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+				"body":message.texto,
+				"icon":"https://bookalo.es/media/bookalo_logo.png"
+			},
 			"data":{
 				"chat":chat,
 				"soy_vendedor":not soy_vendedor,
