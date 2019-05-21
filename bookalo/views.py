@@ -28,6 +28,8 @@ import urllib.request
 import json
 import textwrap
 
+from .middleware import process_request
+
 def index(request):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
@@ -40,7 +42,7 @@ def index(request):
 		token = request.POST.get('token', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
-
+	process_request(request)
 	try:
 		serializer, tope = GenericProducts(token,last_index,nelements)
 		if movil == 'true':
@@ -1328,3 +1330,10 @@ def GetInfoISBN(request, format=None):
 
 	except:
 		return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def MobileRedirect(request, format=None):
+	return render(request, 'bookalo/redirect.html')
