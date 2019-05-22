@@ -249,6 +249,7 @@ def CreacionProducto(biblio):
 	tipo_envio = biblio['tipo_envio']
 	descripcion = biblio['descripcion']
 	tags = biblio['tags']
+	isbn = biblio['isbn']
 	#Check that the request is correct
 	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '':
 		return 'Bad request'
@@ -278,7 +279,8 @@ def CreacionProducto(biblio):
 						estado_producto=estado_producto, 
 						estado_venta=True,
 						tipo_envio=tipo_envio,
-						descripcion=descripcion)
+						descripcion=descripcion,
+						isbn=isbn)
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	print(producto)
@@ -337,6 +339,7 @@ def EditarProducto(biblio,id_producto, movil):
 	tipo_envio = biblio['tipo_envio']
 	descripcion = biblio['descripcion']
 	tags = biblio['tags']
+	isbn = biblio['isbn']
 	#Check that the request is correct
 	if tags != '':
 		lista_tags = [x.strip() for x in tags.split(',')]
@@ -377,6 +380,8 @@ def EditarProducto(biblio,id_producto, movil):
 		producto.tipo_envio = tipo_envio
 	if descripcion != '':
 		producto.descripcion = descripcion
+	if isbn != '':
+		producto.isbn = isbn
 	producto.save()
 	if tags != '':
 		if movil == 'true':

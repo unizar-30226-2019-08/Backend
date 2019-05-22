@@ -461,9 +461,10 @@ def CreateProduct(request, format=None):
 		tipo_envio = request.POST.get('tipo_envio', '')
 		descripcion = request.POST.get('descripcion', '')
 		tags = request.POST.get('tags', '')
+		isbn = request.POST.get('isbn', '')
 		biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 									'estado_producto':estado_producto,'tipo_envio':tipo_envio,
-									'descripcion':descripcion,'tags':tags,'token':token}
+									'descripcion':descripcion,'tags':tags,'token':token, 'isbn':isbn}
 		print(biblioteca)
 		result = CreacionProducto(biblioteca)
 		if movil == 'true':
@@ -1162,9 +1163,10 @@ def EditProduct(request, format=None):
 			tipo_envio = request.POST.get('tipo_envio', '')
 			descripcion = request.POST.get('descripcion', '')
 			tags = request.POST.get('tags', '')
+			isbn = request.POST.get('isbn', '')
 			biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 										'estado_producto':estado_producto,'tipo_envio':tipo_envio,
-										'descripcion':descripcion,'tags':tags,'token':token}
+										'descripcion':descripcion,'tags':tags,'token':token, 'isbn':isbn}
 			result = EditarProducto(biblioteca,id_product,movil)
 			if movil == 'true':
 				if result == 'Modified':
