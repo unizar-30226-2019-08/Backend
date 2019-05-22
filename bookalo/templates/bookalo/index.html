@@ -690,7 +690,7 @@
             }
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/like_product",
-            {'csrfmiddlewaretoken': csrftoken, 'idProducto': id},
+            {'csrfmiddlewaretoken': csrftoken, 'idProducto': id},  
             function(){
                 document.location.reload(true);
             });
