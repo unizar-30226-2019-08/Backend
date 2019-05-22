@@ -1218,7 +1218,7 @@ def Logout(request, format=None):
 					sesion.delete()
 		except:
 			return Response({'error':"Something went wrong while deleting the session"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-	return Response(status=status.HTTP_200_OK)
+	return HttpResponseRedirect('/')
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))

@@ -104,7 +104,7 @@
                     {% if loggedin %}
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/api/get_user_products">Mis productos</a></li>
                     <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/create_product">Subir producto</a></li>
-                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="" onclick="cerrarSesion()">Cerrar sesión</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link" style="color: #ffffff;padding: 8px 15px;" href="/logout">Cerrar sesión</a></li>
                     {% endif %}
                 </ul>
                 {% if loggedin %}
@@ -604,20 +604,6 @@
                 // ...
                 alert("No se pudo conectar con Twitter. Por favor, inténtelo de nuevo.");
                 alert(errorMessage);
-            });
-        }
-    </script>
-    <script>
-        function cerrarSesion(){
-            var csrftoken = '{{ csrf_token }}';
-            $.post("/logout", 
-            {'csrfmiddlewaretoken': csrftoken},
-            function(){
-                firebase.auth().signOut().then(function() {
-                    window.location.replace("https://bookalo.es");
-                }).catch(function(error) {
-                    alert("Error al cerrar sesión");
-                });
             });
         }
     </script>
