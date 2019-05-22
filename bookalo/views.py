@@ -114,7 +114,7 @@ def Login(request, format=None):
 		else:
 			return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'Token no recibido.'})
 	else:
-		retorno = usuario_login(token, fcm_token, latitude, longitude, fcm_type)
+		retorno = usuario_login(token, fcm_token, latitude, longitude, fcm_type, movil)
 		if retorno == 'Error':
 			if movil != 'true':
 				return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'error' : 'El usuario no existe.'})
@@ -925,7 +925,6 @@ def SellProduct(request, format=None):
 		serializer_favs = ProductosFavoritos(token, 0, -1)
 		notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 		tiene_notificaciones = notifications > 0
-		#product_id = request.POST.get('id_producto', '')
 		chat_id = request.POST.get('id_chat', '')
 		if chat_id == '' or token == 'nothing':
 			if movil == 'true':
@@ -953,25 +952,23 @@ def SellProduct(request, format=None):
 				user1 = chat_buscado.vendedor
 				user2 = chat_buscado.comprador
 				try:
-					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
-						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
-					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
-						producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+					notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2, producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
+					notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1, producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
 					notificacion1.save()
 					notificacion2.save()
 					try:
-						mensaje = Mensaje.objects.get(chat_asociado=chat_buscado, es_valoracion=True)#.delete()
-						#mensaje = None
+						mensaje = Mensaje.objects.get(chat_asociado=chat_buscado, es_valoracion=True)
 						mensaje.valoracion = None
 					except:
 						print('Mensaje no existia')
-						mensaje = CrearMensaje(token, chat_buscado.id, "Notificacion")
+						mensaje = CrearMensaje(token, str(chat_buscado.pk), "Notificacion")
+
 					if mensaje != None:
 						mensaje.es_valoracion = True
 						mensaje.save()
-						fcm_token = user2.token_fcm
 						soy_vendedor = True
-						if SendFCMMessage(chat_buscado.id, mensaje, token, user1, soy_vendedor, user2):
+						mensaje = Mensaje.objects.get(chat_asociado=chat_buscado, es_valoracion=True)
+						if SendFCMMessage(str(chat_buscado.pk), mensaje, token, user1, soy_vendedor, user2):
 							if movil == 'true':
 								return Response(status=status.HTTP_200_OK)
 							else:
@@ -1097,7 +1094,6 @@ def EditProductRender(request, format=None):
 		if 'token' in request.session:
 			request.session.pop('token')
 		return redirect('/')
-		#return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'), {'loggedin': logged, 'error':'El usuario no esta logeado'})
 
 
 @api_view(('POST','GET'))
@@ -1125,7 +1121,6 @@ def EditProduct(request, format=None):
 			biblioteca = {'files':files,'latitud':latitud,'longitud':longitud,'nombre':nombre,'precio':precio,
 										'estado_producto':estado_producto,'tipo_envio':tipo_envio,
 										'descripcion':descripcion,'tags':tags,'token':token}
-			print(biblioteca)
 			result = EditarProducto(biblioteca,id_product,movil)
 			if movil == 'true':
 				if result == 'Modified':
@@ -1180,61 +1175,6 @@ def Logout(request, format=None):
 		except:
 			return Response({'error':"Something went wrong while deleting the session"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 	return Response(status=status.HTTP_200_OK)
-
-
-@api_view(('POST','GET'))
-@permission_classes((permissions.AllowAny,))
-@csrf_exempt
-# Dado un identificador de chat, marca el producto como vendido y crea
-# dos instancias en la tabla notificaciones , una para cada usuario de que
-# el producto ha sido vendido
-def Vender_producto(request, format=None):
-	movil = request.META.get('HTTP_APPMOVIL','nothing')
-	if movil == 'true':
-		token = request.POST.get('token', 'nothing')
-	else:
-		token = request.session.get('token', 'nothing')
-	id_chat = request.POST.get('id_chat', 'nothing')
-
-	if token == 'nothing' or id_chat == 'nothing':
-		return Response(status=status.HTTP_400_BAD_REQUEST)
-	
-	else:
-
-		try:
-			chat_buscado = Chat.objects.get(pk=int(id_chat))
-			respuesta = MarkAsSold(chat_buscado.producto.id,token)
-		
-
-			if respuesta == False :
-				# No se ha podido markar como vendido
-				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-			if respuesta == None:
-				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-			# Se ha podido marcar como vendido
-			# Se crea instancia
-
-			Mensaje = "Se ha vendido el producto: "	+chat_buscado.producto.nombre	
-			user1 = chat_buscado.vendedor
-			user2 = chat_buscado.comprador
-
-			try:
-				notificacion1 = NotificacionesPendientes(usuario_pendiente=user1, otro_usuario_compra=user2,
-					producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
-				notificacion2 = NotificacionesPendientes(usuario_pendiente=user2, otro_usuario_compra=user1,
-					producto=chat_buscado.producto, descripcion_notificacion= Mensaje)
-				notificacion1.save()
-				notificacion2.save()
-
-				return Response(status=status.HTTP_200_OK)
-			except:
-				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-				 
-		except:
-			# No se ha encontrado el chat
-			return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(('POST', 'GET'))
 @permission_classes((permissions.AllowAny,))

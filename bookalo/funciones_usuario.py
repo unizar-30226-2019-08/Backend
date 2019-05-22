@@ -67,7 +67,7 @@ def session_needs_deleting(session):
 	except:
 		return False
 
-def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
+def usuario_login(token, token_fcm, latitude, longitude, fcm_type, movil):
 	if latitude == '-1':
 		latitud_registro = 41.683490
 	else:
@@ -118,6 +118,10 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 				user.save()
 				update_last_connection(user)
 				try:
+					if movil == 'true':
+						es_movil = True
+					else:
+						es_movil = False
 					sessions = Sesion.objects.filter(usuario=user)
 					if sessions:
 						for session in sessions:
@@ -129,14 +133,14 @@ def usuario_login(token, token_fcm, latitude, longitude, fcm_type):
 							sesion.token = token
 							sesion.save()
 						except Exception as ex:
-							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user, es_movil=es_movil)
 					else:
 						try:
 							user = Usuario.objects.get(uid=user_uid)
-							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user)
+							Sesion.objects.create(token=token, token_fcm=token_fcm, usuario=user, es_movil=es_movil)
 						except Exception as ex:
 							user = Usuario.objects.get(uid=user_uid)
-							Sesion.objects.create(token=token, token_fcm=str(ex), usuario=user)
+							Sesion.objects.create(token=token, token_fcm=str(ex), usuario=user, es_movil=es_movil)
 				except Exception as ex:
 					print("Error while looking for active sessions")
 				return UserSerializer(user).data
