@@ -386,6 +386,10 @@ class Sesion(models.Model):
         max_length=3000,
         verbose_name='Token temporal de sesion del usuario')
     timestamp = models.DateTimeField(default=timezone_now)
+
+    es_movil = models.BooleanField(
+        default=False,
+        verbose_name='Campo que indica si la sesion pertenece a la aplicacion movil')
     
     def __str__(self):
         return str(self.usuario) + str(self.timestamp)

@@ -21,12 +21,18 @@ import requests
 import json
 
 def get_list_tokens(user, token_to_omit):
-	sessions = Sesion.objects.filter(usuario=user)
-	final_tokens = []
+	sessions = Sesion.objects.filter(usuario=user, es_movil=True)
+	tokens_movil = []
 	for session in sessions:
 		if session.token != token_to_omit:
-			final_tokens = final_tokens + [session.token_fcm]
-	return final_tokens
+			tokens_movil = tokens_movil + [session.token_fcm]
+
+	sessions = Sesion.objects.filter(usuario=user, es_movil=False)
+	tokens_web = []
+	for session in sessions:
+		if session.token != token_to_omit:
+			tokens_web = tokens_web + [session.token_fcm]
+	return {'movil':tokens_movil, 'web':tokens_web}
 
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
@@ -125,50 +131,70 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		else:
 			chat_obj.num_pendientes_vendedor = chat_obj.num_pendientes_vendedor + 1
 			chat_obj.save()
-		chat = ChatSerializer(chat_obj, context = {"user": receptor}).data
-		mensaje = MensajeSerializer(message, context = {"user": receptor}).data
 
 		#Codigo para el receptor del mensaje
+		chat = ChatSerializer(chat_obj, context = {"user": receptor}).data
+		mensaje = MensajeSerializer(message, context = {"user": receptor}).data
 		tokens_receptor = get_list_tokens(receptor, "NONE")
-		data = {
-			"registration_ids":tokens_receptor,
-			"data":{
-				"chat":chat,
-				"soy_vendedor":soy_vendedor,
-				"mensaje":mensaje,
+		if tokens_receptor['movil']:
+			data = {
+				"registration_ids":tokens_receptor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+				}
 			}
-		}
-		"""
-		"notification":{
-				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-				"body":message.texto,
-				"icon":"https://bookalo.es/media/bookalo_logo.png"
-		},
-		"""
-		data = json.dumps(data)
-		requests.post(url=URL, data=data, headers=headers)
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+		if tokens_receptor['web']:
+			data = {
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto,
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
+				"registration_ids":tokens_receptor['web'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
 
 		#Codigo para el emisor del mensaje
 		chat = ChatSerializer(chat_obj, context = {"user": emisor}).data
 		mensaje = MensajeSerializer(message, context = {"user": emisor}).data
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
-		data = {
-			"registration_ids":tokens_emisor,
-			"data":{
-				"chat":chat,
-				"soy_vendedor":not soy_vendedor,
-				"mensaje":mensaje,
+		if tokens_emisor['movil']:
+			data = {
+				"registration_ids":tokens_emisor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":not soy_vendedor,
+					"mensaje":mensaje,
+				}
 			}
-		}
-		"""
-		"notification":{
-				"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-				"body":message.texto,
-				"icon":"https://bookalo.es/media/bookalo_logo.png"
-		},
-		"""
-		data = json.dumps(data)
-		requests.post(url=URL, data=data, headers=headers)
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+		if tokens_emisor['web']:
+			data = {
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto,
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
+				"registration_ids":tokens_emisor['web'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":not soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
 		return True
 	except Exception as ex:
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
