@@ -120,10 +120,10 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		URL = 'https://fcm.googleapis.com/fcm/send'
 		chat_obj = Chat.objects.get(pk=int(chat_id))
 		if chat_obj.vendedor == emisor:
-			chat_obj.num_pendientes_vendedor = chat_obj.num_pendientes_vendedor + 1
+			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
 			chat_obj.save()
 		else:
-			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
+			chat_obj.num_pendientes_vendedor = chat_obj.num_pendientes_vendedor + 1
 			chat_obj.save()
 		chat = ChatSerializer(chat_obj, context = {"user": receptor}).data
 		mensaje = MensajeSerializer(message, context = {"user": receptor}).data
