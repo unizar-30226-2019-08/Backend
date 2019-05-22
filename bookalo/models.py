@@ -191,6 +191,12 @@ class Chat(models.Model):
     num_pendientes_comprador = models.IntegerField(
         default=0,
         verbose_name='Indica si el comprador tiene mensajes pendientes')
+    borrado_vendedor = models.BooleanField(
+        default=False,
+        verbose_name='Marca si el chat ha sido borrado por el vendedor')
+    borrado_comprador = models.BooleanField(
+        default=False,
+        verbose_name='Marca si el chat ha sido borrado por el comprador')
     
     def __str__(self):
         return str(self.vendedor) + "/" + str(self.comprador)
