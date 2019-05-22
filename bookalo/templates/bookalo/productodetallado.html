@@ -247,7 +247,7 @@
                                                     <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
                                                 <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
-                                                <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -370,7 +370,7 @@
                 <div class="col text-center" style="padding: 0px;margin: 10px 0px 0px 0px;">
                     {% if loggedin %}
                     {% if producto.vendido_por.uid != informacion_basica.uid %}
-                    <button onclick="anadirFavorito('{{ producto.info_producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button">
+                    <button onclick="anadirFavorito('{{ producto.pk }}')" class="btn btn-link btn-circle" style="border-radius: 50px;border: 1px solid black;background-color: #e91e63;margin: 0px 10px 0px 0px;border-color:transparent;" type="button">
                         {% if producto.le_gusta %}
                         <i id="{{ producto.info_producto.pk }}Icon" class="fa fa-thumbs-down" style="color:#ffffff;font-size:30px;"></i>
                         {% else %}
