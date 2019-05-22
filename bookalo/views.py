@@ -500,7 +500,7 @@ def CreateReport(request, format=None):
 		token = request.session.get('token', 'nothing')
 
 	reporteduserUid = request.POST.get('uid', 'nothing')
-	print(reporteduserUid)
+	id_chat = request.POST.get('idChat','nothing')
 	cause = request.POST.get('causa', 'nothing')
 	comment = request.POST.get('comentario', 'nothing')
 	if request.method != 'POST' or token == 'nothing' or reporteduserUid == 'nothing' or comment == 'nothing' or cause == 'nothing':
@@ -514,10 +514,11 @@ def CreateReport(request, format=None):
 			if logged:
 				print("Voy a crear")
 				CrearReport(reporteduserUid, cause, comment)
+				user = get_user(token)
+				MandarCorreo(user,reporteduserUid, cause, comment,id_chat)
 				if movil == 'true':
 					return Response(status=status.HTTP_201_CREATED)
 				else:
-					user = get_user(token)
 					serializer_favs = ProductosFavoritos(token,0,-1)
 					notifications = NotificacionesPendientes.objects.filter(usuario_pendiente__uid=user.uid).count()
 					tiene_notificaciones = notifications > 0

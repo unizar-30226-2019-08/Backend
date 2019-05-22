@@ -19,7 +19,8 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 env = environ.Env(
     DEBUG=(bool, True),
-    SECRET_KEY=(str, 'nPW:f$rss4v22[N]:$}AbVFaPFj*A<y)*8T]ZqLSsw.bAf$^SF')
+    SECRET_KEY=(str, 'nPW:f$rss4v22[N]:$}AbVFaPFj*A<y)*8T]ZqLSsw.bAf$^SF'),
+    PASS_CORREO=(str, 'bolasdylan28')
 )
 
 environ.Env.read_env()
@@ -108,10 +109,16 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST = 'smtp.gmail.com'
 
-EMAIL_HOST_USER = 'gatyico@gmail.com'
+#EMAIL_HOST_USER = 'robertawilliamsuz@gmail.com'
+EMAIL_HOST_USER = 'robertabookalo@gmail.com'
 
 #Must generate specific password for your app in [gmail settings][1]
-EMAIL_HOST_PASSWORD = 'gaticos458'
+EMAIL_HOST_PASSWORD = env('PASS_CORREO')
+
+#EMAIL_HOST_USER = 'gatyico@gmail.com'
+
+#Must generate specific password for your app in [gmail settings][1]
+#EMAIL_HOST_PASSWORD = 'gaticos458'
 
 EMAIL_PORT = 587
 
