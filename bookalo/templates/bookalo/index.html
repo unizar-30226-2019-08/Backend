@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<html>
+<html lang="es-ES">
 
 <head>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -313,7 +313,7 @@
                 </div>
             </div>
             {% if productos.0 == null %}
-            <div class="row" style="margin: 70px 0px 0px 0px;">
+            <div class="row" style="margin: 120px 0px 20px 0px;">
                 <div class="col text-center"><i class="far fa-sad-tear light" style="font-size: 200px;color: #e91e63;"></i>
                     {% if not filter_product %}
                     <h1 style="font-family: Antic, sans-serif;font-size: 30px;margin: 30px 0px 0px 0px;">¡Vaya! Aún no hay productos</h1>
@@ -599,7 +599,7 @@
                     alert("Error al iniciar sesión")
                     // Handle error
                 });
-            	}).catch(function(error) {
+                }).catch(function(error) {
                 // Handle Errors here.
                 var errorCode = error.code;
                 var errorMessage = error.message;
@@ -671,11 +671,14 @@
     <script>
         function cerrarSesion(){
             var csrftoken = '{{ csrf_token }}';
-            $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
-            firebase.auth().signOut().then(function() {
-                window.location.replace("https://bookalo.es");
-            }).catch(function(error) {
-                alert("Error al cerrar sesión");
+            $.post("/logout", 
+            {'csrfmiddlewaretoken': csrftoken},
+            function(){
+                firebase.auth().signOut().then(function() {
+                    window.location.replace("https://bookalo.es");
+                }).catch(function(error) {
+                    alert("Error al cerrar sesión");
+                });
             });
         }
     </script>

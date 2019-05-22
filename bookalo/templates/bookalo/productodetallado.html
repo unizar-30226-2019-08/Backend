@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 {% load staticfiles %}
-<html>
+<html lang="es-ES">
 
 <head>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
@@ -630,11 +630,14 @@
     <script>
         function cerrarSesion(){
             var csrftoken = '{{ csrf_token }}';
-            $.post("/logout", {'csrfmiddlewaretoken': csrftoken});
-            firebase.auth().signOut().then(function() {
-                window.location.replace("https://bookalo.es");
-            }).catch(function(error) {
-                alert("Error al cerrar sesión");
+            $.post("/logout", 
+            {'csrfmiddlewaretoken': csrftoken},
+            function(){
+                firebase.auth().signOut().then(function() {
+                    window.location.replace("https://bookalo.es");
+                }).catch(function(error) {
+                    alert("Error al cerrar sesión");
+                });
             });
         }
     </script>
