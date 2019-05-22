@@ -519,11 +519,6 @@
     </script>
     <script>
         function anadirFavorito(id){
-            if(document.getElementById(id + "Icon").className == "fas fa-thumbs-up"){
-                document.getElementById(id + "Icon").className = "fas fa-thumbs-down";
-            } else{
-                document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
-            }
             var csrftoken = '{{ csrf_token }}';
             $.post("/api/like_product",
             {'csrfmiddlewaretoken': csrftoken, 'idProducto': id},  
