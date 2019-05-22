@@ -32,6 +32,7 @@ urlpatterns = [
     path(r'api/edit_product', views.EditProduct),
     re_path(r'logout', views.Logout),
     path(r'api/delete_pending', views.ClearPendingMessages),
+    path(r'api/delete_chat', views.DeleteChat),
     path(r'api/get_info_isbn', views.GetInfoISBN),
     re_path(r'mobile_app', views.MobileRedirect),
 ]

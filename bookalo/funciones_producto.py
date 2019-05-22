@@ -250,9 +250,10 @@ def CreacionProducto(biblio):
 	descripcion = biblio['descripcion']
 	tags = biblio['tags']
 	#Check that the request is correct
-	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '' or tags == '':
+	if latitud == '' or longitud == '' or nombre == '' or precio == '' or estado_producto == '' or tipo_envio == '' or descripcion == '':
 		return 'Bad request'
-	lista_tags = [x.strip() for x in tags.split(',')]
+	if tags != '':
+		lista_tags = [x.strip() for x in tags.split(',')]
 	#Prueba si el precio es un numero o no
 	try:
 		precio = precio.replace(',', '.')
@@ -281,21 +282,22 @@ def CreacionProducto(biblio):
 	producto.save()
 	producto = Producto.objects.get(pk=producto.pk)
 	print(producto)
-	for tag in lista_tags:
-		print(tag)
-		tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
-		tag_estandar = strip_accents(tag_estandar)
-		tag_estandar = tag_estandar.lower()
-		try:
-			t = Tag.objects.get(nombre=tag_estandar)
-			producto.tiene_tags.add(t)
-			t.number_of_uses = t.number_of_uses + 1
-			t.save()
-		except:
-			t = Tag.objects.create(nombre=tag_estandar)
-			producto.tiene_tags.add(t)
-			t.number_of_uses = t.number_of_uses + 1
-			t.save()
+	if tags != '':
+		for tag in lista_tags:
+			print(tag)
+			tag_estandar = re.sub('[^A-Za-z0-9á-źÁ-Źüñ]+', '', tag)
+			tag_estandar = strip_accents(tag_estandar)
+			tag_estandar = tag_estandar.lower()
+			try:
+				t = Tag.objects.get(nombre=tag_estandar)
+				producto.tiene_tags.add(t)
+				t.number_of_uses = t.number_of_uses + 1
+				t.save()
+			except:
+				t = Tag.objects.create(nombre=tag_estandar)
+				producto.tiene_tags.add(t)
+				t.number_of_uses = t.number_of_uses + 1
+				t.save()
 	i = 0
 	for file in files:
 		multi = ContenidoMultimedia(contenido=file, producto=producto, orden_en_producto=i)

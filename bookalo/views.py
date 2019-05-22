@@ -689,6 +689,49 @@ def CreateChat(request, format=None):
 			else:
 				return redirect('/')
 
+
+@api_view(('POST','GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def DeleteChat(request, format=None):
+	movil = request.META.get('HTTP_APPMOVIL','nothing')
+	if movil == 'true':
+		token = request.POST.get('token', 'nothing')
+	else:
+		token = request.session.get('token', 'nothing')
+	chatId = request.POST.get('idChat', 'nothing')
+	if request.method != 'POST' or token == 'nothing' or chatId == 'nothing':
+		if movil == 'true':
+			return Response(status=status.HTTP_400_BAD_REQUEST)
+		else:
+			return redirect('/')
+	else:
+		try:
+			if check_user_logged_in(token):
+				result = BorradoChat(token,chatId)
+				if movil == 'true':
+					if result == 'Unauthorized':
+						return Response(status=status.HTTP_401_UNAUTHORIZED)
+					else:
+						return Response(status=status.HTTP_200_OK)
+				else:
+					if result == 'Unauthorized':
+						return redirect('/')
+					else:
+						return redirect('/api/get_chats')
+			else:
+				if movil == 'true':
+					return Response(status=status.HTTP_401_UNAUTHORIZED)
+				else:
+					if 'token' in request.session:
+						request.session.pop('token')
+					return redirect('/')
+		except:
+			if movil == 'true':
+				return Response(status=status.HTTP_404_NOT_FOUND)
+			else:
+				return redirect('/')
+
 @api_view(('POST','GET'))
 @permission_classes((permissions.AllowAny,))
 @csrf_exempt

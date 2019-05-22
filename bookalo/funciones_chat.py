@@ -48,7 +48,9 @@ def CrearChat(token,otroUserUid,productId):
 	return chat
 
 def GetChatVendedor(user,ultimo_indice,elementos_pagina):
-	chats = Chat.objects.filter(vendedor=user)
+	chats = Chat.objects.filter(vendedor=user, borrado_vendedor=False, producto__estado_venta=True)
+	chats_terminados = Chat.objects.filter(vendedor=user, borrado_vendedor=False, producto__estado_venta=False)
+	chats = list(chats) + list(chats_terminados)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
@@ -56,7 +58,9 @@ def GetChatVendedor(user,ultimo_indice,elementos_pagina):
 	return ChatSerializer(chats, many=True, read_only=True, context = {"user": user})
 
 def GetChatComprador(user,ultimo_indice,elementos_pagina):
-	chats = Chat.objects.filter(comprador=user)
+	chats = Chat.objects.filter(comprador=user,borrado_comprador=False, producto__estado_venta=True)
+	chats_terminados = Chat.objects.filter(comprador=user,borrado_comprador=False, producto__estado_venta=False)
+	chats = list(chats) + list(chats_terminados)
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
@@ -71,6 +75,9 @@ def CrearMensaje(token, chat_id, message):
 		chat = Chat.objects.get(pk=int(chat_id))
 		mensaje = Mensaje(texto=message, chat_asociado=chat, emisor=user)
 		mensaje.save()
+		chat.borrado_vendedor = False
+		chat.borrado_comprador = False
+		chat.save()
 		return mensaje
 	except:
 		return None	
@@ -119,6 +126,26 @@ def GetChatInfoWeb(chat_id):
 		return {'comprador':UserSerializer(buyer).data, 'vendedor':UserSerializer(seller).data, 'producto': ProductoSerializer(product).data}
 	except:
 		return {'comprador': '', 'vendedor':'', 'producto': ''}
+
+def BorradoChat(token,chatId):
+	user_info = auth.get_account_info(token)
+	user_uid = user_info['users'][0]['localId']
+	user = Usuario.objects.get(uid=user_uid)
+	chat = Chat.objects.get(id=chatId)
+	if chat.vendedor == user:
+		chat.borrado_vendedor = True
+		chat.save()
+		if chat.borrado_comprador == True:
+			chat.delete()
+		return 'Ok'
+	elif chat.comprador == user:
+		chat.borrado_comprador = True
+		chat.save()
+		if chat.borrado_vendedor == True:
+			chat.delete()
+		return 'Ok'
+	else:
+		return 'Unauthorized'
 
 def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, receptor):
 	try:
