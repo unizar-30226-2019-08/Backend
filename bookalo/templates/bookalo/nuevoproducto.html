@@ -297,7 +297,7 @@
                                                     <strong>{{ p.info_producto.precio }} €</strong>
                                                 </p>
                                                 <a class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" role="button" href="/api/generic_product_view/?id={{ p.info_producto.pk }}">Ver más</a>
-                                                <button onclick="anadirFavorito('{{ p.info_producto.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
+                                                <button onclick="anadirFavorito('{{ p.pk }}')" class="btn btn-secondary" style="margin: 0px 0px 15px 13px;width: 76px;font-size: 14px;padding: 3px 0px;background-color: #e91e63;border-color:transparent" type="button">Quitar</button>
                                             </div>
                                         </div>
                                     </div>
@@ -679,6 +679,21 @@
                 // ...
                 alert("No se pudo conectar con Twitter. Por favor, inténtelo de nuevo.");
                 alert(errorMessage);
+            });
+        }
+    </script>
+    <script>
+        function anadirFavorito(id){
+            if(document.getElementById(id + "Icon").className == "fas fa-thumbs-up"){
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-down";
+            } else{
+                document.getElementById(id + "Icon").className = "fas fa-thumbs-up";
+            }
+            var csrftoken = '{{ csrf_token }}';
+            $.post("/api/like_product",
+            {'csrfmiddlewaretoken': csrftoken, 'idProducto': id},  
+            function(){
+                document.location.reload(true);
             });
         }
     </script>
