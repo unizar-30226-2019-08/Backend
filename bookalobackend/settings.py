@@ -112,13 +112,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_HOST_USER = 'robertawilliamsuz@gmail.com'
 EMAIL_HOST_USER = 'robertabookalo@gmail.com'
 
-#Must generate specific password for your app in [gmail settings][1]
 EMAIL_HOST_PASSWORD = env('PASS_CORREO')
-
-#EMAIL_HOST_USER = 'gatyico@gmail.com'
-
-#Must generate specific password for your app in [gmail settings][1]
-#EMAIL_HOST_PASSWORD = 'gaticos458'
 
 EMAIL_PORT = 587
 
