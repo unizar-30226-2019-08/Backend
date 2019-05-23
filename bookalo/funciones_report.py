@@ -31,7 +31,7 @@ def MandarCorreo(user,reporteduserUid, cause, comment, id_chat):
 		if id_chat != 'nothing':
 			chat = Chat.objects.get(id=int(id_chat))
 			mensaje = mensaje + '\n\nMensajes del chat:'
-			mensajes_chat = Mensaje.objects.filter(chat_asociado=chat)
+			mensajes_chat = Mensaje.objects.filter(chat_asociado=chat).order_by('-hora')
 			for m in mensajes_chat:
 				hora_mensaje = str(m.hora.year)+ '-' + str(m.hora.month) + '-' + str(m.hora.day) + '  ' + str(m.hora.hour) +':'+ str(m.hora.minute) +':'+ str(m.hora.second)
 				mensaje = mensaje +'\n' + m.emisor.nombre +',' + hora_mensaje + ': ' + m.texto
@@ -40,5 +40,4 @@ def MandarCorreo(user,reporteduserUid, cause, comment, id_chat):
 		email.send()
 		return True
 	except:
-		print('excepcion')
 		return False

@@ -243,10 +243,11 @@ class NotificationSerializer(serializers.HyperlinkedModelSerializer):
 
 class MensajeSerializer(serializers.HyperlinkedModelSerializer):
     es_suyo = serializers.SerializerMethodField()
-    valoracion = ValidacionEstrellaSerializer(read_only=True)
+    valoracion_vendedor = ValidacionEstrellaSerializer(read_only=True)
+    valoracion_comprador = ValidacionEstrellaSerializer(read_only=True)
     class Meta:
         model = Mensaje
-        fields = ('texto', 'hora', 'es_suyo', 'es_valoracion', 'valoracion')
+        fields = ('texto', 'hora', 'es_suyo', 'es_valoracion', 'valoracion_vendedor', 'valoracion_comprador')
 
     def get_es_suyo(self, obj):
         print("He comprobado si era suyo")
@@ -255,3 +256,28 @@ class MensajeSerializer(serializers.HyperlinkedModelSerializer):
             return True
         else:
             return False
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        ret = OrderedDict()
+        fields = [field for field in self.fields.values() if not field.write_only]
+
+        for field in fields:
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            if attribute is not None:
+                represenation = field.to_representation(attribute)
+                if represenation is None:
+                    # Do not seralize empty objects
+                    continue
+                if isinstance(represenation, list) and not represenation:
+                   # Do not serialize empty lists
+                   continue
+                ret[field.field_name] = represenation
+
+        return ret

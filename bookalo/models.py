@@ -311,13 +311,22 @@ class Mensaje(models.Model):
     es_valoracion = models.BooleanField(
         default=False,
         verbose_name='Campo que indica si el mensaje pertenece a un mensaje - valoracion')
-    valoracion = models.ForeignKey(
+    valoracion_vendedor = models.ForeignKey(
         to=ValidacionEstrella,
         default=None,
         null=True,
         blank=True,
         on_delete=models.CASCADE,
-        verbose_name='Valoracion relacionada con este mensaje')
+        related_name='v_vendedor',
+        verbose_name='Valoracion del vendedor relacionada con este mensaje')
+    valoracion_comprador = models.ForeignKey(
+        to=ValidacionEstrella,
+        default=None,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='v_comprador',
+        verbose_name='Valoracion del comprador relacionada con este mensaje')
 
     def __str__(self):
         return self.texto

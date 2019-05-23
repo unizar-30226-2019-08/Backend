@@ -451,22 +451,37 @@ def ValorarVenta(token, rated_user_id, comment, product_id, stars):
 		rated_user = Usuario.objects.get(uid=rated_user_id)
 		user = get_user(token)
 		product = Producto.objects.get(pk=int(product_id))
-		validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+		try:
+			ValidacionEstrella.objects.get(usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
+			return False  # Ya estaba creada
+		except:
+			validacion = ValidacionEstrella.objects.create(estrellas=stars, usuario_valorado=rated_user, usuario_que_valora=user, comentario=comment, producto=product)
 		validacion.actualizar()
 		NotificacionesPendientes.objects.filter(producto=product, usuario_pendiente=user).delete()
-		chat_venta = Chat.objects.get(vendedor=rated_user, comprador=user, producto=product)
+		try:
+			chat_venta = Chat.objects.get(vendedor=rated_user, comprador=user, producto=product)
+			es_vendedor = False
+		except:
+			chat_venta = Chat.objects.get(vendedor=user, comprador=rated_user, producto=product)
+			es_vendedor = True
 		try:
 			mensaje_valoracion = Mensaje.objects.get(chat_asociado=chat_venta, es_valoracion=True)
-			mensaje_valoracion.valoracion = validacion
+			if es_vendedor == True:
+				mensaje_valoracion.valoracion_vendedor = validacion
+			else:
+				mensaje_valoracion.valoracion_comprador = validacion
 			mensaje_valoracion.save()
 		except:
+			"""
 			mensaje_valoracion = CrearMensaje(token, chat_venta.id, "Notificacion")
 			if mensaje_valoracion != None:
 				mensaje_valoracion.es_valoracion = True
 				mensaje_valoracion.valoracion = validacion
 				mensaje_valoracion.save()
 			else:
-				return False
+			"""
+			print('Excepcion valoracion, no existe el mensaje')
+			return False
 
 		return True
 	except:
@@ -487,6 +502,8 @@ def MarkAsSold(product_id, token):
 	try:
 		user = get_user(token)
 		producto = Producto.objects.get(pk=int(product_id))
+		print(producto.vendido_por.uid)
+		print(user.uid)
 		if producto.vendido_por != user:
 			return None
 	except:

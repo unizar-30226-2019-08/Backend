@@ -1003,7 +1003,7 @@ def SellProduct(request, format=None):
 					notificacion2.save()
 					try:
 						mensaje = Mensaje.objects.get(chat_asociado=chat_buscado, es_valoracion=True)
-						mensaje.valoracion = None
+						mensaje = None
 					except:
 						print('Mensaje no existia')
 						mensaje = CrearMensaje(token, str(chat_buscado.pk), "Notificacion")
