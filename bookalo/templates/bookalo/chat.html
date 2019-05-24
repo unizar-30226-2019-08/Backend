@@ -729,6 +729,8 @@
             $.post("/api/sell_product",
             {'csrfmiddlewaretoken': csrftoken, 'id_chat': id_chat},
             function(){
+                var buttonRating = document.getElementById("buttonRating");
+                buttonRating.parentNode.removeChild(buttonRating);
                 document.getElementById('chat' + id_chat).style.backgroundColor = "maroon";
             });
         }

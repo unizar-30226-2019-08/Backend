@@ -79,7 +79,7 @@
     <link rel="stylesheet" href="{% static 'bookalo/css/Tag-cloud.css' %}">
 </head>
 
-<body>
+<body onload="mobileDetection()">
     <nav class="navbar navbar-light navbar-expand-xl d-xl-flex justify-content-xl-start navigation-clean-search fixed-top" style="background-color: #e91e63;padding: 16px;filter: blur(0px);">
         <div class="container-fluid">
             <a class="navbar-brand" style="margin: -7px 0px 0px 0px;padding: 0px;" href="/">
@@ -619,6 +619,16 @@
     <script src="{% static 'bookalo/js/sortable.js' %}"></script>
     <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
+    <script>
+        function mobileDetection(){
+            if(navigator.userAgent.toLowerCase().indexOf("android") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
+            if(navigator.userAgent.toLowerCase().indexOf("iphone") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
+        }
+    </script>
     <script>
         function getLocation(provider) {
             if (navigator.geolocation) {
