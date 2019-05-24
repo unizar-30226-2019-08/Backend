@@ -112,7 +112,7 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		
 		for word in search.split():
 			if word not in preposiciones:
-				productos_palabra = Producto.objects.filter(nombre__icontains=word)
+				productos_palabra = Producto.objects.filter(nombre__icontains=word).order_by('-num_likes')
 				for producto in productos_palabra:
 					products_search = products_search + [producto]
 
@@ -138,46 +138,46 @@ def FiltradoProducto(biblio,token,ultimo_indice,elementos_pagina):
 		if min_price == '-1':
 			if max_price == '-1':
 				if min_score == '-1':
-					products = Producto.objects.filter(tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 			else:
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 		else:
 			if max_price == '-1':
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 			else:
 				if min_score == '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), tiene_tags__in=tag_queryset, estado_venta=True).order_by('-num_likes')
 	else:
 		if min_price == '-1':
 			if max_price == '-1':
 				if min_score != '-1':
-					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
+					products = Producto.objects.filter(vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True).order_by('-num_likes')
 			else:
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__lte=Decimal(max_price), estado_venta=True)
+					products = Producto.objects.filter(precio__lte=Decimal(max_price), estado_venta=True).order_by('-num_likes')
 		else:
 			if max_price == '-1':
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), estado_venta=True).order_by('-num_likes')
 			else:
 				if min_score != '-1':
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), vendido_por__media_valoraciones__gte=int(min_score), estado_venta=True).order_by('-num_likes')
 				else:
-					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), estado_venta=True)
+					products = Producto.objects.filter(precio__gte=Decimal(min_price), precio__lte=Decimal(max_price), estado_venta=True).order_by('-num_likes')
 
 
 	#print(products)
