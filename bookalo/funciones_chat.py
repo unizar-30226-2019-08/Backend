@@ -34,6 +34,21 @@ def get_list_tokens(user, token_to_omit):
 			tokens_web = tokens_web + [session.token_fcm]
 	return {'movil':tokens_movil, 'web':tokens_web}
 
+def get_list_tokens_without_sender(user, token_to_omit):
+	sessions = Sesion.objects.filter(usuario=user, es_movil=True)
+	tokens_movil = []
+	for session in sessions:
+		if session.token_fcm != token_to_omit:
+			tokens_movil = tokens_movil + [session.token_fcm]
+
+	sessions = Sesion.objects.filter(usuario=user, es_movil=False)
+	tokens_web = []
+	for session in sessions:
+		if session.token_fcm != token_to_omit:
+			tokens_web = tokens_web + [session.token_fcm]
+	return {'movil':tokens_movil, 'web':tokens_web}
+
+
 def CrearChat(token,otroUserUid,productId):
 	user_info = auth.get_account_info(token)
 	user_uid = user_info['users'][0]['localId']
@@ -227,6 +242,94 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		data = {
 			"registration_ids":[tokens_emisor],
+			"notification":{
+				"title":"Bookalo: Fallo en envio de mensaje",
+				"body":"Un error ocurrió mientras enviabas el mensaje - " + message.texto + " -: " + str(ex)
+			}
+		}
+		data = json.dumps(data)
+		requests.post(url=URL, data=data, headers=headers)
+		return False
+
+def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, receptor):
+	try:
+		headers = {"Authorization":"key=AAAARwXiWF8:APA91bEvM5nPUaBpR217T3ZjRqCGvYadxmHQXQSIgGMkWn_BeAOnnLZNv2DtVmCwF-D_sJEsh4CrDg6S0S4jl9tsImUnqzEGAssiizIF4U1h0AVsgyzzU8to0q0QlLx2cFu2673OvKuH","Content-Type":"application/json"}
+		URL = 'https://fcm.googleapis.com/fcm/send'
+		chat_obj = Chat.objects.get(pk=int(chat_id))
+		if chat_obj.vendedor == emisor:
+			chat_obj.num_pendientes_comprador = chat_obj.num_pendientes_comprador + 1
+			chat_obj.save()
+		else:
+			chat_obj.num_pendientes_vendedor = chat_obj.num_pendientes_vendedor + 1
+			chat_obj.save()
+
+		#Codigo para el receptor del mensaje
+		chat = ChatSerializer(chat_obj, context = {"user": receptor}).data
+		mensaje = MensajeSerializer(message, context = {"user": receptor}).data
+		tokens_receptor = get_list_tokens_without_sender(receptor, "NONE")
+		if tokens_receptor['movil']:
+			data = {
+				"registration_ids":tokens_receptor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+		if tokens_receptor['web']:
+			data = {
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto,
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
+				"registration_ids":tokens_receptor['web'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+
+		#Codigo para el emisor del mensaje
+		chat = ChatSerializer(chat_obj, context = {"user": emisor}).data
+		mensaje = MensajeSerializer(message, context = {"user": emisor}).data
+		tokens_emisor = get_list_tokens_without_sender(emisor, token_emisor)
+		if tokens_emisor['movil']:
+			data = {
+				"registration_ids":tokens_emisor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":not soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+		if tokens_emisor['web']:
+			data = {
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto,
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
+				"registration_ids":tokens_emisor['web'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":not soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+		return True
+	except Exception as ex:
+		data = {
+			"registration_ids":[token_emisor],
 			"notification":{
 				"title":"Bookalo: Fallo en envio de mensaje",
 				"body":"Un error ocurrió mientras enviabas el mensaje - " + message.texto + " -: " + str(ex)

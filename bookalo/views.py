@@ -741,8 +741,10 @@ def SendMessage(request, format=None):
 	movil = request.META.get('HTTP_APPMOVIL','nothing')
 	if movil == 'true':
 		token = request.POST.get('token', 'nothing')
+		token_fcm = request.POST.get('token_fcm', 'nothing')
 	else:
 		token = request.session.get('token', 'nothing')
+		token_fcm = request.session.get('token_fcm', 'nothing')
 	if token == 'nothing':
 		logged = False
 	else:
@@ -763,7 +765,7 @@ def SendMessage(request, format=None):
 		except:
 			message_created = None
 		if message_created != None:
-			if SendFCMMessage(chat_id, message_created, token, user, soy_vendedor, user_recibe):
+			if SendFCMChatMessage(chat_id, message_created, token_fcm, user, soy_vendedor, user_recibe):
 				return Response(status=status.HTTP_200_OK)
 			else:
 				return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)	
