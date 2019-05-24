@@ -78,7 +78,7 @@
     <link rel="stylesheet" href="{% static 'bookalo/css/Tag-cloud.css' %}">
 </head>
 
-<body>
+<body onload="mobileDetection()">
     <nav class="navbar navbar-light navbar-expand-xl d-xl-flex justify-content-xl-start navigation-clean-search fixed-top" style="background-color: #e91e63;padding: 16px;filter: blur(0px);">
         <div class="container-fluid">
             <a class="navbar-brand" style="margin: -7px 0px 0px 0px;padding: 0px;" href="/">
@@ -292,7 +292,9 @@
             </div>
             <div class="row">
                 <div class="col" style="padding: 0px 25px;">
-                    <p style="padding: 0px 15px;font-size: 24px;font-family: Antic, sans-serif;">ISBN: 978-0-7334-2609-4</p>
+                    {% if producto.info_producto.isbn != '' %}
+                    <p style="padding: 0px 15px;font-size: 24px;font-family: Antic, sans-serif;">ISBN: {{ producto.info_producto.isbn }}</p>
+                    {% endif %}
                 </div>
             </div>
             <div class="row" style="margin: 0px;">
@@ -356,7 +358,7 @@
                     {% if producto.info_producto.tipo_envio %}
                         <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Con envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
                     {% else %}
-                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Sin envío<i class="fa fa-truck" style="margin: 0px 0px 0px 10px;"></i></p>
+                        <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Sin envío</p>
                     {% endif %}
                     <p style="font-size: 18px;margin: 0px;font-family: Antic, sans-serif;">Número de likes: {{ producto.info_producto.num_likes }}<i class="far fa-heart" style="margin: 0px 0px 0px 10px;"></i></p>
                 </div>
@@ -451,6 +453,16 @@
     <script src="{% static 'bookalo/js/sortable.js' %}"></script>
     <script src="{% static 'bookalo/js/sortable.min.js' %}"></script>
     <script src="{% static 'bookalo/js/starrating.js' %}"></script>
+    <script>
+        function mobileDetection(){
+            if(navigator.userAgent.toLowerCase().indexOf("android") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
+            if(navigator.userAgent.toLowerCase().indexOf("iphone") > -1){
+                window.location.replace("https://bookalo.es/mobile_app");
+            }
+        }
+    </script>
     <script>
         function getLocation(provider) {
             if (navigator.geolocation) {
