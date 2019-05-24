@@ -463,10 +463,14 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login",
-                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                $.post("/logout",
+                                {'csrfmiddlewaretoken': csrftoken},
                                 function(){
-                                    document.location.reload(true);
+                                    $.post("/api/login",
+                                    {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                    function(){
+                                        document.location.reload(true);
+                                    })
                                 })
                             } else {
                                 alert("No Instance ID token available");
@@ -516,10 +520,14 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login",
-                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                $.post("/logout",
+                                {'csrfmiddlewaretoken': csrftoken},
                                 function(){
-                                    document.location.reload(true);
+                                    $.post("/api/login",
+                                    {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                    function(){
+                                        document.location.reload(true);
+                                    })
                                 })
                             } else {
                                 alert("No Instance ID token available");
@@ -571,10 +579,14 @@
                         console.log('Notification permission granted.');
                         messaging.getToken().then(function(currentToken) {
                             if (currentToken) {
-                                $.post("/api/login",
-                                {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                $.post("/logout",
+                                {'csrfmiddlewaretoken': csrftoken},
                                 function(){
-                                    document.location.reload(true);
+                                    $.post("/api/login",
+                                    {'csrfmiddlewaretoken': csrftoken, 'token': idToken, 'fcm_token': currentToken, 'latitud': position.coords.latitude, 'longitud': position.coords.longitude},
+                                    function(){
+                                        document.location.reload(true);
+                                    })
                                 })
                             } else {
                                 alert("No Instance ID token available");
