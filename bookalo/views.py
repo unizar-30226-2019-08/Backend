@@ -514,9 +514,9 @@ def CreateReport(request, format=None):
 			logged = check_user_logged_in(token)
 			if logged:
 				print("Voy a crear")
-				CrearReport(reporteduserUid, cause, comment)
+				reporte = CrearReport(reporteduserUid, cause, comment)
 				user = get_user(token)
-				MandarCorreo(user,reporteduserUid, cause, comment,id_chat)
+				MandarCorreo(user,reporteduserUid, cause, comment, id_chat, reporte.pk)
 				if movil == 'true':
 					return Response(status=status.HTTP_201_CREATED)
 				else:
@@ -1325,3 +1325,36 @@ def GetInfoISBN(request, format=None):
 @csrf_exempt
 def MobileRedirect(request, format=None):
 	return render(request, 'bookalo/redirect.html')
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def AcceptReport(request, format=None):
+	report_id = request.GET.get('id','')
+	if report_id == '':
+		return render(request, 'bookalo/reporte_no_encontrado.html')
+	else:
+		try:
+			report = Report.objects.get(pk=int(report_id))
+			reported_user = report.usuario_reportado
+			num_reportes = Report.objects.filter(usuario_reportado=reported_user).count()
+			if num_reportes > 4:
+				reported_user.esta_baneado = True
+				reported_user.save()
+			return render(request, 'bookalo/aceptar_reporte.html')
+		except:
+			return render(request, 'bookalo/reporte_no_encontrado.html')
+
+@api_view(('POST', 'GET'))
+@permission_classes((permissions.AllowAny,))
+@csrf_exempt
+def RejectReport(request, format=None):
+	report_id = request.GET.get('id','')
+	if report_id == '':
+		return render(request, 'bookalo/reporte_no_encontrado.html')
+	else:
+		try:
+			Report.objects.get(pk=int(report_id)).delete()
+			return render(request, 'bookalo/rechazar_reporte.html')
+		except:
+			return render(request, 'bookalo/reporte_no_encontrado.html')

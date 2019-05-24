@@ -35,4 +35,6 @@ urlpatterns = [
     path(r'api/delete_chat', views.DeleteChat),
     path(r'api/get_info_isbn', views.GetInfoISBN),
     re_path(r'mobile_app', views.MobileRedirect),
+    path(r'api/accept_report', views.AcceptReport),
+    path(r'api/reject_report', views.RejectReport),
 ]
