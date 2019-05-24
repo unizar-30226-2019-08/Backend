@@ -760,7 +760,6 @@
             var mensaje = JSON.parse(payload.data.mensaje);
             var chat = JSON.parse(payload.data.chat);
 
-            alert(mensaje.es_valoracion);
             if(mensaje.texto != 'Notificacion'){
                 console.log('Message received. ', payload);
                 if(document.getElementById("idChat").value == chat.pk){
