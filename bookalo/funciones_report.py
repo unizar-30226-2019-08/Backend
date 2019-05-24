@@ -23,7 +23,7 @@ def CrearReport(reporteduserUid, cause, comment):
 	reporte = Report.objects.create(usuario_reportado=reporteduser, causa=cause, comentario=comment)
 	return reporte
 
-def MandarCorreo(user,reporteduserUid, cause, comment, id_chat):
+def MandarCorreo(user,reporteduserUid, cause, comment, id_chat, pk_report):
 	try:
 		correo = 'robertabookalo@gmail.com'
 		reporteduser = Usuario.objects.get(uid=reporteduserUid)
@@ -35,6 +35,9 @@ def MandarCorreo(user,reporteduserUid, cause, comment, id_chat):
 			for m in mensajes_chat:
 				hora_mensaje = str(m.hora.year)+ '-' + str(m.hora.month) + '-' + str(m.hora.day) + '  ' + str(m.hora.hour) +':'+ str(m.hora.minute) +':'+ str(m.hora.second)
 				mensaje = mensaje +'\n' + m.emisor.nombre +',' + hora_mensaje + ': ' + m.texto
+			mensaje = mensaje + "A continuación se te presentan las distintas acciones posibles que tienes como moderador:\n\n"
+			mensaje = mensaje + "Aceptar reporte: https://bookalo.es/api/accept_report?id=" + str(pk_report) + "\n\n"
+			mensaje = mensaje + "Rechazar reporte: https://bookalo.es/api/reject_report?id=" + str(pk_report) + "\n"
 		email = EmailMessage('Reporte de usuario ' + reporteduser.nombre, mensaje, 
 				to=[correo])
 		email.send()
