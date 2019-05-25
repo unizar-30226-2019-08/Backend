@@ -182,7 +182,7 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 			data = {
 				"notification":{
 					"title":"Bookalo",
-					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora a " + emisor.nombre + "!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_receptor['movil'],
@@ -198,7 +198,7 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 			data = {
 				"notification":{
 					"title":"Bookalo",
-					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora a " + emisor.nombre + "!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_receptor['web'],
@@ -219,7 +219,7 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 			data = {
 				"notification":{
 					"title":"Bookalo",
-					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora a " + receptor.nombre + "!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_emisor['movil'],
@@ -235,7 +235,7 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 			data = {
 				"notification":{
 					"title":"Bookalo",
-					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora a " + receptor.nombre + "!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_emisor['web'],
