@@ -141,7 +141,7 @@
             <div class="modal-content">
                 <form action="/api/create_report" method="post">
                 <div class="modal-header">
-                    <h4 class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a {{ otro_usuario.nombre }}</h4>
+                    <h4 id="tituloReport" class="modal-title" style="font-family: Antic, sans-serif;font-size: 30px;">Reportar a</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -161,7 +161,7 @@
                     <h4 style="font-family: Antic, sans-serif;margin: 20px 0px 0px 0px;">Incluye un comentario (opcional):</h4>
                     <textarea style="font-size: 12px;margin: 20px 0px 0px 30px;width: 85%;" id="comentario" name="comentario"></textarea>
                 </div>
-                <input type="hidden" id="uid" name="uid" value="{{ otro_usuario.uid }}">
+                <input type="hidden" id="uid" name="uid" value="">
                 <div class="modal-footer">
                     <button class="btn btn-secondary" style="background-color: #e91e63;border-color:transparent" type="submit">Enviar</button>
                 </div>
@@ -378,10 +378,15 @@
                 {% for notificacion in notificaciones %}
                 <div class="card" style="margin: 0px 0px 15px 0px;">
                     <div class="card-body border-secondary">
-                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ notificacion.otro_usuario_compra.nombre }}<img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ notificacion.otro_usuario_compra.imagen_perfil }}"></h4>
+                        <h4 class="card-title" style="margin: 0px 0px 5px 0px;">{{ notificacion.otro_usuario_compra.nombre }}
+                            <a href="/api/get_user_profile/?uid={{ notificacion.otro_usuario_compra.uid }}">
+                                <img style="width: 30px;height: 30px;margin: 0px 0px 0px 15px;" src="{{ notificacion.otro_usuario_compra.imagen_perfil }}">
+                            </a>
+                        </h4>
                         <h6 class="card-title" style="margin: 0px 0px 5px 0px;color: rgb(109,109,109);">Intercambiasteis {{ notificacion.producto.info_producto.nombre }}</h6>
                         <p class="card-text">Recuerda valorarle. ¡Con tu valoración ayudas a mejorar Bookalo!</p>
-                        <button onclick="abrirModalRating('{{ notificacion.otro_usuario_compra.uid }}', '{{ notificacion.producto.pk }}', '{{ notificacion.otro_usuario_compra.nombre }}')" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Valorar compra</button></div>
+                        <button onclick="abrirModalRating('{{ notificacion.otro_usuario_compra.uid }}', '{{ notificacion.producto.pk }}', '{{ notificacion.otro_usuario_compra.nombre }}')" class="btn btn-secondary action-button" type="button" style="background-color: #e91e63;border-color:transparent;border-radius:20px">Valorar compra</button>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -830,8 +835,10 @@
     <script>
         function abrirModalRating(uid, pk, nombre){
             document.getElementById("titulo").innerHTML = "Valora a " + nombre;
+            document.getElementById("tituloReport").innerHTML = "Reporta a " + nombre;
             document.getElementById("id_producto_valorado").value = pk;
             document.getElementById("uid_usuario_valorado").value = uid;
+            document.getElementById("uid").value = uid;
             $("#modalRating").modal("show")
         }
     </script>
