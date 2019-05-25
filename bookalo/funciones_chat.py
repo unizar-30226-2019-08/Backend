@@ -180,6 +180,11 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		tokens_receptor = get_list_tokens(receptor, "NONE")
 		if tokens_receptor['movil']:
 			data = {
+				"notification":{
+					"title":"Bookalo",
+					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
 				"registration_ids":tokens_receptor['movil'],
 				"data":{
 					"chat":chat,
@@ -192,8 +197,8 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		if tokens_receptor['web']:
 			data = {
 				"notification":{
-					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-					"body":message.texto,
+					"title":"Bookalo",
+					"body":"¡Hola " + receptor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_receptor['web'],
@@ -212,6 +217,11 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		if tokens_emisor['movil']:
 			data = {
+				"notification":{
+					"title":"Bookalo",
+					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
 				"registration_ids":tokens_emisor['movil'],
 				"data":{
 					"chat":chat,
@@ -224,8 +234,8 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		if tokens_emisor['web']:
 			data = {
 				"notification":{
-					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
-					"body":message.texto,
+					"title":"Bookalo",
+					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora al otro usuario!",
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
 				"registration_ids":tokens_emisor['web'],
