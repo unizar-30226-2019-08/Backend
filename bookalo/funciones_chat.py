@@ -194,6 +194,16 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 			}
 			data = json.dumps(data)
 			requests.post(url=URL, data=data, headers=headers)
+			data = {
+				"registration_ids":tokens_receptor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
 		if tokens_receptor['web']:
 			data = {
 				"notification":{
@@ -217,11 +227,6 @@ def SendFCMMessage(chat_id, message, token_emisor, emisor, soy_vendedor, recepto
 		tokens_emisor = get_list_tokens(emisor, token_emisor)
 		if tokens_emisor['movil']:
 			data = {
-				"notification":{
-					"title":"Bookalo",
-					"body":"¡Hola " + emisor.nombre + "! La venta se ha cerrado para el producto " + chat_obj.producto.nombre + ". ¡Valora a " + receptor.nombre + "!",
-					"icon":"https://bookalo.es/media/bookalo_logo.png"
-				},
 				"registration_ids":tokens_emisor['movil'],
 				"data":{
 					"chat":chat,
@@ -284,6 +289,17 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 					"body":message.texto,
 					"icon":"https://bookalo.es/media/bookalo_logo.png"
 				},
+				"registration_ids":tokens_receptor['movil'],
+				"data":{
+					"chat":chat,
+					"soy_vendedor":soy_vendedor,
+					"mensaje":mensaje,
+					"click_action":"FLUTTER_NOTIFICATION_CLICK",
+				}
+			}
+			data = json.dumps(data)
+			requests.post(url=URL, data=data, headers=headers)
+			data = {
 				"registration_ids":tokens_receptor['movil'],
 				"data":{
 					"chat":chat,
