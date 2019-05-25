@@ -269,11 +269,17 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 		tokens_receptor = get_list_tokens_without_sender(receptor, "NONE")
 		if tokens_receptor['movil']:
 			data = {
+				"notification":{
+					"title":emisor.nombre + ' - ' + chat_obj.producto.nombre,
+					"body":message.texto,
+					"icon":"https://bookalo.es/media/bookalo_logo.png"
+				},
 				"registration_ids":tokens_receptor['movil'],
 				"data":{
 					"chat":chat,
 					"soy_vendedor":soy_vendedor,
 					"mensaje":mensaje,
+					"click_action":"FLUTTER_NOTIFICATION_CLICK",
 				}
 			}
 			data = json.dumps(data)
