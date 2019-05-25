@@ -292,7 +292,7 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 				"registration_ids":tokens_receptor['movil'],
 				"data":{
 					"chat":chat,
-					"soy_vendedor":soy_vendedor,
+					"soy_vendedor":not soy_vendedor,
 					"mensaje":mensaje,
 					"click_action":"FLUTTER_NOTIFICATION_CLICK",
 				}
@@ -303,7 +303,7 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 				"registration_ids":tokens_receptor['movil'],
 				"data":{
 					"chat":chat,
-					"soy_vendedor":soy_vendedor,
+					"soy_vendedor":not soy_vendedor,
 					"mensaje":mensaje,
 					"click_action":"FLUTTER_NOTIFICATION_CLICK",
 				}
@@ -320,7 +320,7 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 				"registration_ids":tokens_receptor['web'],
 				"data":{
 					"chat":chat,
-					"soy_vendedor":soy_vendedor,
+					"soy_vendedor":not soy_vendedor,
 					"mensaje":mensaje,
 				}
 			}
@@ -336,7 +336,7 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 				"registration_ids":tokens_emisor['movil'],
 				"data":{
 					"chat":chat,
-					"soy_vendedor":not soy_vendedor,
+					"soy_vendedor":soy_vendedor,
 					"mensaje":mensaje,
 				}
 			}
@@ -352,7 +352,7 @@ def SendFCMChatMessage(chat_id, message, token_emisor, emisor, soy_vendedor, rec
 				"registration_ids":tokens_emisor['web'],
 				"data":{
 					"chat":chat,
-					"soy_vendedor":not soy_vendedor,
+					"soy_vendedor":soy_vendedor,
 					"mensaje":mensaje,
 				}
 			}
