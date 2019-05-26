@@ -68,7 +68,7 @@ def ProductosUsuario(token, ultimo_indice, elementos_pagina, user_uid):
 		user = get_user(token)
 	else:
 		user = Usuario.objects.get(uid=user_uid)
-	products = Producto.objects.filter(vendido_por=user)
+	products = Producto.objects.filter(vendido_por=user).order_by('estado_venta')
 	ultimo_indice = int(ultimo_indice)
 	elementos_pagina = int(elementos_pagina)
 	if(elementos_pagina != -1):
